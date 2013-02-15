@@ -1,0 +1,78 @@
+# +----------------------------------------------+
+# |  _____        _____      _              _    |
+# | |  __ \      / ____|    | |            | |   |
+# | | |__) |   _| (___   ___| |__   ___  __| |   |
+# | |  ___/ | | |\___ \ / __| '_ \ / _ \/ _` |   |
+# | | |   | |_| |____) | (__| | | |  __/ (_| |   |
+# | |_|    \__, |_____/ \___|_| |_|\___|\__,_|   |
+# |         __/ |Copyright 2012 by Martin Predki |
+# |        |___/                                 |
+# |                                              |
+# +----------------------------------------------+
+# Template file to configure a PySched-Job
+#
+
+[CONFIG]
+# The job name
+JOB_NAME=
+
+# A short job description (Optional)
+JOB_DESCRIPTION=
+
+# If the program supports multiple cpu's set this to true
+MULTI_CPU=false
+
+# REQ_CPU sets the CPU count that should be at least reserved for the program
+# Setting this to a high value may result in a longer scheduling time
+# till a workstation that matches the requirement is free.
+# This option is only used by the parser if MULTI_CPU is true
+REQ_CPU=1
+
+# Set REQ_MEM if the program needs at least a specific amount of memory to run.
+# The value given here is stated in MB.
+REQ_MEM=
+
+[PATH]
+# This section defines the files that are needed by the program.
+# All files specified here are send to the server.
+# If a folder is specified the content will be send to the server.
+# Only one path per line.
+#
+# Examples:
+# /home/user/HelloWorld.c will send the file HelloWorld.c to the server
+# /home/user/foo/ will send the complete folder to the server
+# /home/user/foo/* will send the content of the folder foo to the server
+
+[COMPILER]
+# This section is only needed if the program needs to be compiled first.
+# The compilation will be done on the server. Please make sure that the
+# needed compiler and all libraries are installed on the server or provided via
+# the PATH section. If you are using a linux OS it may be simpler to compile the
+# code on your machine and link (static linking) all necessary files with the executable.
+#
+# Example: If you have specified the file HelloWorld.c at the PATH section
+# and want to compile this file with the gcc-compiler (installed on the server)
+# the compiler code should look like:
+# gcc -o helloWorld HelloWorld.c
+
+[PROGRAMS]
+# This section is only needed if the program (or - more likely - the script) needs a special
+# environment (in this case a special program) to run. Here you can provide a list
+# of programs which must be available on the workstation. To use this feature it is highly
+# recommended to speak with the administrator at first because the specified program may not
+# be listed within the scheduler and thus your program will never be started.
+# Only one program per line.
+#
+# Examples:
+# mathematica
+# matlab
+
+[EXECUTION]
+# This section describes how the program should be started on the workstation.
+# Here you must provide a bash command like if you would start the program on your
+# own machine.
+#
+# Example:
+# To start the compiled HelloWorld program simply enter:
+# helloWorld
+
