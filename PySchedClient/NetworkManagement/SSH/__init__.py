@@ -66,10 +66,8 @@ class SSHTunnel(object):
                 self.hostPort,
                 self.client.get_transport(),
                 self)
-            self.forwardServer.allow_reuse_address = True
 
             thread.start_new_thread(self.forwardServer.serve_forever, ())
-            self.logger.info("Allow reuse address: {}".format(self.forwardServer.allow_reuse_address))
             self.isConnected = True
             return True
 
@@ -102,6 +100,7 @@ class SSHTunnel(object):
             chain_host = remoteHost
             chain_port = remotePort
             ssh_transport = transport
+            ssh_Client = sshClient
 
         # Open forward tunnel
         return ForwardServer(('', localPort), SubHandler)
@@ -111,6 +110,7 @@ class ForwardServer (SocketServer.ThreadingTCPServer):
     @summary: Threaded TCPServer
     '''
     daemon_threads = True
+    allow_reuse_address = True
 
 class Handler (SocketServer.BaseRequestHandler):
     '''
@@ -128,8 +128,9 @@ class Handler (SocketServer.BaseRequestHandler):
         if chan is None:
             return
 
-        while True:#self.sshClient.serve:
-            r, w, x = select.select([self.request, chan], [], [])
+        self.ssh_Client.logger.debug("Starting ssh loop")
+        while self.ssh_Client.serve:
+            r, w, x = select.select([self.request, chan], [], [], 0)
             if self.request in r:
                 data = self.request.recv(1024)
                 chan.send(data)
@@ -138,5 +139,6 @@ class Handler (SocketServer.BaseRequestHandler):
                 data = chan.recv(1024)
                 self.request.send(data)
 
+        self.ssh_Client.logger.info("Closing SSH-Tunnel.")
         chan.close()
         self.request.close()

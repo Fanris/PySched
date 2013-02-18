@@ -20,8 +20,8 @@ class MessageHandler(MessageHandlerInterface):
         @param pySchedClient: A reference to the PySchedClient.
         @result:
         '''
-        self.pySchedClient = pySchedClient
         self.logger = logging.getLogger("PySchedClient")
+        self.pySchedClient = pySchedClient
 
     def messageReceived(self, sender, message):
         '''

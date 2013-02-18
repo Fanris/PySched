@@ -22,7 +22,8 @@ class NetworkManager(NetworkInterface):
     def __init__(self, workingDir, messageReceiver):
         '''
         @summary: Initializes this NetworkManager.
-        @param messageReceiver: A MessageReceiver. See Common.Interfaces.Network.MessageReceiverInterface
+        @param messageReceiver: A MessageReceiver.
+        See Common.Interfaces.Network.MessageReceiverInterface
         @result:
         '''
         self.logger = logging.getLogger("PySchedClient")
@@ -57,6 +58,7 @@ class NetworkManager(NetworkInterface):
         self.udpClient.stopClient()
 
         self.sshTunnel = SSHTunnel(host=host)
+
         if self.sshTunnel.buildTunnel():
             self.connectTcp(host)
 
@@ -67,7 +69,7 @@ class NetworkManager(NetworkInterface):
         @result:
         '''
         self.logger.info("Building tcp connection to {}:{}".format(host, self.tcpPort))
-        self.tcpClient = TcpClient(host, self.tcpPort, self)
+        self.tcpClient = TcpClient('', self.tcpPort, self)
         self.tcpClient.startClient()
 
     def connectionMade(self):
@@ -86,6 +88,7 @@ class NetworkManager(NetworkInterface):
         self.logger.info("Tcp connection lost.")
         self.messageReceiver.connectionLost(self.tcpClient.server.id)
         self.tcpClient = None
+        self.sshTunnel.closeTunnel()
 
         self.logger.info("Restarting the udp listener")
         self.startService()
