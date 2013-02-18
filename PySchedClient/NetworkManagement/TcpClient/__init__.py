@@ -11,7 +11,6 @@ from twisted.internet.endpoints import TCP4ClientEndpoint
 from TcpClientFactory  import TcpClientFactory
 
 import logging
-import json
 import os
 
 class TcpClient(object):

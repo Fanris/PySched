@@ -59,17 +59,17 @@ class NetworkManager(NetworkInterface):
 
         self.sshTunnel = SSHTunnel(host=host)
 
-        if self.sshTunnel.buildTunnel():
-            self.connectTcp(host)
+        localPort = self.sshTunnel.buildTunnel()
+        if localPort:
+            self.connectTcp(localPort)
 
-    def connectTcp(self, host):
+    def connectTcp(self, localPort):
         '''
-        @summary: Connects to a tcp server at host
-        @param host: the hosts ip-address
+        @summary: Connects to an ssh tunnel
         @result:
         '''
-        self.logger.info("Building tcp connection to {}:{}".format(host, self.tcpPort))
-        self.tcpClient = TcpClient('', self.tcpPort, self)
+        self.logger.info("Building tcp connection to localhost:{}".format(localPort))
+        self.tcpClient = TcpClient('localhost', localPort, self)
         self.tcpClient.startClient()
 
     def connectionMade(self):

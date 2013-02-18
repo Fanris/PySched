@@ -136,10 +136,11 @@ class Network(object):
             self.logger.info("Building up connection...")
             ip = address[0]
             self.sshTunnel = SSHTunnel(keyFile=self.keyFile, host=ip)
-            if self.sshTunnel.buildTunnel():
+            localPort = self.sshTunnel.buildTunnel()
+            if localPort:
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 s.settimeout(timeout)
-                s.connect(('localhost', tcpPort))
+                s.connect(('localhost', localPort))
                 self.connection = s
                 self.logger.info("Connection established.")
                 return True

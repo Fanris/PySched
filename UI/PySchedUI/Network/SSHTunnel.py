@@ -11,6 +11,8 @@ import logging
 import thread
 
 import paramiko
+import random
+import socket
 
 SSH_PORT = 22
 
@@ -18,7 +20,7 @@ class SSHTunnel(object):
     '''
     @summary: Main class of the tunnel service.
     '''
-    def __init__(self, username="pysched", keyFile=None, port=49999,
+    def __init__(self, username="pysched", keyFile=None, portRange=(1024, 49999),
         host=None, hostPort=49999):
         '''
         @summary: Initializes the Tunnel service
@@ -30,7 +32,8 @@ class SSHTunnel(object):
         self.logger = logging.getLogger("PySchedUI")
         self.user = username
         self.keyFile = keyFile
-        self.port = port
+        self.portRange = portRange
+        self.port = random.randint(self.portRange[0], self.portRange[1])
         self.host = host
         self.hostPort = hostPort
 
@@ -48,28 +51,35 @@ class SSHTunnel(object):
         '''
         self.logger.info("Build up SSH-Tunnel...")
         try:
+            retryCount = 0
             self.serve = True
 
             self.logger.debug("Connect to: {}:{} with username {}".\
                 format(self.host, SSH_PORT, self.user))
 
-            self.client.connect(self.host, SSH_PORT, username=self.user,
-                key_filename=self.keyFile)
+            while retryCount < 5:
+                try:
+                    self.client.connect(self.host, SSH_PORT, username=self.user,
+                        key_filename=self.keyFile)
 
-            self.logger.debug("Connect ForwardServer {}:{}:{}".\
-                format(self.port, self.host, self.hostPort))
+                    self.logger.debug("Connect ForwardServer {}:{}:{}".\
+                        format(self.port, self.host, self.hostPort))
 
-            self.forwardServer = self.createForwardServer(
-                self.port,
-                self.host,
-                self.hostPort,
-                self.client.get_transport(),
-                self)
+                    self.forwardServer = self.createForwardServer(
+                        self.port,
+                        self.host,
+                        self.hostPort,
+                        self.client.get_transport(),
+                        self)
 
-            thread.start_new_thread(self.forwardServer.serve_forever, ())
-            self.logger.info("Allow reuse address: {}".format(self.forwardServer.allow_reuse_address))
-            self.isConnected = True
-            return True
+                    thread.start_new_thread(self.forwardServer.serve_forever, ())
+                    self.isConnected = True
+                    return self.port
+                except socket.error:
+                    retryCount += 1
+                    self.port = random.randint(self.portRange[0], self.portRange[1])
+            self.logger.error("Failed to build up a SSH connection.")
+            return False
 
         except Exception, e:
             self.logger.error("Could not connect to server! Reason: {}".
