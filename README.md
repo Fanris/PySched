@@ -1,12 +1,10 @@
-PySched
-===
+# PySched # 
 
 PySched - A python network Scheduler
 
-1. Installation
----
+## 1.\ Installation ##
 
-1.1 PySchedServer:  
+### PySchedServer:  ###
 	1. Create a System-User named 'pysched'  
 	2. Create a public/private key pair for this user  
 		- The private key is distributed to all Users / Workstations
@@ -22,19 +20,19 @@ PySched - A python network Scheduler
 	5. Create a working directory for the PySchedServer  
 	6. Start the server with the path to the working directory as first parameter  
 
-1.2 PySchedClient (Workstation):  
+### PySchedClient (Workstation):  ###
 	1. Create a System-User named 'pysched'  
-	3. Copy the PySchedServer files to the new users home  
-	4. Install the required python packages  
+	2. Copy the PySchedServer files to the new users home  
+	3. Install the required python packages  
 		- paramiko  
 		- python-twisted  
 		- sqlalchemy  
-	5. Copy the private key of the server to the PySchedClient working folder  
-	6. Rename it to 'pysched.rsa'  
-	7. Create a working directory for the PySchedClient  
-	8. Start the Client with the path to the working directory as first parameter  
+	4. Copy the private key of the server to the PySchedClient working folder  
+	5. Rename it to 'pysched.rsa'  
+	6. Create a working directory for the PySchedClient  
+	7. Start the Client with the path to the working directory as first parameter  
 
-1.3 User-Interface:  
+### User-Interface:  ###
 	1. Copy the PySched user interface anywhere on your machine  
 	2. Install the required python packages  
 		- paramiko  
