@@ -450,7 +450,7 @@ class PySchedServer(object):
         '''
         self.workstations[networkId] = workstationInfo
         self.logger.info("New workstation {} added. Currently are {} workstations available."
-            .format(workstationInfo.get("workstationName", None), len(workstationInfo)))
+            .format(workstationInfo.get("workstationName", None), len(self.workstations)))
 
         self.logger.info("Checking programs on workstation {}".format(workstationInfo.get("workstationName", None)))
         self.checkForPrograms(workstationInfo.get("workstationName", None))
