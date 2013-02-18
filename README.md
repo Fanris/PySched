@@ -2,7 +2,7 @@
 
 PySched - A python network Scheduler
 
-## 1.\ Installation ##
+## Installation ##
 
 ### PySchedServer:  ###
 	1. Create a System-User named 'pysched'  
