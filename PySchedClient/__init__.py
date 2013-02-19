@@ -176,6 +176,14 @@ class PySchedClient():
 
     # PySchedFunctions
     # =====================================================
+    def getProgramPath(self, programName):
+        '''
+        @summary: Returns the full path of an installed programs (if in the list)
+        @param programName: The program name
+        @result: 
+        '''
+        return self.wim.getProgramPath(programName)
+
 
     # Job Control Functions
     # =====================================================

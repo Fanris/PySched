@@ -24,6 +24,7 @@ PySched - A python network Scheduler
 	1. Create a System-User named 'pysched'  
 	2. Copy the PySchedServer files to the new users home  
 	3. Install the required python packages  
+		- psutil (http://code.google.com/p/psutil/)
 		- paramiko  
 		- python-twisted  
 		- sqlalchemy  

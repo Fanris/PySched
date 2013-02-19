@@ -34,3 +34,13 @@ class WIMInterface(object):
         '''
         raise NotImplementedError
 
+    def getProgramPath(self, programName):
+        '''
+        @summary: This function is called by the PySchedClient when the full 
+        path to an installed program is needed. The function should return None
+        if the program is not installed or not checked.
+        @param programName: The name of the program to search for.
+        @result: 
+        '''
+        raise NotImplementedError
+

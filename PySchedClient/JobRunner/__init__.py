@@ -43,6 +43,10 @@ class JobRunner(JobRunnerInterface):
             # Adding job parameters
             # First parameter should be the executable name
             jobParams = job.executeStr.split(" ")
+            if jobParams[0] in job.reqPrograms:
+                programPath = self.pySchedClient.getProgramPath(jobParams[0])
+                if programPath:
+                    jobParams[0] = programPath
 
             # Start the process
             # ==============================

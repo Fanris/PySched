@@ -54,7 +54,12 @@ class WIM(WIMInterface):
         @summary: Returns a dictionary with all workstation informations.
         @result:
         '''
-        return self.informations
+        info = self.informations.copy()
+        progs = info.get("programs", None)
+        if progs:
+            info["programs"] = progs.keys()
+
+        return info
 
     def getStaticInformations(self):
         '''
@@ -90,6 +95,15 @@ class WIM(WIMInterface):
         '''
         self.informations["programs"] = self.getProgramList(programs)
 
+    def getProgramPath(self, programName):
+        '''
+        @summary: Returns the full path to the program
+        @param programName: The program name
+        @result: 
+        '''
+        if self.informations.get("programs", None):
+            return self.informations["programs"].get(programName, None)
+            
 
     def getProgramList(self, programs):
         '''
@@ -98,16 +112,17 @@ class WIM(WIMInterface):
         and executable to check for.
         @result: Returns a list with all available programs
         '''
-        progs = []
+        progs = {}
         for program in programs:
             programName = program.get("programName", None)
             programExec = program.get("programExec", None)
             if not programName or not programExec:
                 self.logger.info("Program not available: name={}, exec={}").format(programName, programExec)
 
-            if self.programInstalled(programExec):
+            programPath = self.programInstalled(programExec)
+            if programPath:
                 self.logger.info("Program available: {}".format(programName))
-                progs.append(programName)
+                progs[programName] = programPath
             else:
                 self.logger.info("Program not available: {}").format(programName)
 
@@ -115,17 +130,16 @@ class WIM(WIMInterface):
         return progs
 
     def programInstalled(self, programExec):
-
         fpath, fname = os.path.split(programExec)
         if fpath:
             if self.is_exe(programExec):
-                return True
+                return os.path.join(fpath, fname)
         else:
             for path in os.environ["PATH"].split(os.pathsep):
                 path = path.strip('"')
                 exe_file = os.path.join(path, programExec)
                 if self.is_exe(exe_file):
-                    return True
+                    return exe_file
 
         return False
 
