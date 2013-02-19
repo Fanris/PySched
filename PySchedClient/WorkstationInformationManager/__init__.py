@@ -20,17 +20,19 @@ class WIM(WIMInterface):
     informations of the workstation (eg. cpu load, used memory, etc.) and store them.
     This class uses psutil (http://code.google.com/p/psutil/) to get the informations.
     '''
-    def __init__(self, interval=5):
+    def __init__(self, interval=5, programs=[]):
         '''
         @summary: Initializes the WIM
         @param interval: time between each information refresh.
+        @param programs: A dictionary (programName: programExec) of programs 
+        which may be configured on the workstation
         @result:
         '''
+        super(WIM, self).__init__(programs)
         self.logger = logging.getLogger("PySchedClient")
         self.informations = {}
         self.interval = interval
         self.refreshLoop = LoopingCall(self.refreshData)
-        self.programList = []
 
     def startCollectingData(self):
         '''
@@ -117,19 +119,22 @@ class WIM(WIMInterface):
             programName = program.get("programName", None)
             programExec = program.get("programExec", None)
             if not programName or not programExec:
-                self.logger.info("Program not available: name={}, exec={}").format(programName, programExec)
+                continue
 
-            programPath = self.programInstalled(programExec)
-            if programPath:
-                self.logger.info("Program available: {}".format(programName))
+            programPath = self.programInstalled(programName, programExec)
+            if programPath:                
                 progs[programName] = programPath
+                self.logger.debug("Program available: {}".format(program))
             else:
-                self.logger.info("Program not available: {}").format(programName)
-
-        self.logger.info("Done.")
+                self.logger.debug("Program not available: {}".format(program))
+                
         return progs
 
-    def programInstalled(self, programExec):
+    def programInstalled(self, programName, programExec):
+
+        if programName in self.programList:
+            return self.programList.get(programName, None)
+
         fpath, fname = os.path.split(programExec)
         if fpath:
             if self.is_exe(programExec):
@@ -141,7 +146,6 @@ class WIM(WIMInterface):
                 if self.is_exe(exe_file):
                     return exe_file
 
-        return False
 
     def is_exe(self, fpath):
         return os.path.isfile(fpath) and os.access(fpath, os.X_OK)

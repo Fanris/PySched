@@ -47,85 +47,18 @@ class Job(object):
 
         self.otherAttr = {}
 
-    def createLogHead(self):
-        '''
-        @summary: Creates the Log head for this job
-        @result: a list containing the lines of the log head.
-        '''
-        head = []
-        head.append("+---------------------------------------------+")
-        head.append("|               PySched Job log               |")
-        head.append("+---------------------------------------------+")
-        head.append("")
-        head.append("Global information:")
-        head.append("-------------------")
-        head.append("jobId: {}".format(self.jobId))
-        head.append("jobName: {}".format(self.name))
-        head.append("jobDescription: {}".format(self.jobDescription))
-        head.append("jobState: {}".foramt(self.stateId))
-        head.append("userId: {}".format(self.userId))
-        head.append("")
-
-        head.append("Job information:")
-        head.append("-------------------")
-        head.append("Support multiple cpus: {}".format(self.multiCpu))
-        head.append("Minimum cpu count: {}".format(self.minCpu))
-        head.append("Minimum memory: {}".format(self.minMemory))
-        head.append("Needed programs: {}".format(self.reqPrograms))
-        head.append("added: {}".format(self.added))
-        head.append("started: {}".format(self.started))
-        head.append("finished: {}".format(self.finished))
-        head.append("workstation: {}".format(self.workstation))
-        head.append("")
-
-        head.append("Compiler information:")
-        head.append("-------------------")
-        head.append("CompilerStr: {}".format(self.compilerStr))
-        head.append("")
-
-        head.append("Other Attributes:")
-        head.append("-----------------")
-
-        for key in self.otherAttr.keys:
-            head.append(key + ": {}".format(self.otherAttr[key]))
-
-        head.append("")
-        head.append("")
-
-        return head
-
-    def addToLog(self, logType, message):
-        '''
-        @summary: Adds a message to the log.
-        @param logType: Type of the Message. E.g. "Log", "Error"
-        @param message: The message
-        @result:
-        '''
-        log = "[" + str(datetime.datetime.now()).split(".")[0] + "]"
-        log += " [{}]: ".format(logType.uppercase())
-        log += message
-
-        self.log.append(log)
-
-    def getLog(self):
-        '''
-        @summary: Returns a list of lines containing the complete job Log
-        @result:
-        '''
-        completeLog = []
-        completeLog.extend(self.createLogHead())
-        completeLog.extend(self.log)
-
-        return completeLog
-
 class Program(object):
     '''
     @summary: Objects of this class represent external programs
-    which may be available on the workstations e.g. MatLab, Mathematica
+    which may be available on the workstations e.g. MatLab, Mathematica.
+    The workstation should have a database table with programs which are 
+    available in extension to the Workstation Information Manager or
+    if the Manager doesn't check for Programs. Entries from the database
+    overrides the informations of the WIM if the same program name occurs.
     '''
     def __init__(self):
         self.programName = None
-        self.programExec = None
+        self.programExec = None        
 
 
 class User(object):

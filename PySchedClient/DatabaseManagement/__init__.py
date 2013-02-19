@@ -10,9 +10,9 @@ from Common.Interfaces.DatabaseInterface import DatabaseInterface
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from Tables import SqliteJob, Tables
+from Tables import SqliteJob, SqliteProgram, Tables
 
-from Common.DataStructures import Job
+from Common.DataStructures import Job, Program
 
 import logging
 
@@ -57,6 +57,8 @@ class SqliteManager(DatabaseInterface):
         sqliteObject = None
         if obj == Job:
             sqliteObject = SqliteJob
+        elif obj == Program:
+            sqliteObject = SqliteProgram
 
         self.logger.debug("selected SqliteObject: {}".format(sqliteObject))
 
@@ -81,6 +83,9 @@ class SqliteManager(DatabaseInterface):
         if isinstance(obj, Job):
             sqliteClass = SqliteJob
             sqliteObject = SqliteJob.convertFromPySched(obj)
+        elif isinstance(obj, Program):
+            sqliteClass = SqliteProgram
+            sqliteObject = SqliteProgram.convertFromPySched(obj)
 
         s = self.sessionClass()
 

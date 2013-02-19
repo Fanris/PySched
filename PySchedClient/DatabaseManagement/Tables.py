@@ -8,7 +8,7 @@ Contains the Database Tables
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
-from Common.DataStructures import Job
+from Common.DataStructures import Job, Program
 from Common import str2Datetime, datetime2Str
 
 import datetime
@@ -26,7 +26,7 @@ class Tables(object):
         Tables.declBase.metadata.create_all(self.engine)
 
 class SqliteJob(Tables.declBase):
-    ''' Server side Job table '''
+    ''' Client side Job table '''
 
     __tablename__ = "jobs"
     id = Column("id", Integer, primary_key=True)
@@ -110,4 +110,47 @@ class SqliteJob(Tables.declBase):
         job.finished = str2Datetime(obj.finished)
         job.stateId = obj.stateId
 
-        return job
+        return job  
+
+class SqliteProgram(Tables.declBase):
+    ''' Client side Program table '''
+
+    __tablename__ = "programs"
+    id = Column("id", Integer, primary_key=True)
+    name = Column("programName", String)
+    path = Column("programExec", String)
+
+    def __init__(self, programName, programExec):
+        self.name = programName
+        self.path = programExec
+
+    def update(self, updatedObject):
+        '''
+        @summary: Updates this object with the new values
+        @param updatedObject:
+        @result:
+        '''
+        self.name = updatedObject.name
+        self.path = updatedObject.path
+
+    def convertToPySched(self):
+        '''
+        @summary: Converts this Sqlite object object to a PySched object
+        @result: A PySched object
+        '''
+        program = Program()
+        program.programName = self.name
+        program.programExec = self.path
+
+        return program
+
+    @staticmethod
+    def convertFromPySched(obj):
+        '''
+        @summary: Converts the PySchedServer object to an Sqlite object
+        @param obj: Object to convert
+        @result:
+        '''
+        program = SqliteProgram(obj.programName, obj.programExec)
+
+        return program

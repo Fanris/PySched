@@ -18,7 +18,7 @@ from Common.Communication.CommandBuilder import CommandBuilder
 from Common.IO import FileUtils
 from Common.IO import Archive
 from Common import datetime2Str
-from Common.DataStructures import Job, JobState
+from Common.DataStructures import Job, JobState, Program
 
 from twisted.internet import reactor
 from twisted.internet.task import LoopingCall
@@ -47,15 +47,15 @@ class PySchedClient():
         # Job Runner
         self.jobRunner = JobRunner(self)
 
-        # WIM
-        self.wim = WIM()
-        self.wim.startCollectingData()
-        self.workstationStateLoop = LoopingCall(self.sendWorkstationState)
-        self.logger.info("Workstation Information Manager initialized.")
-
         # Database. Database class needs to extend Common.Interfaces.DatabaseInterface
         self.dbController = SqliteManager(self.workingDir)
         self.logger.info("Database Manager initialized.")
+
+        # WIM
+        self.wim = WIM(programs=self.getFromDatabase(Program))
+        self.wim.startCollectingData()
+        self.workstationStateLoop = LoopingCall(self.sendWorkstationState)
+        self.logger.info("Workstation Information Manager initialized.")
 
         # Network. NetworkManager needs to extend Common.Interfaces.Network.NetworkInterface
         self.logger.info("Starting network server...")
@@ -183,6 +183,14 @@ class PySchedClient():
         @result: 
         '''
         return self.wim.getProgramPath(programName)
+
+    def getProgramsFromDatabase(self):
+        '''
+        @summary: Returns a list with all programs specified in the database
+        @result: 
+        '''
+        return self.getFromDatabase(Program)
+
 
 
     # Job Control Functions

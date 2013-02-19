@@ -11,6 +11,17 @@ class WIMInterface(object):
     by an Workstation Information Manager (WIM). It is highly recommended that
     the WorkstationReference.py is updated according to the provided workstation informations.
     '''
+    def __init__(self, programs=[]):
+        '''
+        @summary: The consturctor takes one parameter containing 
+        @param programs: a dictionary
+        with all preconfigured programs on the workstation which may be defined
+        by database entries. This dictionary is stored in programList
+        @result: 
+        '''
+        self.programList = {}
+        for p in programs:
+            self.programList[p.programName] = p.programExec
 
     def getWorkstationInformations(self):
         '''
