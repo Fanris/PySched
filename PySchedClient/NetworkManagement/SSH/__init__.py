@@ -141,7 +141,7 @@ class Handler (SocketServer.BaseRequestHandler):
 
         self.ssh_Client.logger.debug("Starting ssh loop")
         while self.ssh_Client.serve:
-            r, w, x = select.select([self.request, chan], [], [], 0)
+            r, w, x = select.select([self.request, chan], [], [])
             if self.request in r:
                 data = self.request.recv(1024)
                 chan.send(data)

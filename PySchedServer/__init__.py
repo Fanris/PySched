@@ -182,6 +182,8 @@ class PySchedServer(object):
             else:
                 job.otherAttr[key] = jobInformations[key]
 
+        self.logger.debug("New Job: {}".format(job.__dict__))
+
         user = self.getFromDatabase(User, username=jobInformations.get("username", ""), first=True)
         if not user:
             return False

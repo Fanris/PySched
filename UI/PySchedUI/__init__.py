@@ -173,11 +173,11 @@ class PySchedUI(object):
             return True
 
         if section.upper() == "PROGRAMS":
-            paths = template.get("programs", [])
+            paths = template.get("reqPrograms", [])
             if len(paths) == 0:
                 self.logger.debug("Adding program {} to template".format(line))
                 paths.append(line)
-                template["programs"] = paths
+                template["reqPrograms"] = paths
                 return True
 
             self.logger.debug("Adding program {} to template".format(line))
