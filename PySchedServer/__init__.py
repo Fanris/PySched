@@ -70,15 +70,11 @@ class PySchedServer(object):
         @result:
         '''
         objects = self.dbController.getFromDatabase(objClass)
-        self.logger.debug("Retrieved {} object from database".format(len(objects)))
-
         returnList = filter(self.createFilterFunction(**filterArgs), objects)
-        self.logger.debug("{} objects passed the filter function ({})".format(len(returnList), filterArgs))
 
         if first:
             if len(returnList) == 0:
                 return None
-
             return returnList[0]
 
         return returnList
@@ -109,11 +105,8 @@ class PySchedServer(object):
         '''
         def checkItem(item):
             for key, value in filterArgs.iteritems():
-                self.logger.debug("Check object for {}={}".format(key, value))
                 if str(getattr(item, key, None)) != str(value):
-                    self.logger.debug("Object discarded. Key: {}, Value: {}, Needed Value: {}".format(key, getattr(item, key, None), value))
                     return False
-                self.logger.debug("Object passed.")
 
             return True
         return checkItem

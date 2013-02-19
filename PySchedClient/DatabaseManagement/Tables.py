@@ -32,6 +32,7 @@ class SqliteJob(Tables.declBase):
     id = Column("id", Integer, primary_key=True)
     name = Column("name", String)
     jobDescription = Column("jobDescription", String)
+    reqPrograms = Column("requiredPrograms", String)
     executeStr = Column('executeStr', String)
     added = Column('added', DateTime)
     started = Column('started', DateTime)
@@ -50,6 +51,7 @@ class SqliteJob(Tables.declBase):
         self.name = name
         self.jobDescription = jobDescription
         self.executeStr = executeStr
+        self.reqPrograms = []
         self.added = datetime.datetime.now()
         self.started = None
         self.finished = None
@@ -64,6 +66,7 @@ class SqliteJob(Tables.declBase):
         self.name = updatedObject.name
         self.jobDescription = updatedObject.jobDescription
         self.executeStr = updatedObject.executeStr
+        self.reqPrograms = updatedObject.reqPrograms
         self.added = updatedObject.added
         self.started = updatedObject.started
         self.finished = updatedObject.finished
@@ -79,6 +82,7 @@ class SqliteJob(Tables.declBase):
         job.jobName = self.name
         job.jobDescription = self.jobDescription
         job.executeStr = self.executeStr
+        job.reqPrograms = self.reqPrograms.split(';')
         job.added = datetime2Str(self.added)
         job.started = datetime2Str(self.started)
         job.finished = datetime2Str(self.finished)
@@ -93,8 +97,14 @@ class SqliteJob(Tables.declBase):
         @param obj: Object to convert
         @result:
         '''
+        reqPrograms = ""
+        for progs in obj.reqPrograms:
+            reqPrograms += progs + ";"
+        reqPrograms = reqPrograms.rstrip(";")
+
         job = SqliteJob(obj.jobName, obj.jobDescription, obj.executeStr)
         job.id = obj.jobId
+        job.reqPrograms = reqPrograms
         job.added = str2Datetime(obj.added)
         job.started = str2Datetime(obj.started)
         job.finished = str2Datetime(obj.finished)
