@@ -24,12 +24,3 @@ PySched - A python network Scheduler
 	5. Rename it to 'pysched.rsa'  
 	6. Create a working directory for the PySchedClient  
 	7. Start the Client with the path to the working directory as first parameter  
-
-### User-Interface:  ###
-	1. Copy the PySched user interface anywhere on your machine  
-	2. Install the PySched-UI
-	3. Get the servers private key from your administrator.  
-	4. Start the user interface with the following parameters  
-		- --key=Path/To/PrivateKey  
-		- --user=Your username (optional)  
-		- ui (to start the "graphical" UI)  
