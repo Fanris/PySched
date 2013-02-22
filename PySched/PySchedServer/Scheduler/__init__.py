@@ -63,7 +63,7 @@ class PyScheduler(SchedulerInterface):
             self.logger.debug("Checking workstation {}".format(workstation))
             freeCpus = 0
             # First check the installed OS
-            if not workstation.get("os", None) == job.reqOS:
+            if not None and not workstation.get("os", None) == job.reqOS:
                 continue
 
             for load in workstation.get("cpuLoad", []):
