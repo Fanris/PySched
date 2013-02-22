@@ -151,7 +151,12 @@ class PySchedUI(object):
                 template[key.lower()] = False
             else:
                 self.logger.debug("Adding {}={} to template".format(key, value))
-                template[key.lower()] = value
+                # transform key to equal the datastructure
+                splitted = key.split("_")
+                newKey = splitted[0].lower()
+                for s in splitted[1::]:
+                    newKey += s
+                template[newKey] = value
 
             return True
 
@@ -173,11 +178,11 @@ class PySchedUI(object):
             return True
 
         if section.upper() == "PROGRAMS":
-            paths = template.get("reqPrograms", [])
-            if len(paths) == 0:
+            programs = template.get("reqPrograms", [])
+            if len(programs) == 0:
                 self.logger.debug("Adding program {} to template".format(line))
-                paths.append(line)
-                template["reqPrograms"] = paths
+                programs.append(line)
+                template["reqPrograms"] = programs
                 return True
 
             self.logger.debug("Adding program {} to template".format(line))

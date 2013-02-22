@@ -22,6 +22,11 @@ JOB_DESCRIPTION=
 # If the program supports multiple cpu's set this to true
 MULTI_CPU=false
 
+# Required OS. Currently only Linux is available. Changes to this variable
+# may result in not scheduling your job if the given OS is not available within
+# the network. For further informations please contact your administrator.
+REQ_OS=Linux
+
 # REQ_CPU sets the CPU count that should be at least reserved for the program
 # Setting this to a high value may result in a longer scheduling time
 # till a workstation that matches the requirement is free.
@@ -48,7 +53,8 @@ REQ_MEM=
 # The compilation will be done on the server. Please make sure that the
 # needed compiler and all libraries are installed on the server or provided via
 # the PATH section. If you are using a linux OS it may be simpler to compile the
-# code on your machine and link (static linking) all necessary files with the executable.
+# code on your machine and link (static linking) all necessary files with the 
+# executable.
 #
 # Example: If you have specified the file HelloWorld.c at the PATH section
 # and want to compile this file with the gcc-compiler (installed on the server)
@@ -56,11 +62,14 @@ REQ_MEM=
 # gcc -o helloWorld HelloWorld.c
 
 [PROGRAMS]
-# This section is only needed if the program (or - more likely - the script) needs a special
-# environment (in this case a special program) to run. Here you can provide a list
-# of programs which must be available on the workstation. To use this feature it is highly
-# recommended to speak with the administrator at first because the specified program may not
-# be listed within the scheduler and thus your program will never be started.
+# This section is only needed if the program (or - more likely - the script) 
+# needs a special environment (in this case a special program) to run. Here you
+# can provide a list of programs which must be available on the workstation. To
+# use this feature it is highly recommended to speak with your administrator 
+# first because the specified program may not be listed within the scheduler 
+# and thus your program will never be started. In fact it is possible to provide
+# any program (make sure you provide the name of the executable) and the scheduler
+# will ask the workstations for this program but this is not recommended.
 # Only one program per line.
 #
 # Examples:

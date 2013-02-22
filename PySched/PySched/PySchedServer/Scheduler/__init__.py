@@ -62,6 +62,10 @@ class PyScheduler(SchedulerInterface):
         for workstation in workstations:
             self.logger.debug("Checking workstation {}".format(workstation))
             freeCpus = 0
+            # First check the installed OS
+            if not workstation.get("os", None) == job.reqOS:
+                continue
+
             for load in workstation.get("cpuLoad", []):
             # Count free cpus. Threshold of a free cpu is 20%
                 if load < 20:
