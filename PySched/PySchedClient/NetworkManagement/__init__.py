@@ -19,7 +19,7 @@ class NetworkManager(NetworkInterface):
     @summary: A NetworkManager.
     '''
 
-    def __init__(self, workingDir, messageReceiver):
+    def __init__(self, workingDir, messageReceiver, pathToRsa):
         '''
         @summary: Initializes this NetworkManager.
         @param messageReceiver: A MessageReceiver.
@@ -27,9 +27,8 @@ class NetworkManager(NetworkInterface):
         @result:
         '''
         self.logger = logging.getLogger("PySchedClient")
-        self.workingDir = workingDir
+        super(NetworkManager, self).__init__(workingDir, messageReceiver, pathToRsa)
 
-        self.messageReceiver = messageReceiver
         self.tcpClient = None
         self.udpClient = None
         self.sshTunnel = None
@@ -57,7 +56,7 @@ class NetworkManager(NetworkInterface):
         self.logger.info("Server found.")
         self.udpClient.stopClient()
 
-        self.sshTunnel = SSHTunnel(host=host)
+        self.sshTunnel = SSHTunnel(host=host, keyFile=self.pathToRsa)
 
         localPort = self.sshTunnel.buildTunnel()
         if localPort:

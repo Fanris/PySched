@@ -44,6 +44,7 @@ class MessageHandler(MessageHandlerInterface):
         else:
             self.logger.warning("Cannot parse command: {}".format(message))
 
+
     def connectionLost(self, networkId):
         '''
         @summary: Is called if a network connection is closed.

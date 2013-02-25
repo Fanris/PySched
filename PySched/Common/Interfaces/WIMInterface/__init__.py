@@ -20,6 +20,9 @@ class WIMInterface(object):
         @result: 
         '''
         self.programList = {}
+        if not programs:
+            return
+            
         for p in programs:
             self.programList[p.programName] = p.programExec
 

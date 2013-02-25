@@ -10,7 +10,7 @@ class NetworkInterface(object):
     @summary: This class is used by the PySchedServer / Client as an interface to the network
     module. The class imported by the PySchedServer / Client must implement this functions.
     '''
-    def __init__(self, workingDir, messageReceiver):
+    def __init__(self, workingDir, messageReceiver, rsaPath=None):
         '''
         @summary: Is called to Initialize the networkInterface
         @param workingDir: a Path to a directory which can be used to store network specific data if needed.
@@ -20,6 +20,7 @@ class NetworkInterface(object):
         '''
         self.workingDir = workingDir
         self.messageReceiver = messageReceiver
+        self.pathToRsa = rsaPath
 
     def startService(self):
         '''

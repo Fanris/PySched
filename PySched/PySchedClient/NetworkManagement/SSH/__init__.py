@@ -33,6 +33,8 @@ class SSHTunnel(object):
         self.logger = logging.getLogger("PySchedClient")
         self.user = username
         self.keyFile = keyFile
+        if not self.keyFile:
+            self.keyFile = DEFAULT_KEY
         self.portRange = portRange
         self.port = random.randint(self.portRange[0], self.portRange[1])
         self.host = host

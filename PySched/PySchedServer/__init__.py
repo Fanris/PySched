@@ -244,13 +244,15 @@ class PySchedServer(object):
                 if not os.path.exists(os.path.join(self.workingDir, str(job.jobId), 'results')):
                     self.getResultsFromWorkstation(job.jobId)
 
-    def checkForPrograms(self, workstation):
+    def checkForPrograms(self, workstation, programs=None, waitForAnswer=False):
         '''
         @summary: Checks the workstation for the programs defined in the database.
         @param workstation:
         @result:
         '''
-        programs = self.getFromDatabase(Program)
+        if not programs:
+            programs = self.getFromDatabase(Program)
+
         networkId = self.lookupWorkstationName(workstation)
 
         self.networkManager.sendMessage(networkId, CommandBuilder.buildCheckForProgramsString(programs))
@@ -499,7 +501,6 @@ class PySchedServer(object):
                 runningJobs += 1
 
         return runningJobs
-
 
     # Internal Functions
     # ========================
