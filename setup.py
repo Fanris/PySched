@@ -8,7 +8,7 @@ setup(name='PySched',
       author='Martin Predki',
       author_email='martin.predki@rub.de',
       url='https://github.com/Fanris/PySched',
-      license='LGPL'
+      license='LGPL',
       packages=[
             'PySched',
             'PySched.Common',
