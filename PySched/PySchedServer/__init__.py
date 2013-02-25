@@ -422,8 +422,8 @@ class PySchedServer(object):
         self.updateDatabaseEntry(job)
         if job.stateId >= JobState.lookup("DONE"):
             self.cleanupJobDir(job.jobId)
-            self.getResultsFromWorkstation(job.jobId)
-            reactor.callInThread(self.schedule)
+            self.getResultsFromWorkstation(job.jobId)            
+            self.schedule()
 
     def schedule(self, jobId=None):
         '''
@@ -455,6 +455,8 @@ class PySchedServer(object):
 
         self.logger.info("Checking Jobs of workstation {}".format(workstationInfo.get("workstationName", None)))
         self.checkJobs(workstationInfo.get("workstationName", None))
+
+        self.schedule()
 
     def removeWorkstation(self, networkId):
         '''
