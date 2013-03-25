@@ -267,6 +267,7 @@ class MessageHandler(MessageHandlerInterface):
 
         if not user:
             self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
+            return
 
         if user.admin:
             self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, admin=True))
