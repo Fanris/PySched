@@ -334,7 +334,7 @@ class PySchedServer(object):
         else:
             return False
 
-    def getJobList(self, username, showAll):
+    def getJobList(self, username, showAll, showAllUser):
         '''
         @summary: Returns a list with all jobs of the user
         @param userId: the user id
@@ -345,7 +345,11 @@ class PySchedServer(object):
         if not user:
             return False
 
-        jobs = self.getFromDatabase(Job, userId=user.id)
+        jobs = []
+        if user.admin and showAllUser:
+            jobs = self.getFromDatabase(Job)
+        else:
+            jobs = self.getFromDatabase(Job, userId=user.id)
 
         returnList = []
         for i in range(0, len(jobs)):

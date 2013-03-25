@@ -124,11 +124,12 @@ class MessageHandler(MessageHandlerInterface):
         @param data: dictionary containing the username and the showAll flag
         @result:
         '''
-        username = data["username"]
-        showAll = data["showAll"]
+        username = data.get("username", None)
+        showAll = data.get("showAll", False)
+        showAllUser = data.get("showAllUser", False)
 
         self.logger.debug("Get Jobs for user ({}, showAll={})".format(username, showAll))
-        jobs = self.pySchedServer.getJobList(username, showAll)
+        jobs = self.pySchedServer.getJobList(username, showAll, showAllUser)
 
         if not jobs:
             self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
