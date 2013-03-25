@@ -114,7 +114,7 @@ class MessageHandler(MessageHandlerInterface):
         @param data: Dictionary containing the userId and the job id
         @result:
         '''
-        self.pySchedServer.killJob(data.get("jobId", None), data.get("username", None))
+        self.pySchedServer.killJob(data.get("jobId", None), data.get("userId", None))
         self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True))
 
     def getJobs(self, networkId, data):
@@ -124,7 +124,7 @@ class MessageHandler(MessageHandlerInterface):
         @param data: dictionary containing the username and the showAll flag
         @result:
         '''
-        username = data.get("username", None)
+        username = data.get("userId", None)
         showAll = data.get("showAll", False)
         showAllUser = data.get("showAllUser", False)
 
@@ -150,7 +150,7 @@ class MessageHandler(MessageHandlerInterface):
         @param data: Dictionary containing the username and the jobId
         @result:
         '''
-        self.pySchedServer.archiveJob(data["jobId"], data["username"])
+        self.pySchedServer.archiveJob(data["jobId"], data["userId"])
 
     def getResults(self, networkId, data):
         '''
@@ -160,7 +160,7 @@ class MessageHandler(MessageHandlerInterface):
         @param userId: id of the user who sent the request
         @result:
         '''
-        username = data.get("username", None)
+        username = data.get("userId", None)
         jobId = data.get("jobId", None)
 
         resultsFile = self.pySchedServer.returnResultsToClient(username, jobId)
@@ -252,7 +252,7 @@ class MessageHandler(MessageHandlerInterface):
         @param data: username, jobId
         @result:
         '''
-        if self.pySchedServer.deleteJob(data.get("username", ""), data.get("jobId", None)):
+        if self.pySchedServer.deleteJob(data.get("userId", ""), data.get("jobId", None)):
             self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True))
         else:
             self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
@@ -264,7 +264,7 @@ class MessageHandler(MessageHandlerInterface):
         @param data: contains the username to check
         @result: 
         '''
-        user = self.pySchedServer.getUser(data.get("username", None))
+        user = self.pySchedServer.getUser(data.get("userId", None))
 
         if not user:
             self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
