@@ -18,7 +18,7 @@ dictionaryOverview = {
 	"email": 		"The email-address of an user.",
 
 	# Job Informations:
-	# These informations should available for all jobs.
+	# These informations should be available for all jobs.
 	"jobId": 		"The global job id",
 	"jobName": 		"The name of the job.",
 	"jobDescription":	"A Job description.",

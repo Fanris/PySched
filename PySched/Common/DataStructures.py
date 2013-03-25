@@ -73,6 +73,7 @@ class User(object):
         self.firstName = None
         self.lastName = None
         self.email = None
+        self.admin = False
 
         self.otherAttr = {}
 

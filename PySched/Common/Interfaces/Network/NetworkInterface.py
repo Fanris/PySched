@@ -53,12 +53,3 @@ class NetworkInterface(object):
         @result: Returns True if the file was send
         '''
         raise NotImplementedError
-
-    def receiveFile(self, pathToFile):
-        '''
-        @summary: Is called when PySched awaits a file transfer
-        @param pathToFile: path to store the file
-        @result:
-        '''
-        raise NotImplementedError
-

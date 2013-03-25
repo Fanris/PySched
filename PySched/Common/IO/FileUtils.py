@@ -129,4 +129,3 @@ def getFileSize(pathToFile):
         return os.path.getsize(pathToFile) / 1024
     else:
         return None
-

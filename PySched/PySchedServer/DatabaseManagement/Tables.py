@@ -133,10 +133,12 @@ class SqliteUser(Tables.declBase):
     firstName = Column('firstName', String)
     lastName = Column('lastName', String)
     email = Column('email', String)
+    admin = Column('admin', Boolean)
 
 
     def __init__(self, email):
         self.email = email
+        self.admin = False
 
     def __repr__(self):
         print "User ({}, {})".format(self.id, self.email)
@@ -150,6 +152,7 @@ class SqliteUser(Tables.declBase):
         self.firstName = updatedObject.firstName
         self.lastName = updatedObject.lastName
         self.email = updatedObject.email
+        self.admin = updatedObject.admin
 
     def convertToPySched(self):
         '''
@@ -162,6 +165,7 @@ class SqliteUser(Tables.declBase):
         user.lastName = self.lastName
         user.email = self.email
         user.username = self.email
+        user.admin = self.admin
 
         return user
 
@@ -176,6 +180,7 @@ class SqliteUser(Tables.declBase):
         newUser.id = obj.id
         newUser.firstName = obj.firstName
         newUser.lastName = obj.lastName
+        newUser.admin = obj.admin
 
         return newUser
 
