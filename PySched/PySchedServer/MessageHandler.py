@@ -121,15 +121,15 @@ class MessageHandler(MessageHandlerInterface):
         '''
         @summary: is called when a user requested a list of his jobs.
         @param networkId: global id of the client
-        @param data: dictionary containing the username and the showAll flag
+        @param data: dictionary containing the userId and the showAll flag
         @result:
         '''
-        username = data.get("userId", None)
+        userId = data.get("userId", None)
         showAll = data.get("showAll", False)
         showAllUser = data.get("showAllUser", False)
 
-        self.logger.debug("Get Jobs for user ({}, showAll={})".format(username, showAll))
-        jobs = self.pySchedServer.getJobList(username, showAll, showAllUser)
+        self.logger.debug("Get Jobs for user ({}, showAll={})".format(userId, showAll))
+        jobs = self.pySchedServer.getJobList(userId, showAll, showAllUser)
 
         if not jobs:
             self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
@@ -147,7 +147,7 @@ class MessageHandler(MessageHandlerInterface):
         '''
         @summary: Is called when an user requests to archive a job
         @param networkId: global client id
-        @param data: Dictionary containing the username and the jobId
+        @param data: Dictionary containing the userId and the jobId
         @result:
         '''
         self.pySchedServer.archiveJob(data["jobId"], data["userId"])
@@ -160,10 +160,10 @@ class MessageHandler(MessageHandlerInterface):
         @param userId: id of the user who sent the request
         @result:
         '''
-        username = data.get("userId", None)
+        userId = data.get("userId", None)
         jobId = data.get("jobId", None)
 
-        resultsFile = self.pySchedServer.returnResultsToClient(username, jobId)
+        resultsFile = self.pySchedServer.returnResultsToClient(userId, jobId)
 
         if not resultsFile:
             self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
@@ -249,7 +249,7 @@ class MessageHandler(MessageHandlerInterface):
         '''
         @summary: Is called when a client requests to delete a job.
         @param networkId: the client which sends the request
-        @param data: username, jobId
+        @param data: userId, jobId
         @result:
         '''
         if self.pySchedServer.deleteJob(data.get("userId", ""), data.get("jobId", None)):
@@ -261,7 +261,7 @@ class MessageHandler(MessageHandlerInterface):
         '''
         @summary: Is called when a UI is connected. Retrieves the user informations.
         @param networkId: the sender of the request.
-        @param data: contains the username to check
+        @param data: contains the userId to check
         @result: 
         '''
         user = self.pySchedServer.getUser(data.get("userId", None))

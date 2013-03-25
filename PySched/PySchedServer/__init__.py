@@ -178,7 +178,7 @@ class PySchedServer(object):
 
         self.logger.debug("New Job: {}".format(job.__dict__))
 
-        user = self.getFromDatabase(User, username=jobInformations.get("username", ""), first=True)
+        user = self.getFromDatabase(User, userId=jobInformations.get("userId", ""), first=True)
         if not user:
             return False
 
@@ -258,16 +258,16 @@ class PySchedServer(object):
         self.networkManager.sendMessage(networkId, CommandBuilder.buildCheckForProgramsString(programs))
 
 
-    def killJob(self, jobId, username):
+    def killJob(self, jobId, userId):
         '''
         @summary: Kills a job.
         @param jobId: Id of the job to kill.
-        @param username: username of the user who requested this.
+        @param userId: userId of the user who requested this.
         @result: Returns true if the kill signal is sent to
         the workstation
         '''
         job = self.getFromDatabase(Job, jobId=jobId, first=True)
-        user = self.getFromDatabase(User, username=username, first=True)
+        user = self.getFromDatabase(User, userId=userId, first=True)
 
         if not (job or user) or not (job.userId == user.id):
             return False
@@ -276,15 +276,15 @@ class PySchedServer(object):
         self.logger.info("Aborting job {} on workstation {} ({})".format(job.jobId, job.workstation, networkId))
         self.networkManager.sendMessage(networkId, CommandBuilder.buildKillJobString(job.jobId))
 
-    def deleteJob(self, username, jobId):
+    def deleteJob(self, userId, jobId):
         '''
         @summary: Deletes a the given job of the given user.
-        @param username: the owner of the job.
+        @param userId: the owner of the job.
         @param jobId: the jobId
         @result:
         '''
         job = self.getFromDatabase(Job, jobId=jobId, first=True)
-        user = self.getFromDatabase(User, username=username, first=True)
+        user = self.getFromDatabase(User, userId=userId, first=True)
 
         if not (job or user) or not (job.userId == user.id):
             return False
@@ -296,16 +296,16 @@ class PySchedServer(object):
 
         return True
 
-    def returnResultsToClient(self, username, jobId):
+    def returnResultsToClient(self, userId, jobId):
         '''
         @summary: Returns the results of the given job
-        @param username: the username of the job owner.
+        @param userId: the userId of the job owner.
         @param jobId: the id of the job.
         @result:
         '''
         self.logger.info("Retrieving results of job {}".format(jobId))
         job = self.getFromDatabase(Job, jobId=jobId, first=True)
-        user = self.getFromDatabase(User, username=username, first=True)
+        user = self.getFromDatabase(User, userId=userId, first=True)
 
         if not job or not user or not job.userId == user.id:
             self.logger.info("Could not retrieve results for job {}".format(jobId))
@@ -334,14 +334,14 @@ class PySchedServer(object):
         else:
             return False
 
-    def getJobList(self, username, showAll, showAllUser):
+    def getJobList(self, userId, showAll, showAllUser):
         '''
         @summary: Returns a list with all jobs of the user
         @param userId: the user id
         @param showAll: show all Jobs including archived
         @result:
         '''
-        user = self.getFromDatabase(User, username=username, first=True)
+        user = self.getFromDatabase(User, userId=userId, first=True)
         if not user:
             return False
 
@@ -359,15 +359,15 @@ class PySchedServer(object):
 
         return returnList
 
-    def archiveJob(self, jobId, username):
+    def archiveJob(self, jobId, userId):
         '''
         @summary: Archives a job
         @param jobId: the job id
-        @param username: the username of the user who requested this
+        @param userId: the userId of the user who requested this
         @result:
         '''
         job = self.getFromDatabase(Job, jobId=jobId, first=True)
-        user = self.getFromDatabase(User, username=username, first=True)
+        user = self.getFromDatabase(User, userId=userId, first=True)
 
         if not job.userId == user.id:
             return False
@@ -382,7 +382,7 @@ class PySchedServer(object):
         @param firstName: The first name
         @param lastName: The last name
         @param email: The email address
-        @result: Return an generated username
+        @result: Return an generated userId
         '''
         u = User()
         for key in userInformation:
@@ -391,9 +391,9 @@ class PySchedServer(object):
             else:
                 u.otherAttr[key] = userInformation[key]
 
-        u.username = u.email
+        u.userId = u.email
 
-        user = self.getFromDatabase(User, username=u.username, first=True)
+        user = self.getFromDatabase(User, userId=u.userId, first=True)
 
         if user:
             result = self.updateDatabaseEntry(u)
@@ -490,16 +490,16 @@ class PySchedServer(object):
         '''
         return self.workstations.values()
 
-    def getUser(self, username):
+    def getUser(self, userId):
         '''
-        @summary: Returns the user object for the given username
-        @param username: The username to check.
+        @summary: Returns the user object for the given userId
+        @param userId: The userId to check.
         @result: 
         '''
-        if not username:
+        if not userId:
             return None
 
-        return self.getFromDatabase(User, first=True, username=username)
+        return self.getFromDatabase(User, first=True, userId=userId)
 
     def getJobCountOnWorkstation(self, workstation):
         '''
