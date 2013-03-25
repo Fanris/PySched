@@ -164,7 +164,7 @@ class SqliteUser(Tables.declBase):
         user.firstName = self.firstName
         user.lastName = self.lastName
         user.email = self.email
-        user.username = self.email
+        user.userId = self.email
         user.admin = self.admin
 
         return user
@@ -176,7 +176,7 @@ class SqliteUser(Tables.declBase):
         @param user:
         @result:
         '''
-        newUser = SqliteUser(obj.email)
+        newUser = SqliteUser(obj.userId)
         newUser.id = obj.id
         newUser.firstName = obj.firstName
         newUser.lastName = obj.lastName

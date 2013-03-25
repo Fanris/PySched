@@ -69,7 +69,7 @@ class User(object):
         @result:
         '''
         self.id = None
-        self.username = None
+        self.userId = None
         self.firstName = None
         self.lastName = None
         self.email = None
