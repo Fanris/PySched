@@ -13,6 +13,7 @@ from Tables import SqliteJob, SqliteUser, SqliteCompiler, SqliteProgram, Tables
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+import os
 import logging
 
 class SqliteManager(DatabaseInterface):
@@ -23,7 +24,8 @@ class SqliteManager(DatabaseInterface):
         super(SqliteManager, self).__init__(workingDir)
         self.logger = logging.getLogger("PySchedServer")
 
-        self.pathToDB = self.workingDir + "/PySchedServer.sqlite"
+        self.pathToDB = os.path.join(self.workingDir, "/PySchedServer.sqlite")
+        self.logger.debug("Checking database path: {}".format(self.pathToDB))
         self.engine = create_engine("sqlite:////{}".format(self.pathToDB))
         self.sessionClass = sessionmaker(bind=self.engine)
         self.tables = Tables(self.engine)
