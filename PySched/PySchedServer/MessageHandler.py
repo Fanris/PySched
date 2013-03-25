@@ -256,3 +256,19 @@ class MessageHandler(MessageHandlerInterface):
         else:
             self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
 
+    def checkUser(self, networkId, data):
+        '''
+        @summary: Is called when a UI is connected. Retrieves the user informations.
+        @param networkId: the sender of the request.
+        @param data: contains the username to check
+        @result: 
+        '''
+        user = self.pySchedServer.getUser(data.get("username", None))
+
+        if not user:
+            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
+
+        if user.admin:
+            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, admin=True))
+        else:
+            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True))

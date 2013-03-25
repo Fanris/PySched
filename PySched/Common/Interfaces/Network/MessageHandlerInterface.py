@@ -206,6 +206,15 @@ class MessageHandlerInterface(object):
         '''
         pass
 
+    def checkUser(self, sender, data):
+        '''
+        @summary: Server Command. Checks the user and returns Informations to the
+        UI, e.g. if the user has admin-permissions.        
+        @param data: A dictionary containing the username.
+        @result: 
+        '''
+        pass
+
     def createUser(self, sender, data):
         '''
         @summary: Server Command. Creates a new user in the database.

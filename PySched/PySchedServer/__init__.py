@@ -486,6 +486,17 @@ class PySchedServer(object):
         '''
         return self.workstations.values()
 
+    def getUser(self, username):
+        '''
+        @summary: Returns the user object for the given username
+        @param username: The username to check.
+        @result: 
+        '''
+        if not username:
+            return None
+
+        return self.getFromDatabase(User, first=True, username=username)
+
     def getJobCountOnWorkstation(self, workstation):
         '''
         @summary: Returns the count of running jobs on the workstation
