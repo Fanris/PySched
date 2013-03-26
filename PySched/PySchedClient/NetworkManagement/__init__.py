@@ -60,7 +60,7 @@ class NetworkManager(NetworkInterface):
         self.logger.info("Server found.")
         self.udpClient.stopClient()
 
-        self.sshTunnel = SSHTunnel(host=host, keyFile=self.pathToRsa)
+        self.sshTunnel = SSHTunnel(self, host=host, keyFile=self.pathToRsa)
 
         localPort = self.sshTunnel.buildTunnel()
         if localPort:
