@@ -59,8 +59,7 @@ class PySchedClient(object):
 
         # Network. NetworkManager needs to extend Common.Interfaces.Network.NetworkInterface
         self.logger.info("Starting network server...")
-        networkDir = FileUtils.createDirectory(os.path.join(self.workingDir, "network"))
-        self.networkManager = NetworkManager(networkDir, MessageHandler(self), args.key)
+        self.networkManager = NetworkManager(self.workingDir, MessageHandler(self), args.key)
         self.networkManager.startService()
         self.serverId = None
 

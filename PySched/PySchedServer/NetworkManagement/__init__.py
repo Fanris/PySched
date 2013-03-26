@@ -4,6 +4,7 @@ Created on 2013-01-11 13:21
 @summary:
 @author: Martin Predki
 '''
+from PySched.Common.IO import FileUtils
 
 from PySched.Common.Interfaces.Network.NetworkInterface import NetworkInterface
 from PySched.Common.IO.FileUtils import getFileMD5Hashsum, deleteFile
@@ -11,6 +12,7 @@ from PySched.Common.IO.FileUtils import getFileMD5Hashsum, deleteFile
 from UdpServer import UdpServer
 from TcpServer import TcpServer
 
+import os
 import logging
 
 
@@ -24,9 +26,10 @@ class NetworkManager(NetworkInterface):
         @summary: Initializes this NetworkManager.
         @param messageReceiver: A MessageReceiver. See Common.Interfaces.Network.MessageReceiverInterface
         @result:
-        '''
-        self.workingDir = workingDir
+        '''        
         self.logger = logging.getLogger("PySchedServer")
+        self.workingDir = os.path.join(workingDir, "network")
+        FileUtils.createDirectory(self.workingDir)
 
         self.messageReceiver = messageReceiver
         self.tcpServer = None

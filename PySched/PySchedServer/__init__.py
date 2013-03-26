@@ -41,10 +41,8 @@ class PySchedServer(object):
 
         self.dbController = SqliteManager(self.workingDir)
         self.scheduler = PyScheduler(self.workingDir, self)
-
-        networkManagerDir = os.path.join(self.workingDir, "network")
-        FileUtils.createDirectory(networkManagerDir)
-        self.networkManager = NetworkManager(networkManagerDir, MessageHandler(self))
+        
+        self.networkManager = NetworkManager(self.workingDir, MessageHandler(self))
 
         self.workstations = {}
 

@@ -6,12 +6,13 @@ Created on 2013-01-09 15:11
 '''
 
 from PySched.Common.Interfaces.Network.NetworkInterface import NetworkInterface
-from PySched.Common.IO.FileUtils import getFileMD5Hashsum, deleteFile
+from PySched.Common.IO.FileUtils import getFileMD5Hashsum, deleteFile, createDirectory
 
 from TcpClient import TcpClient
 from UdpClient import UdpClient
 from SSH import SSHTunnel
 
+import os
 import logging
 
 class NetworkManager(NetworkInterface):
@@ -28,6 +29,9 @@ class NetworkManager(NetworkInterface):
         '''
         self.logger = logging.getLogger("PySchedClient")
         super(NetworkManager, self).__init__(workingDir, messageReceiver, pathToRsa)
+        self.workingDir = os.path.join(workingDir, "network")
+        self.parentDir = workingDir
+        createDirectory(self.workingDir)
 
         self.tcpClient = None
         self.udpClient = None
