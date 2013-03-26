@@ -138,7 +138,7 @@ class Client(object):
         '''
         # Set the protocol to raw mode
         self.currentFilePath = os.path.join(self.tcpServer.networkManager.workingDir, destination)
-        self.currentFile = open(destination, 'wb')
+        self.currentFile = open(self.currentFilePath, 'wb')
         self.currentMD5 = md5
 
 
