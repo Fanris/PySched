@@ -13,16 +13,14 @@ import thread
 import paramiko
 import random
 import socket
-import os
 
 SSH_PORT = 22
-DEFAULT_KEY = "pysched.rsa"
 
 class SSHTunnel(object):
     '''
     @summary: Main class of the tunnel service.
     '''
-    def __init__(self, tcpClient, username="pysched", keyFile=DEFAULT_KEY, portRange=(1024, 49999),
+    def __init__(self, keyFile="", username="pysched", portRange=(1024, 49999),
         host=None, hostPort=49999):
         '''
         @summary: Initializes the Tunnel service
@@ -34,9 +32,6 @@ class SSHTunnel(object):
         self.logger = logging.getLogger("PySchedClient")
         self.user = username
         self.keyFile = keyFile
-        if not self.keyFile:            
-            self.keyFile = os.path.join(tcpClient.networkManager.parentDir, DEFAULT_KEY)
-            self.logger.debug("No Key file provided. Use DEFAULT={}".format(self.keyFile))
         self.portRange = portRange
         self.port = random.randint(self.portRange[0], self.portRange[1])
         self.host = host

@@ -6,7 +6,7 @@ Created on 2013-01-09 15:11
 '''
 
 from PySched.Common.Interfaces.Network.NetworkInterface import NetworkInterface
-from PySched.Common.IO.FileUtils import getFileMD5Hashsum, deleteFile, createDirectory
+from PySched.Common.IO.FileUtils import getFileMD5Hashsum, deleteFile
 
 from TcpClient import TcpClient
 from UdpClient import UdpClient
@@ -30,8 +30,6 @@ class NetworkManager(NetworkInterface):
         self.logger = logging.getLogger("PySchedClient")
         super(NetworkManager, self).__init__(workingDir, messageReceiver, pathToRsa)
         self.workingDir = os.path.join(workingDir, "network")
-        self.parentDir = workingDir
-        createDirectory(self.workingDir)
 
         self.tcpClient = None
         self.udpClient = None
@@ -60,7 +58,7 @@ class NetworkManager(NetworkInterface):
         self.logger.info("Server found.")
         self.udpClient.stopClient()
 
-        self.sshTunnel = SSHTunnel(self, host=host, keyFile=self.pathToRsa)
+        self.sshTunnel = SSHTunnel(host=host, keyFile=self.pathToRsa)
 
         localPort = self.sshTunnel.buildTunnel()
         if localPort:
