@@ -95,12 +95,4 @@ class NetworkManager(NetworkInterface):
 
     def fileReceived(self, networkId, pathToFile, md5):
         self.messageReceiver.fileTransferCompleted(networkId, pathToFile)
-        '''
-        if validateFileMD5(pathToFile, md5):
-            self.logger.info("File transfer complete.")
-            self.messageReceiver.fileTransferCompleted(networkId, pathToFile)
-        else:
-            self.logger.error("File transfer failed due to invalid md5. {} (original) vs. {}".format(md5, getFileMD5Hashsum(pathToFile)))
-            self.messageReceiver.fileTransferFailed(networkId, pathToFile)
-        '''
         deleteFile(pathToFile)

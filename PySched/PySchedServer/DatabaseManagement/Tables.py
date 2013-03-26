@@ -10,7 +10,7 @@ Contains the Database Tables
 from PySched.Common.DataStructures import Job, User, Compiler, Program
 from PySched.Common import str2Datetime, datetime2Str
 
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Float
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -195,7 +195,7 @@ class SqliteJob(Tables.declBase):
     userId = Column('userId', Integer, ForeignKey(SqliteUser.id))
     multiCpu = Column('multiCpu', Boolean)
     minCpu = Column('minCpu', Integer)
-    minMemory = Column('minMemory', Integer)
+    minMemory = Column('minMemory', Float)
     reqOS = Column('reqOS', String)
     reqPrograms = Column('requiredPrograms', String)
     compilerStr = Column('compilerStr', String)

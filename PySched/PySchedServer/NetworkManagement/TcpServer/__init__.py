@@ -11,7 +11,6 @@ from twisted.internet.endpoints import TCP4ServerEndpoint
 from twisted.internet import reactor
 
 import logging
-import os
 
 class TcpServer(object):
     '''
@@ -116,20 +115,6 @@ class TcpServer(object):
         if client:
             client.sendFile(pathToFile, md5)
             return True
-
-    def receiveFile(self, client, filename, md5):
-        '''
-        @summary: is called when a file is about to be received.
-        @param client: The client which is about to receive the file
-        @param pathToFile: path where the file should be stored
-        @param md5: md5 hashsum of the file
-        @result:
-        '''
-        pathToFile = os.path.join(self.networkManager.workingDir, filename)
-        self.logger.debug("Path to store the file: {}".format(pathToFile))
-
-        self.logger.debug("Setting client {} to raw mode".format(client.id))
-        client.receiveFile(pathToFile, md5)
 
     def fileTransferCompleted(self, client, pathToFile, md5):
         '''
