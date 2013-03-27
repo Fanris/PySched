@@ -537,6 +537,16 @@ class PySchedServer(object):
         '''
         return self.workstations.get(networkId, None)
 
+    def shutdown(self):
+        '''
+        @summary: Shut the server down.
+        @result: 
+        '''
+        self.logger.info("Shutting down...")
+        self.networkManager.stopService()
+        reactor.stop()
+
+
     def initializeLogger(self, workingDir, args):
         '''
         @summary: Initializes the logger

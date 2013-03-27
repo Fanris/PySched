@@ -19,18 +19,18 @@ class MessageHandler(MessageHandlerInterface):
     '''
     def __init__(self, pySchedServer):
         '''
-        @summary: Initializes the message handler
+        @summary:           Initializes the message handler
         @param pySchedServer: a reference to the PySchedServer
         @result:
         '''
         self.logger = logging.getLogger("PySchedServer")
         self.pySchedServer = pySchedServer
 
-    def messageReceived(self, sender, message):
+    def messageReceived(self, networkId, message):
         '''
-        @summary: Should be called if a new message is received.
-        @param sender: An identifier for the sender of the message
-        @param command: the received message
+        @summary:           Should be called if a new message is received.
+        @param networkId:   An identifier for the sender of the message
+        @param command:     the received message
         @result:
         '''
         self.logger.debug("Message received: {}".format(message))
@@ -40,15 +40,15 @@ class MessageHandler(MessageHandlerInterface):
         cmd = commandDict.get("command", None)
 
         if cmd and hasattr(self, commandDict.get("command", None)):
-            getattr(self, commandDict.get("command", None))(sender, commandDict)
+            getattr(self, commandDict.get("command", None))(networkId, commandDict)
         else:
             self.logger.warning("Cannot parse command: {}".format(message))
 
 
     def connectionLost(self, networkId):
         '''
-        @summary: Is called if a network connection is closed.
-        @param networkId: The id of the client who closed the connection.
+        @summary:           Is called if a network connection is closed.
+        @param networkId:   The id of the client who closed the connection.
         @result:
         '''
         self.pySchedServer.removeWorkstation(networkId)
@@ -58,32 +58,32 @@ class MessageHandler(MessageHandlerInterface):
 
     def workstationInfo(self, networkId, info):
         '''
-        @summary: Is called if new Informations of a workstation
-        are available
-        @param networkId: Global id of the sender (workstation)
-        @param info: A dictionary containing all (new) informations
-        of the workstation
+        @summary:           Is called if new Informations of a workstation
+                            are available
+        @param networkId:   Global id of the sender (workstation)
+        @param info:        A dictionary containing all (new) informations
+                            of the workstation
         @result:
         '''
         self.pySchedServer.updateWorkstation(networkId, info)
 
     def jobInfo(self, networkId, jobState):
         '''
-        @summary: Is called if a job is finished.
-        @param networkId: global id of the workstation which sent this message
-        @param jobState: dictionary containing the job informations
+        @summary:           Is called if a job is finished.
+        @param networkId:   global id of the workstation which sent this message
+        @param jobState:    dictionary containing the job informations
         @result:
         '''
         self.pySchedServer.updateJobState(jobState)
 
-    def addJob(self, networkId, jobInformation):
+    def addJob(self, networkId, jobInfo):
         '''
-        @summary: Is called when a new should be added.
-        @param networkId: global id of the sender
-        @param jobInformation: dictionary containing the jobInformation
+        @summary:           Is called when a new should be added.
+        @param networkId:   global id of the sender
+        @param jobInfo:     dictionary containing the jobInformation
         @result:
         '''
-        job = self.pySchedServer.addJob(jobInformation)
+        job = self.pySchedServer.addJob(jobInfo)
 
         if job:
             self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, jobId=job.jobId))
@@ -92,26 +92,26 @@ class MessageHandler(MessageHandlerInterface):
 
     def schedule(self, networkId, data):
         '''
-        @summary: Is called when th scheduler should be forced to
-        schedule. Mainly for debug purpose
-        @param networkId: global client id
+        @summary:           Is called when th scheduler should be forced to
+                            schedule. Mainly for debug purpose
+        @param networkId:   global client id
         @result:
         '''
         self.pySchedServer.schedule()
 
     def checkJobs(self, networkId, data):
         '''
-        @summary: Is called when the jobs should be updated
-        @param networkId: global client id
+        @summary:           Is called when the jobs should be updated
+        @param networkId:   global client id
         @result:
         '''
         self.pySchedServer.checkJobs()
 
     def killJob(self, networkId, data):
         '''
-        @summary: Is called when a kill signal is received.
-        @param networkId: global client id
-        @param data: Dictionary containing the userId and the job id
+        @summary:           Is called when a kill signal is received.
+        @param networkId:   global client id
+        @param data:        Dictionary containing the userId and the job id
         @result:
         '''
         self.pySchedServer.killJob(data.get("jobId", None), data.get("userId", None))
@@ -119,9 +119,10 @@ class MessageHandler(MessageHandlerInterface):
 
     def getJobs(self, networkId, data):
         '''
-        @summary: is called when a user requested a list of his jobs.
-        @param networkId: global id of the client
-        @param data: dictionary containing the userId and the showAll flag
+        @summary:           is called when a user requested a list of his jobs.
+        @param networkId:   global id of the client
+        @param data:        dictionary containing the userId and the showAll 
+                            flag
         @result:
         '''
         userId = data.get("userId", None)
@@ -145,19 +146,18 @@ class MessageHandler(MessageHandlerInterface):
 
     def archiveJob(self, networkId, data):
         '''
-        @summary: Is called when an user requests to archive a job
-        @param networkId: global client id
-        @param data: Dictionary containing the userId and the jobId
+        @summary:           Is called when an user requests to archive a job
+        @param networkId:   global client id
+        @param data:        Dictionary containing the userId and the jobId
         @result:
         '''
         self.pySchedServer.archiveJob(data["jobId"], data["userId"])
 
     def getResults(self, networkId, data):
         '''
-        @summary: Is called when an user requests the results of a job
-        @param networkId: global client id
-        @param jobId: id of the job
-        @param userId: id of the user who sent the request
+        @summary:           Is called when an user requests the results of a job
+        @param networkId:   global client id
+        @param data:        A dictionary containig userId and jobId
         @result:
         '''
         userId = data.get("userId", None)
@@ -178,13 +178,13 @@ class MessageHandler(MessageHandlerInterface):
         FileUtils.deleteFile(resultsFile)
         return True
 
-    def createUser(self, networkId, userInformations):
+    def createUser(self, networkId, userInfo):
         '''
-        @summary: Is called when a new user should be created.
-        @param userInformations: a dictionary containing the user informations
-        @result: Returns the generated user name of the user.
+        @summary:           Is called when a new user should be created.
+        @param userInfo:    a dictionary containing the user informations
+        @result:            Returns the generated user name of the user.
         '''
-        if self.pySchedServer.createUser(userInformations):
+        if self.pySchedServer.createUser(userInfo):
             self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, message="User created."))
 
         else:
@@ -192,9 +192,9 @@ class MessageHandler(MessageHandlerInterface):
 
     def fileTransferCompleted(self, networkId, pathToFile):
         '''
-        @summary: Is called when a file transfer is completed.
-        @param networkId: The id of the client which receives the file
-        @param networkFileObject: a network file object.
+        @summary:           Is called when a file transfer is completed.
+        @param networkId:   The id of the client which receives the file
+        @param pathToFile:  Path to the transfered file.
         @result:
         '''
         self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True))
@@ -202,9 +202,9 @@ class MessageHandler(MessageHandlerInterface):
 
     def fileTransferFailed(self, networkId, pathToFile):
         '''
-        @summary: Is called when a file transfer is completed.
-        @param networkId: The id of the client which receives the file
-        @param networkFileObject: a network file object.
+        @summary:           Is called when a file transfer is completed.
+        @param networkId:   The id of the client which receives the file
+        @param pathToFile:  Path to the transfered File.
         @result:
         '''
         self.pySchedServer.fileTransferFailed(pathToFile)
@@ -212,8 +212,9 @@ class MessageHandler(MessageHandlerInterface):
 
     def getCompiler(self, networkId, data):
         '''
-        @summary: Is called when a client requests a list of all available Compilers.
-        @param networkId: The client which sends the request.
+        @summary:           Is called when a client requests a list of all 
+                            available Compilers.
+        @param networkId:   The client which sends the request.
         @param data:
         @result:
         '''
@@ -233,8 +234,9 @@ class MessageHandler(MessageHandlerInterface):
 
     def getParser(self, networkId, data):
         '''
-        @summary: Is called when a client requests a list of all available Parsers.
-        @param networkId: The client which sends the request.
+        @summary:           Is called when a client requests a list of all 
+                            available Parsers.
+        @param networkId:   The client which sends the request.
         @param data:
         @result:
         '''
@@ -247,9 +249,9 @@ class MessageHandler(MessageHandlerInterface):
 
     def deleteJob(self, networkId, data):
         '''
-        @summary: Is called when a client requests to delete a job.
-        @param networkId: the client which sends the request
-        @param data: userId, jobId
+        @summary:           Is called when a client requests to delete a job.
+        @param networkId:   the client which sends the request
+        @param data:        userId, jobId
         @result:
         '''
         if self.pySchedServer.deleteJob(data.get("userId", ""), data.get("jobId", None)):
@@ -259,9 +261,10 @@ class MessageHandler(MessageHandlerInterface):
 
     def checkUser(self, networkId, data):
         '''
-        @summary: Is called when a UI is connected. Retrieves the user informations.
-        @param networkId: the sender of the request.
-        @param data: contains the userId to check
+        @summary:           Is called when a UI is connected. Retrieves the 
+                            user informations.
+        @param networkId:   the sender of the request.
+        @param data:        contains the userId to check
         @result: 
         '''
         user = self.pySchedServer.getUser(data.get("userId", None))
@@ -274,3 +277,19 @@ class MessageHandler(MessageHandlerInterface):
             self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, admin=True))
         else:
             self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True))
+
+    def shutdown(self, networkId, data):
+        '''
+        @summary:           Shuts the server down, if the user has admin-
+                            privileges
+        @param networkId:   the sender of the request
+        @param data:        the userId
+        @result: 
+        '''
+        user = self.pySchedServer.getUser(data.get("userId", None))
+        
+        if not user or user.admin:
+            return
+
+        self.pySchedServer.shutdown()
+

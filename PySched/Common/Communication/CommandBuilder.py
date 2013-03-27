@@ -173,4 +173,3 @@ class CommandBuilder(object):
             progs.append(p.__dict__)
 
         return CommandBuilder.buildCommand("checkForPrograms", programs=progs)
-
