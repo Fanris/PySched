@@ -543,7 +543,6 @@ class PySchedServer(object):
         @result: 
         '''
         self.logger.info("Shutting down...")
-        self.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True))
         self.networkManager.stopService()
         reactor.stop()
 
