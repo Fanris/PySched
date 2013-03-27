@@ -90,6 +90,11 @@ class Client(object):
             self.currentMD5 = None
             return
 
+        if networkCommand == "heartBeat":
+            cmd = json.dumps({"nCommand": "heartBeatResponse"})
+            self.sendMessage(cmd)
+            return
+
         self.tcpServer.commandReceived(self, line)
 
     def receiveFileChunk(self, chunk):
