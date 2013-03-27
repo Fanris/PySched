@@ -397,6 +397,17 @@ class PySchedClient(object):
                 newPath = os.path.join(jobDir, 'results', f)
                 FileUtils.moveFile(filepath, newPath)
 
+    def shutdown(self):
+        '''
+        @summary: Shuts the workstation down.
+        @result: 
+        '''
+        self.logger.info("Shutting down...")
+        self.stopWorkstationStateLoop()
+        self.stopNetworkServices()
+        reactor.stop()
+
+
     # Misc
     # =====================================================
     def initializeLogger(self, workingDir, args):
