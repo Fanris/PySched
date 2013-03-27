@@ -90,6 +90,10 @@ class Client(object):
             self.currentMD5 = None
             return
 
+        if networkCommand == "heartBeatResponse":            
+            self.tcpClient.heartBeatResponse()
+            return            
+
         self.tcpClient.commandReceived(self, line)
 
     def receiveFileChunk(self, chunk):

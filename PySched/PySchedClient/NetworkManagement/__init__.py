@@ -12,6 +12,9 @@ from TcpClient import TcpClient
 from UdpClient import UdpClient
 from SSH import SSHTunnel
 
+from twisted.internet import reactor
+from twisted.internet.task import LoopingCall
+
 import os
 import logging
 
@@ -30,6 +33,9 @@ class NetworkManager(NetworkInterface):
         self.logger = logging.getLogger("PySchedClient")
         super(NetworkManager, self).__init__(workingDir, messageReceiver, pathToRsa)
         self.workingDir = os.path.join(workingDir, "network")
+
+        self.heartBeat = LoopingCall(self.sendHeartBeat)
+        self.heartBeatTimeout = None
 
         self.tcpClient = None
         self.udpClient = None
@@ -79,6 +85,8 @@ class NetworkManager(NetworkInterface):
         @result:
         '''
         self.logger.info("Tcp connection established.")
+        self.logger.debug("Starting Heartbeat...")
+        self.heartBeat.start(60)
         self.messageReceiver.connectionBuild(self.tcpClient.server.id)
 
     def connectionLost(self):
@@ -87,12 +95,36 @@ class NetworkManager(NetworkInterface):
         @result:
         '''
         self.logger.info("Tcp connection lost.")
+        self.heartBeat.stop()
         self.messageReceiver.connectionLost(self.tcpClient.server.id)
         self.tcpClient = None
         self.sshTunnel.closeTunnel()
 
         self.logger.info("Restarting the udp listener")
         self.startService()
+
+    def sendHeartBeat(self):
+        '''
+        @summary: Sends a ping to the server and waits for an heartbeatResponse. 
+        If no answer is received, the server is considered as down.        
+        @result: 
+        '''
+        self.tcpClient.sendHeartBeat()
+        self.heartBeatTimeout = reactor.callLater(5, self.connectionLost)
+
+    def heartBeatResponse(self):
+        '''
+        @summary: Is called, when a response to a heartbeat is received.
+        @result: 
+        '''
+        if self.heartBeatTimeout:
+            try:
+                self.heartBeatTimeout.cancel()
+            except:
+                pass
+            finally:
+                self.heartBeatTimeout = None
+
 
     def commandReceived(self, client, command):
         '''
