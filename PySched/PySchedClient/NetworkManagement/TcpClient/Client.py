@@ -104,6 +104,15 @@ class Client(object):
         '''
         self.currentFile.write(base64.b64decode(chunk))
 
+    def sendHeartBeat(self):
+        '''
+        @summary: Sends a heartbeat to the server.
+        @result: 
+        '''
+        cmd = json.dumps({"nCommand": "heartbeat"})
+        self.sendMessage(cmd)
+
+
     def sendFile(self, path, md5):
         '''
         @summary: Sends the given file to the workstation

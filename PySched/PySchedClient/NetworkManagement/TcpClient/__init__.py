@@ -68,6 +68,15 @@ class TcpClient(object):
         '''
         self.networkManager.commandReceived(client, command)
 
+    def sendHeartBeat(self):
+        '''
+        @summary: Sends a heartbeat to the server
+        @result: 
+        '''
+        if self.server:
+            self.server.sendHeartBeat()
+
+
     def sendMessage(self, message):
         '''
         @summary: Sends a message to a client.
