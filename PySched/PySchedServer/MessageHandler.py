@@ -288,7 +288,7 @@ class MessageHandler(MessageHandlerInterface):
         '''
         user = self.pySchedServer.getUser(data.get("userId", None))
         
-        if not user or user.admin:
+        if not user or not user.admin:
             self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
             return
         
