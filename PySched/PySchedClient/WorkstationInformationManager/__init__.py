@@ -124,7 +124,11 @@ class WIM(WIMInterface):
         new_progs = []
         new_progs.extend(self.informations.get("programs", []))
 
-        for program in programs:
+        progs = programs
+        if not type(progs) == type([]):
+            progs = [programs]
+
+        for program in progs:
             p = {}
             p["programName"] = program
             if not p.get("programName", None):
