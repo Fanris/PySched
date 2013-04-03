@@ -106,9 +106,9 @@ class WIM(WIMInterface):
                     self.programList[p] = prog
 
 
-        self.informations["program"] = []
+        self.informations["programs"] = []
         for p in self.programList.keys():
-            self.informations["program"].append(p)        
+            self.informations["programs"].append(p)        
 
     def getProgramPath(self, programName):
         '''
