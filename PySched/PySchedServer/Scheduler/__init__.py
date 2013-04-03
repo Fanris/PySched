@@ -108,8 +108,7 @@ class PyScheduler(SchedulerInterface):
                         continue
                     else:
                         job.log("{} not appropriate: Program '{}' not available".format(
-                            workstation.get("workstationName", None),
-                            program))
+                            workstation.get("workstationName", None), program))
                         break
 
             score = 0
