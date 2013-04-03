@@ -96,7 +96,16 @@ class PyScheduler(SchedulerInterface):
                         workstation.get("programs")
                     )
                 if p.count == 0:
-                    break
+                    self.pySchedServer.checkForPrograms([program.get("programName", None)], waitForAnswer=True)
+                    p = filter(
+                    lambda x: x.get("programName", None) ==
+                        program.get("programName", None) and
+                        x.get("programVersion", None) ==
+                        program.get("programVersion", None),
+                        workstation.get("programs")
+                    )
+                    if p.count == 0:
+                        break
 
             score = 0
             # If someone working on the machine the scheduler

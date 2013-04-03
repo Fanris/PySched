@@ -22,9 +22,12 @@ from MessageHandler import MessageHandler
 
 from twisted.internet import reactor
 
+from time import sleep
+
 import logging
 import datetime
 import os
+
 
 class PySchedServer(object):
     def __init__(self, workingDir, args):
@@ -254,7 +257,8 @@ class PySchedServer(object):
         networkId = self.lookupWorkstationName(workstation)
 
         self.networkManager.sendMessage(networkId, CommandBuilder.buildCheckForProgramsString(programs))
-
+        if waitForAnswer:
+            sleep(1)       
 
     def killJob(self, jobId, userId):
         '''
