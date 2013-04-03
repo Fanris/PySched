@@ -10,6 +10,8 @@ from PySched.Common.DataStructures import JobState
 
 from Compiler import Compiler as CompilerClass
 
+from time import sleep
+
 import logging
 
 class PyScheduler(SchedulerInterface):
@@ -59,7 +61,9 @@ class PyScheduler(SchedulerInterface):
 
         # Same for jobs with minimum required memory
         scores = {}
-        for workstation in workstations:
+        workstationList = workstations.copy()
+
+        for workstation in workstationList:
             self.logger.debug("Checking workstation {}".format(workstation))
             freeCpus = 0
             # First check the installed OS
@@ -104,6 +108,7 @@ class PyScheduler(SchedulerInterface):
                         workstation.get("workstationName", None),
                         [program]
                         )
+                    sleep(2)
                     
                     if program in workstation.get("programs", []):
                         continue

@@ -22,8 +22,6 @@ from MessageHandler import MessageHandler
 
 from twisted.internet import reactor
 
-from time import sleep
-
 import logging
 import datetime
 import os
@@ -435,7 +433,7 @@ class PySchedServer(object):
         if job.stateId >= JobState.lookup("DONE"):
             self.cleanupJobDir(job.jobId)
             self.getResultsFromWorkstation(job.jobId)            
-            self.schedule()
+            reactor.callInThread(self.schedule)
 
     def schedule(self, jobId=None):
         '''
@@ -468,7 +466,7 @@ class PySchedServer(object):
         self.logger.info("Checking Jobs of workstation {}".format(workstationInfo.get("workstationName", None)))
         self.checkJobs(workstationInfo.get("workstationName", None))
 
-        self.schedule()
+        reactor.callInThread(self.schedule)
 
     def removeWorkstation(self, networkId):
         '''
