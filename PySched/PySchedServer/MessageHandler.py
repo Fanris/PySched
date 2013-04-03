@@ -295,3 +295,13 @@ class MessageHandler(MessageHandlerInterface):
         self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True))
         self.pySchedServer.shutdown()
 
+    def getJobLog(self, networkId, data):
+        '''
+        @summary:           Returns the logfile of a Job to the user.
+        @param networkId:  the sender who send the request
+        @param data:        jobId, username
+        @result:
+        '''
+        log = self.pySchedServer.getLog(data.get("jobId", None), data.get("userId", None))
+        self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, log=log))
+

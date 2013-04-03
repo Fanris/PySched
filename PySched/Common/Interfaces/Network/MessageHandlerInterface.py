@@ -287,5 +287,13 @@ class MessageHandlerInterface(object):
         '''
         pass
 
-
+    def getJobLog(self, sender, data):
+        '''
+        @summary:       Server Command. Returns the logfile of a Job to the 
+                        user.
+        @param sender:  the sender who send the request
+        @param data:    jobId, username
+        @result:
+        '''
+        pass
 

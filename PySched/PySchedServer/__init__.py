@@ -295,10 +295,15 @@ class PySchedServer(object):
         job = self.getFromDatabase(Job, jobId=jobId, first=True)
 
         if job:
-            logPath = os.path.join(self.workingDir, jobId, "logs")
+            logPath = os.path.join(self.workingDir, jobId, "logs", "joblog.log")
             m = "[{}] {}".format(datetime2Str(datetime.datetime.now()),
                 message)
             FileUtils.createOrAppendToFile(logPath, m)
+
+    def getJob(self, jobId):
+        job = self.getFromDatabase(Job, first=True, jobId=jobId)
+
+        return job
 
     # User Functions
     # ========================
@@ -387,7 +392,26 @@ class PySchedServer(object):
         FileUtils.createDirectory(os.path.split(archivePath)[0])
         archive = Archive.packFolder(archivePath, jobDir)
         self.logger.info("Results for job {} prepared.".format(jobId))
-        return archive        
+        return archive  
+
+    def getLog(self, jobId, userId):
+        '''
+        @summary: Reads the logfile of a job and returns it
+        @param jobId: the jobId of the job
+        @param userId: the user id of the requesting user
+        @result: 
+        '''
+        user = self.getUser(userId)
+        job = self.getJob(jobId)
+
+        if user.username == job.userId or user.admin:
+            logPath = os.path.join(self.workingDir, jobId, "logs", "joblog.log")            
+            log = ""
+            for bytes in FileUtils.readBytesFromFile(logPath):
+                log += bytes
+
+            return log
+
 
     # Workstation Functions
     # ========================
