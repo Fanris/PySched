@@ -69,7 +69,8 @@ class PyScheduler(SchedulerInterface):
             freeCpus = 0
             # First check the installed OS
             if not None and not workstation.get("os", None) == job.reqOS:
-                self.pySchedServer.addToJobLog("{} not appropriate: Wrong OS".
+                self.pySchedServer.addToJobLog(job.jobId, 
+                    "{} not appropriate: Wrong OS".
                     format(workstation.get("workstationName"), None))
                 continue
 
@@ -83,6 +84,7 @@ class PyScheduler(SchedulerInterface):
             # be considered any further
             if freeCpus == 0:
                 self.pySchedServer.addToJobLog(
+                    job.jobId,
                     "{} not appropriate: No free resources".format(
                     workstation.get("workstationName"), None))
                 continue
@@ -91,6 +93,7 @@ class PyScheduler(SchedulerInterface):
             # memory, it should not be considered any further
             if job.minMemory > workstation.get("memory", 0) * 1024:
                 self.pySchedServer.addToJobLog(
+                    job.jobId,                    
                     "{} not appropriate: Not enough Memory".format(
                     workstation.get("workstationName"), None))
                 continue
@@ -118,6 +121,7 @@ class PyScheduler(SchedulerInterface):
                     else:
                         reqProgramsAvailable = False
                         self.pySchedServer.addToJobLog(
+                            job.jobId,
                             "{} not appropriate: Program '{}' not available".format(
                             workstation.get("workstationName", None), program))
                         break
@@ -145,12 +149,16 @@ class PyScheduler(SchedulerInterface):
             self.logger.debug("Scores: {}".format(scores))
 
         if len(scores) == 0:
-            self.pySchedServer.addToJobLog("No appropriate Workstation found.")
+            self.pySchedServer.addToJobLog(
+                job.jobId,
+                "No appropriate Workstation found.")
             return None
 
         selected = max(scores, key=scores.get)
         self.logger.debug("Selected workstation: {}".format(selected))
-        self.pySchedServer.addToJobLog("Workstation {} ({}) selected.".
+        self.pySchedServer.addToJobLog(
+            job.jobId,
+            "Workstation {} ({}) selected.".
             format(selected, max(scores)))
         return selected
 
