@@ -296,7 +296,7 @@ class PySchedServer(object):
 
         if job:
             logPath = os.path.join(self.workingDir, str(jobId), "logs", "joblog.log")
-            m = "[{}] {}".format(datetime2Str(datetime.datetime.now()),
+            m = "[{}] {}\n".format(datetime2Str(datetime.datetime.now()),
                 message)
             FileUtils.createOrAppendToFile(logPath, m)
 
