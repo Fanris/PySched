@@ -77,26 +77,25 @@ class PyScheduler(SchedulerInterface):
             # when no cpu is free, this workstation should not
             # be considered any further
             if freeCpus == 0:
-                job.log("{} not appropriate: No free resources".
-                    format(workstation.get("workstationName"), None))
+                job.log("{} not appropriate: No free resources".format(
+                    workstation.get("workstationName"), None))
                 continue
 
             # when the workstation has not the required amount of
             # memory, it should not be considered any further
             if job.minMemory > workstation.get("memory", 0) * 1024:
-                job.log("{} not appropriate: Not enough Memory".
-                    format(workstation.get("workstationName"), None))
+                job.log("{} not appropriate: Not enough Memory".format(
+                    workstation.get("workstationName"), None))
                 continue
 
             # Check for programs
             for program in job.reqPrograms:
-                self.logger.debug("Check workstation for Program: {}.".format(program))
+                self.logger.debug("Check workstation for Program: '{}'.".format(program))
                 if program in workstation.get("programs", []):
                     continue
 
                 else:
-                    self.logger.info("Requesting program {} from {}".
-                        format(
+                    self.logger.info("Requesting program '{}' from {}".format(
                             program,
                             workstation.get("workstationName", None))
                         )
@@ -108,9 +107,9 @@ class PyScheduler(SchedulerInterface):
                     if program in workstation.get("programs", []):
                         continue
                     else:
-                        job.log("{} not appropriate: Program {} not available".
-                            format(workstation.get("workstationName", None),
-                                program))
+                        job.log("{} not appropriate: Program '{}' not available".format(
+                            workstation.get("workstationName", None),
+                            program))
                         break
 
             score = 0
