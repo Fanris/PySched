@@ -97,7 +97,7 @@ class WIM(WIMInterface):
         and executable to check for.
         @result: a list of
         '''
-        self.programList = self.getProgramList(programs)
+        self.programList.update(self.getProgramList(programs))
         progs = []
         for p in self.programList:
             progs.append(p.get("programName"), None)
@@ -121,8 +121,7 @@ class WIM(WIMInterface):
         and executable to check for.
         @result: Returns a list with all available programs
         '''
-        new_progs = []
-        new_progs.extend(self.informations.get("programs", []))
+        new_progs = {}
 
         progs = programs
         if not type(progs) == type([]):
