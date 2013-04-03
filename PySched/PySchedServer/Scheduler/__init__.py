@@ -97,7 +97,7 @@ class PyScheduler(SchedulerInterface):
                 else:
                     self.logger.info("Requesting program {} from {}".
                         format(
-                            program.get("programName", ""), 
+                            program,
                             workstation.get("workstationName", None))
                         )
                     self.pySchedServer.checkForPrograms(
