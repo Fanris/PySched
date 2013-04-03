@@ -295,7 +295,7 @@ class PySchedServer(object):
         job = self.getFromDatabase(Job, jobId=jobId, first=True)
 
         if job:
-            logPath = os.path.join(self.workingDir, jobId, "logs", "joblog.log")
+            logPath = os.path.join(self.workingDir, str(jobId), "logs", "joblog.log")
             m = "[{}] {}".format(datetime2Str(datetime.datetime.now()),
                 message)
             FileUtils.createOrAppendToFile(logPath, m)
@@ -405,7 +405,7 @@ class PySchedServer(object):
         job = self.getJob(jobId)
 
         if user.username == job.userId or user.admin:
-            logPath = os.path.join(self.workingDir, jobId, "logs", "joblog.log")            
+            logPath = os.path.join(self.workingDir, str(jobId), "logs", "joblog.log")            
             log = ""
             for bytes in FileUtils.readBytesFromFile(logPath):
                 log += bytes
