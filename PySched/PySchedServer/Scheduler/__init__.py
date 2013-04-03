@@ -64,8 +64,8 @@ class PyScheduler(SchedulerInterface):
             freeCpus = 0
             # First check the installed OS
             if not None and not workstation.get("os", None) == job.reqOS:
-                job.addLog("{} not appropriate: Wrong OS".format(
-                    workstation.get("workstationName"), None))
+                #job.addLog("{} not appropriate: Wrong OS".format(
+                    #workstation.get("workstationName"), None))
                 continue
 
             for load in workstation.get("cpuLoad", []):
@@ -77,18 +77,19 @@ class PyScheduler(SchedulerInterface):
             # when no cpu is free, this workstation should not
             # be considered any further
             if freeCpus == 0:
-                job.addLog("{} not appropriate: No free resources".format(
-                    workstation.get("workstationName"), None))
+                #job.addLog("{} not appropriate: No free resources".format(
+                    #workstation.get("workstationName"), None))
                 continue
 
             # when the workstation has not the required amount of
             # memory, it should not be considered any further
             if job.minMemory > workstation.get("memory", 0) * 1024:
-                job.addLog("{} not appropriate: Not enough Memory".format(
-                    workstation.get("workstationName"), None))
+                #job.addLog("{} not appropriate: Not enough Memory".format(
+                    #workstation.get("workstationName"), None))
                 continue
 
             # Check for programs
+            reqProgramsAvailable = True
             for program in job.reqPrograms:
                 self.logger.debug("Check workstation for Program: '{}'.".format(program))
                 if program in workstation.get("programs", []):
@@ -107,10 +108,14 @@ class PyScheduler(SchedulerInterface):
                     if program in workstation.get("programs", []):
                         continue
                     else:
-                        job.addLog("{} not appropriate: Program '{}' not available".format(
-                            workstation.get("workstationName", None), program))
+                        reqProgramsAvailable = False
+                        #job.addLog("{} not appropriate: Program '{}' not available".format(
+                            #workstation.get("workstationName", None), program))
                         break
 
+            if not reqProgramsAvailable:
+                continue
+                
             score = 0
             # If someone working on the machine the scheduler
             # should select another one first.
@@ -131,13 +136,13 @@ class PyScheduler(SchedulerInterface):
             self.logger.debug("Scores: {}".format(scores))
 
         if len(scores) == 0:
-            job.addLog("No appropriate Workstation found.")
+            #job.addLog("No appropriate Workstation found.")
             return None
 
         selected = max(scores, key=scores.get)
         self.logger.debug("Selected workstation: {}".format(selected))
-        job.addLog("Workstation {} ({}) selected.".
-            format(selected, max(scores)))
+        #job.addLog("Workstation {} ({}) selected.".
+            #format(selected, max(scores)))
         return selected
 
 

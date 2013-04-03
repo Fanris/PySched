@@ -327,6 +327,7 @@ class PySchedClient(object):
         a programExec
         @result:
         '''
+        self.logger.info("Searching for program(s): {}".format(programs))
         self.wim.checkForPrograms(programs)
         self.sendWorkstationState()
 
