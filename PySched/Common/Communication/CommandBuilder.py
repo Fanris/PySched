@@ -167,4 +167,4 @@ class CommandBuilder(object):
         @param programs: A list of program names
         @result:
         '''
-        return CommandBuilder.buildCommand("checkForPrograms", programs=progs)
+        return CommandBuilder.buildCommand("checkForPrograms", programs=programs)
