@@ -32,7 +32,7 @@ class NetworkManager(NetworkInterface):
         self.logger = logging.getLogger("PySchedClient")
         super(NetworkManager, self).__init__(workingDir, messageReceiver, pathToRsa)
         self.workingDir = os.path.join(workingDir, "network")
-        FileUtils.createDirectory(self.workingDir)
+        createDirectory(self.workingDir)
 
         self.heartBeat = LoopingCall(self.sendHeartBeat)
         self.heartBeatTimeout = None
