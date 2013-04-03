@@ -96,6 +96,7 @@ class PyScheduler(SchedulerInterface):
                         workstation.get("programs")
                     )
                 if p.count == 0:
+                    self.logger.info("Requesting program {} from {}".format(program.get("programName", ""), workstation.get("workstationName", None)))
                     self.pySchedServer.checkForPrograms([program.get("programName", None)], waitForAnswer=True)
                     p = filter(
                     lambda x: x.get("programName", None) ==
