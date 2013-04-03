@@ -404,7 +404,7 @@ class PySchedServer(object):
         user = self.getUser(userId)
         job = self.getJob(jobId)
 
-        if user.username == job.userId or user.admin:
+        if user.userId == job.userId or user.admin:
             logPath = os.path.join(self.workingDir, str(jobId), "logs", "joblog.log")            
             log = ""
             for bytes in FileUtils.readBytesFromFile(logPath):
