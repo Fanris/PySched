@@ -91,7 +91,7 @@ class PyScheduler(SchedulerInterface):
             # Check for programs
             for program in job.reqPrograms:
                 self.logger.debug("Check workstation for Program: {}.".format(program))
-                if program in workstation.get("programs"):
+                if program in workstation.get("programs", []):
                     continue
 
                 else:
