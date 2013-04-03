@@ -12,6 +12,7 @@ from Compiler import Compiler as CompilerClass
 
 from time import sleep
 
+import copy
 import logging
 
 class PyScheduler(SchedulerInterface):
@@ -61,7 +62,7 @@ class PyScheduler(SchedulerInterface):
 
         # Same for jobs with minimum required memory
         scores = {}
-        workstationList = workstations.copy()
+        workstationList = copy.copy(workstations)
 
         for workstation in workstationList:
             self.logger.debug("Checking workstation {}".format(workstation))
