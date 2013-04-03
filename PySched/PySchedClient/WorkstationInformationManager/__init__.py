@@ -98,7 +98,12 @@ class WIM(WIMInterface):
         @result: a list of
         '''
         self.programList = self.getProgramList(programs)
-        self.informations["programs"] = self.programList.keys()
+        progs = []
+        for p in self.programList:
+            progs.append(p.get("programName"), None)
+
+        self.informations["programs"] = progs
+            
 
     def getProgramPath(self, programName):
         '''
