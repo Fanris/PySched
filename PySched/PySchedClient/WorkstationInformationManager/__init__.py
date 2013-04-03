@@ -97,13 +97,19 @@ class WIM(WIMInterface):
         and executable to check for.
         @result: a list of
         '''
-        self.programList.update(self.getProgramList(programs))
-        progs = []
-        for p in self.programList:
-            progs.append(p.get("programName"), None)
 
-        self.informations["programs"] = progs
-            
+        for p in programs:
+            if p  in self.programList:
+                continue
+            else:
+                prog = self.programInstalled(p)
+                if prog:
+                    self.programList[p] = prog
+
+
+        self.informations["program"] = []
+        for p in self.programList.keys():
+            self.informations["program"].append(p)        
 
     def getProgramPath(self, programName):
         '''
@@ -111,48 +117,9 @@ class WIM(WIMInterface):
         @param programName: The program name
         @result: 
         '''
-        return self.programList[programName].get("programPath", None)
-            
+        return self.programList[programName].get("programPath", None)            
 
-    def getProgramList(self, programs):
-        '''
-        @summary: Checks if a given list of programs are available via the environment
-        @param program: a list of dictionaries containing the program name
-        and executable to check for.
-        @result: Returns a list with all available programs
-        '''
-        new_progs = {}
-
-        progs = programs
-        if not type(progs) == type([]):
-            progs = [programs]
-
-        for program in progs:
-            p = {}
-            p["programName"] = program
-            if not p.get("programName", None):
-                continue
-
-            if not p.get("programExec", None):
-                p["programExec"] = p["programName"]
-
-            p["programPath"] = self.programInstalled(
-                p.get("programName", None), 
-                p.get("programExec", None))
-
-            if p.get("programPath", None):
-                new_progs[p.get("programName", "")] = p
-                self.logger.debug("Program available: {}".format(program))
-            else:
-                self.logger.debug("Program not available: {}".format(program))
-                
-        return new_progs
-
-    def programInstalled(self, programName, programExec):
-
-        if programName in self.programList:
-            return self.programList.get(programName, None)
-
+    def programInstalled(self, programExec):
         fpath, fname = os.path.split(programExec)
         if fpath:
             if self.is_exe(programExec):
