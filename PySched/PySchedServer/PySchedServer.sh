@@ -4,8 +4,6 @@ from PySched.PySchedServer import PySchedServer
 
 import argparse
 
-
-
 def main():
     #===============================================================================
     # Main Server Program

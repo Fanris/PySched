@@ -90,7 +90,7 @@ class Client(object):
             self.currentMD5 = None
             return
 
-        if networkCommand == "heartBeat":
+        if networkCommand == "heartbeat":
             cmd = json.dumps({"nCommand": "heartBeatResponse"})
             self.sendMessage(cmd)
             return
