@@ -76,6 +76,12 @@ class TcpClient(object):
         if self.server:
             self.server.sendHeartBeat()
 
+    def heartBeatResponse(self):
+        '''
+        @summary: Reacts to the heartBeatResponse
+        @result: 
+        '''
+        self.networkManager.heartBeatResponse()
 
     def sendMessage(self, message):
         '''
