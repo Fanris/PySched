@@ -97,11 +97,7 @@ class WIM(WIMInterface):
         and executable to check for.
         @result: a list of
         '''
-        progs = programs
-        if not type(progs) == type([]):
-            progs = [programs]
-
-        for p in progs:
+        for p in programs:
             if p  in self.programList:
                 continue
             else:

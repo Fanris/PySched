@@ -102,7 +102,7 @@ class PyScheduler(SchedulerInterface):
                         )
                     self.pySchedServer.checkForPrograms(
                         workstation.get("workstationName", None),
-                        program
+                        [program]
                         )
                     
                     if program in workstation.get("programs", []):
