@@ -102,8 +102,8 @@ class PyScheduler(SchedulerInterface):
                         )
                     self.pySchedServer.checkForPrograms(
                         workstation.get("workstationName", None),
-                        program,
-                        waitForAnswer=True)
+                        program
+                        )
                     
                     if program in workstation.get("programs", []):
                         continue
