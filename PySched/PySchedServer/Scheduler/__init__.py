@@ -68,7 +68,7 @@ class PyScheduler(SchedulerInterface):
             self.logger.debug("Checking workstation {}".format(workstation))
             freeCpus = 0
             # First check the installed OS
-            if not None and not workstation.get("os", None) == job.reqOS:
+            if not None and not workstation.get("os", "").lower() == job.reqOS.lower():
                 self.pySchedServer.addToJobLog(job.jobId, 
                     "{} not appropriate: Wrong OS".
                     format(workstation.get("workstationName"), None))
