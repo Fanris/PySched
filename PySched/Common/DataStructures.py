@@ -6,7 +6,6 @@ Created on 2012-12-04 13:34
 '''
 
 import datetime
-from Common import datetime2Str
 
 class Job(object):
     '''
@@ -50,7 +49,7 @@ class Job(object):
 
     def addLog(self, message):
         self.log.append("[{}]: {}".format(
-            datetime2Str(datetime.datetime.now()), message))
+            datetime.datetime.now(), message))
 
 class Program(object):
     '''
