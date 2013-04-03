@@ -4,9 +4,8 @@ Created on 2013-01-09 15:11
 @summary:
 @author: Martin Predki
 '''
-
 from PySched.Common.Interfaces.Network.NetworkInterface import NetworkInterface
-from PySched.Common.IO.FileUtils import getFileMD5Hashsum, deleteFile
+from PySched.Common.IO.FileUtils import getFileMD5Hashsum, deleteFile, createDirectory
 
 from TcpClient import TcpClient
 from UdpClient import UdpClient
@@ -33,6 +32,7 @@ class NetworkManager(NetworkInterface):
         self.logger = logging.getLogger("PySchedClient")
         super(NetworkManager, self).__init__(workingDir, messageReceiver, pathToRsa)
         self.workingDir = os.path.join(workingDir, "network")
+        FileUtils.createDirectory(self.workingDir)
 
         self.heartBeat = LoopingCall(self.sendHeartBeat)
         self.heartBeatTimeout = None
