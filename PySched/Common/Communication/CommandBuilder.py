@@ -164,12 +164,7 @@ class CommandBuilder(object):
         @summary: Client command. Creates a checkForPrograms command.
         This command is used to check if the given programs are available at
         the workstation. They are listed in the next workstation information dict.
-        @param programs: a list of dictionaries containing the programName and the
-        programExec.
+        @param programs: A list of program names
         @result:
         '''
-        progs = []
-        for p in programs:
-            progs.append(p.__dict__)
-
         return CommandBuilder.buildCommand("checkForPrograms", programs=progs)

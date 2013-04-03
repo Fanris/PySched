@@ -248,17 +248,25 @@ class PySchedServer(object):
     def checkForPrograms(self, workstation, programs=None, waitForAnswer=False):
         '''
         @summary: Checks the workstation for the programs defined in the database.
-        @param workstation:
+        @param workstation: the workstation which should be checked
+        @param programs: a List of program names to check for.
+        @param waitForAnswer: Wait 5 second for an answer
         @result:
         '''
+        p = []
+
         if not programs:
             programs = self.getFromDatabase(Program)
+            for program in programs:
+                p.append(program.programName)
+        else:
+            p = programs
 
         networkId = self.lookupWorkstationName(workstation)
 
-        self.networkManager.sendMessage(networkId, CommandBuilder.buildCheckForProgramsString(programs))
+        self.networkManager.sendMessage(networkId, CommandBuilder.buildCheckForProgramsString(p))
         if waitForAnswer:
-            sleep(1)       
+            sleep(5)       
 
     def killJob(self, jobId, userId):
         '''

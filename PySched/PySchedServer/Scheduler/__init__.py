@@ -96,8 +96,15 @@ class PyScheduler(SchedulerInterface):
 
                 else:
                     self.logger.info("Requesting program {} from {}".
-                        format(program.get("programName", ""), 
-                            workstation.get("workstationName", None)))
+                        format(
+                            program.get("programName", ""), 
+                            workstation.get("workstationName", None))
+                        )
+                    self.pySchedServer.checkForPrograms(
+                        workstation.get("workstationName", None),
+                        program,
+                        waitForAnswer=True)
+                    
                     if program in workstation.get("programs", []):
                         continue
                     else:
