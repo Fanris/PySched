@@ -101,7 +101,7 @@ class WIM(WIMInterface):
         if not type(progs) == type([]):
             progs = [programs]
 
-        for p in programs:
+        for p in progs:
             if p  in self.programList:
                 continue
             else:
