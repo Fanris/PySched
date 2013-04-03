@@ -58,13 +58,8 @@ class WIM(WIMInterface):
         @summary: Returns a dictionary with all workstation informations.
         @result:
         '''
-        info = self.informations.copy()
-        progs = info.get("programs", None)
-        if progs:
-            info["programs"] = progs.keys()
-
-        return info
-
+        return self.informations.copy()
+        
     def getStaticInformations(self):
         '''
         @summary: Sets the static informations of the system like os, name, machine
