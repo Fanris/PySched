@@ -62,8 +62,6 @@ class Program(object):
     '''
     def __init__(self):
         self.programName = None
-        self.programExec = None        
-
 
 class User(object):
     '''

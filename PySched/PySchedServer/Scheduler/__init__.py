@@ -90,24 +90,20 @@ class PyScheduler(SchedulerInterface):
 
             # Check for programs
             for program in job.reqPrograms:
-                if type(program) != type({}):
+                self.logger.debug("Check workstation for Program: {}.".format(program))
+                if program in workstation.get("programs"):
                     continue
 
-                self.logger.debug("Check workstation for Program: {}.".format(program))
-                p = filter(
-                    lambda x: x.get("programName", None) ==
-                        program.get("programName", None),
-                        workstation.get("programs")
-                    )
-                if p.count == 0:
-                    self.logger.info("Requesting program {} from {}".format(program.get("programName", ""), workstation.get("workstationName", None)))
-                    self.pySchedServer.checkForPrograms([program.get("programName", None)], waitForAnswer=True)
-                    p = filter(
-                    lambda x: x.get("programName", None) ==
-                        program.get("programName", None),
-                        workstation.get("programs")
-                    )
-                    if p.count == 0:
+                else:
+                    self.logger.info("Requesting program {} from {}".
+                        format(program.get("programName", ""), 
+                            workstation.get("workstationName", None)))
+                    if program in workstation.get("programs", []):
+                        continue
+                    else:
+                        job.log("{} not appropriate: Program {} not available".
+                            format(workstation.get("workstationName", None),
+                                program))
                         break
 
             score = 0
@@ -133,11 +129,11 @@ class PyScheduler(SchedulerInterface):
             job.log("No appropriate Workstation found.")
             return None
 
-            selected = max(scores, key=scores.get)
-            self.logger.debug("Selected workstation: {}".format(selected))
-            job.log("Workstation {} ({}) selected.".
-                format(selected, max(scores)))
-            return selected
+        selected = max(scores, key=scores.get)
+        self.logger.debug("Selected workstation: {}".format(selected))
+        job.log("Workstation {} ({}) selected.".
+            format(selected, max(scores)))
+        return selected
 
 
     def prepareForTransfer(self, job):

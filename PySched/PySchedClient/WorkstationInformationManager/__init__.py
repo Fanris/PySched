@@ -34,6 +34,7 @@ class WIM(WIMInterface):
         self.informations = {}
         self.interval = interval
         self.refreshLoop = LoopingCall(self.refreshData)
+        self.programList = {}
 
     def startCollectingData(self):
         '''
@@ -96,7 +97,8 @@ class WIM(WIMInterface):
         and executable to check for.
         @result: a list of
         '''
-        self.informations["programs"] = self.getProgramList(programs)
+        self.programList = self.getProgramList(programs)
+        self.informations["programs"] = self.programList.keys()
 
     def getProgramPath(self, programName):
         '''
@@ -104,8 +106,7 @@ class WIM(WIMInterface):
         @param programName: The program name
         @result: 
         '''
-        if self.informations.get("programs", None):
-            return self.informations["programs"].get(programName, None)
+        return self.programList[programName].get("programPath", None)
             
 
     def getProgramList(self, programs):
@@ -115,21 +116,29 @@ class WIM(WIMInterface):
         and executable to check for.
         @result: Returns a list with all available programs
         '''
-        progs = {}
+        new_progs = []
+        new_progs.extend(self.informations.get("programs", []))
+
         for program in programs:
-            programName = program.get("programName", None)
-            programExec = program.get("programExec", None)
-            if not programName or not programExec:
+            p = {}
+            p["programName"] = program
+            if not p.get("programName", None):
                 continue
 
-            programPath = self.programInstalled(programName, programExec)
-            if programPath:                
-                progs[programName] = programPath
+            if not p.get("programExec", None):
+                p["programExec"] = p["programName"]
+
+            p["programPath"] = self.programInstalled(
+                p.get("programName", None), 
+                p.get("programExec", None))
+
+            if p.get("programPath", None):
+                new_progs[p.get("programName", "")] = p
                 self.logger.debug("Program available: {}".format(program))
             else:
                 self.logger.debug("Program not available: {}".format(program))
                 
-        return progs
+        return new_progs
 
     def programInstalled(self, programName, programExec):
 
