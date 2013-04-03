@@ -33,7 +33,27 @@ def createFile(pathToFile, filedata):
         createDirectory(dirname)
 
     fileHandler = open(os.path.normpath(pathToFile), "w+")
-    fileHandler.write(filedata)
+    if filedata:
+        fileHandler.write(filedata)
+    fileHandler.close()
+
+    return os.path.normpath(pathToFile)
+
+def createOrAppendToFile(pathToFile, filedata):
+    '''
+    @summary: Creates a file with the given data at the directory
+    @param pathToFile: path to directory
+    @param filename: The name of the File
+    @result: Absolute path to the File
+    '''
+    path = os.path.normpath(pathToFile)
+
+    if not os.path.exists(path):
+        createFile(pathToFile, None)
+
+    fileHandler = open(os.path.normpath(pathToFile), "a")
+    if filedata:
+        fileHandler.write(filedata)
     fileHandler.close()
 
     return os.path.normpath(pathToFile)

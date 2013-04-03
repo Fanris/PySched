@@ -112,7 +112,7 @@ class PySchedServer(object):
         return checkItem
 
 
-    # PySchedServer Functions
+    # Scheduling Functions
     # ========================
     def processJob(self, jobId):
         '''
@@ -130,36 +130,23 @@ class PySchedServer(object):
             elif job.stateId == JobState.lookup("RUNNING"):
                 pass
 
-    def fileReceived(self, pathToFile):
+    def schedule(self, jobId=None):
         '''
-        @summary: Is called when a file was received successful
-        @param pathToFile: path to the file
+        @summary: Starts scheduling.
         @result:
         '''
-        # The filename equals the job Id
-        jobId = os.path.splitext(os.path.split(pathToFile)[1])[0]
-        dest = os.path.join(self.workingDir, jobId, jobId)
-        FileUtils.copyFile(pathToFile, dest)
-        self.logger.info("Unpacking file...")
-        Archive.unpack(dest)
-        FileUtils.deleteFile(dest)
-        FileUtils.deleteFile(pathToFile)
+        if not jobId:
+            jobs = self.getFromDatabase(Job)
+            for job in jobs:
+                if job.stateId < JobState.lookup("RUNNING"):
+                    self.scheduler.scheduleJob(self.workstations.values(), job)
+        else:
+            job = self.getFromDatabase(Job, jobId=jobId, first=True)
+            if job:
+                self.scheduler.scheduleJob(self.workstations.values(), job)
 
-        reactor.callInThread(self.processJob, jobId)
-
-    def fileTransferFailed(self, pathToFile):
-        '''
-        @summary: Is called when a file transfer has failed due to invalid md5 hashsum
-        @param pathToFile: path to the file
-        @result:
-        '''
-        self.logger.error("Failed to receive {}".format(pathToFile))
-        jobId = os.path.splitext(os.path.split(pathToFile)[1])[0]
-        job = self.getFromDatabase(Job, jobId=jobId, first=True)
-
-        if job and job.stateId < JobState.lookup("RUNNING"):
-            self.deleteFromDatabase(job)
-
+    # Job Functions
+    # ========================
     def addJob(self, jobInformations):
         '''
         @summary: Adds a Job to the database
@@ -190,6 +177,68 @@ class PySchedServer(object):
             return job
 
         return False
+
+    def updateJobState(self, jobInformations):
+        '''
+        @summary: updates the jobInformations
+        @param jobInformations: A dictionary containing the job informations.
+        @result:
+        '''
+        job = self.getFromDatabase(Job, jobId=jobInformations.get("jobId", ""), first=True)
+
+        if job:
+            self.logger.info("Updating job state of job {}".format(job.jobId))
+            for key in jobInformations:
+                if key in job.__dict__:
+                    value = jobInformations.get(key, None)
+                    if value != None and value != "":
+                        setattr(job, key, value)
+                else:
+                    job.otherAttr[key] = jobInformations[key]
+
+        self.updateDatabaseEntry(job)
+        if job.stateId >= JobState.lookup("DONE"):
+            self.cleanupJobDir(job.jobId)
+            self.getResultsFromWorkstation(job.jobId)            
+            reactor.callInThread(self.schedule)        
+
+    def killJob(self, jobId, userId):
+        '''
+        @summary: Kills a job.
+        @param jobId: Id of the job to kill.
+        @param userId: userId of the user who requested this.
+        @result: Returns true if the kill signal is sent to
+        the workstation
+        '''
+        job = self.getFromDatabase(Job, jobId=jobId, first=True)
+        user = self.getFromDatabase(User, userId=userId, first=True)
+
+        if not (job or user) or not (job.userId == user.id):
+            return False
+
+        networkId = self.lookupWorkstationName(job.workstation)
+        self.logger.info("Aborting job {} on workstation {} ({})".format(job.jobId, job.workstation, networkId))
+        self.networkManager.sendMessage(networkId, CommandBuilder.buildKillJobString(job.jobId))        
+
+    def deleteJob(self, userId, jobId):
+        '''
+        @summary: Deletes a the given job of the given user.
+        @param userId: the owner of the job.
+        @param jobId: the jobId
+        @result:
+        '''
+        job = self.getFromDatabase(Job, jobId=jobId, first=True)
+        user = self.getFromDatabase(User, userId=userId, first=True)
+
+        if not (job or user) or not (job.userId == user.id):
+            return False
+
+        self.logger.info("Deleting job {} from database.".format(jobId))
+        self.cleanupJobDir(jobId)
+        job.stateId = JobState.lookup("DELETED")
+        self.updateDatabaseEntry(job)
+
+        return True
 
     def transferJob(self, job):
         '''
@@ -225,146 +274,6 @@ class PySchedServer(object):
         jobDir = os.path.join(self.workingDir, str(jobId))
         FileUtils.clearDirectory(jobDir)
 
-    def checkJobs(self, workstation=None):
-        '''
-        @summary: Checks all Jobs which are not in an end state and
-        updates them if necessary.
-        @result:
-        '''
-        jobs = self.getFromDatabase(Job)
-
-        for job in jobs:
-            if job.stateId == JobState.lookup("RUNNING"):
-                if not workstation or workstation == job.workstation:
-                    networkId = self.lookupWorkstationName(job.workstation)
-                    self.logger.debug("Sending getJobState command for Job {} to workstation {}".format(job.jobId, job.workstation))
-                    self.networkManager.sendMessage(networkId, CommandBuilder.buildGetJobStateString(job.jobId))
-            elif job.stateId >= JobState.lookup("DONE") and job.stateId < JobState.lookup("ARCHIVED"):
-                if not os.path.exists(os.path.join(self.workingDir, str(job.jobId), 'results')):
-                    self.getResultsFromWorkstation(job.jobId)
-
-    def checkForPrograms(self, workstation, programs=None):
-        '''
-        @summary: Checks the workstation for the programs defined in the database.
-        @param workstation: the workstation which should be checked
-        @param programs: a List of program names to check for.
-        @param waitForAnswer: Wait 5 second for an answer
-        @result:
-        '''
-        p = []
-
-        if not programs:
-            programs = self.getFromDatabase(Program)
-            for program in programs:
-                p.append(program.programName)
-        else:
-            p = programs
-
-        networkId = self.lookupWorkstationName(workstation)
-
-        self.networkManager.sendMessage(networkId, CommandBuilder.buildCheckForProgramsString(p))     
-
-    def killJob(self, jobId, userId):
-        '''
-        @summary: Kills a job.
-        @param jobId: Id of the job to kill.
-        @param userId: userId of the user who requested this.
-        @result: Returns true if the kill signal is sent to
-        the workstation
-        '''
-        job = self.getFromDatabase(Job, jobId=jobId, first=True)
-        user = self.getFromDatabase(User, userId=userId, first=True)
-
-        if not (job or user) or not (job.userId == user.id):
-            return False
-
-        networkId = self.lookupWorkstationName(job.workstation)
-        self.logger.info("Aborting job {} on workstation {} ({})".format(job.jobId, job.workstation, networkId))
-        self.networkManager.sendMessage(networkId, CommandBuilder.buildKillJobString(job.jobId))
-
-    def deleteJob(self, userId, jobId):
-        '''
-        @summary: Deletes a the given job of the given user.
-        @param userId: the owner of the job.
-        @param jobId: the jobId
-        @result:
-        '''
-        job = self.getFromDatabase(Job, jobId=jobId, first=True)
-        user = self.getFromDatabase(User, userId=userId, first=True)
-
-        if not (job or user) or not (job.userId == user.id):
-            return False
-
-        self.logger.info("Deleting job {} from database.".format(jobId))
-        self.cleanupJobDir(jobId)
-        job.stateId = JobState.lookup("DELETED")
-        self.updateDatabaseEntry(job)
-
-        return True
-
-    def returnResultsToClient(self, userId, jobId):
-        '''
-        @summary: Returns the results of the given job
-        @param userId: the userId of the job owner.
-        @param jobId: the id of the job.
-        @result:
-        '''
-        self.logger.info("Retrieving results of job {}".format(jobId))
-        job = self.getFromDatabase(Job, jobId=jobId, first=True)
-        user = self.getFromDatabase(User, userId=userId, first=True)
-
-        if not job or not user or not job.userId == user.id:
-            self.logger.info("Could not retrieve results for job {}".format(jobId))
-            return False
-
-        jobDir = os.path.join(self.workingDir, str(job.jobId))
-        archivePath = os.path.join(self.workingDir, "temp", "{}_results.tar".format(job.jobName))
-        FileUtils.createDirectory(os.path.split(archivePath)[0])
-        archive = Archive.packFolder(archivePath, jobDir)
-        self.logger.info("Results for job {} prepared.".format(jobId))
-        return archive
-
-    def getResultsFromWorkstation(self, jobId):
-        '''
-        @summary: Is called to return the results of the given job from the workstation
-        @param jobId: the id of the job
-        @result:
-        '''
-        job = self.getFromDatabase(Job, jobId=jobId, first=True)
-
-        if job and job.stateId >= JobState.lookup("DONE"):
-            self.logger.info("Requesting results for job {} from {}".format(jobId, job.workstation))
-            networkId = self.lookupWorkstationName(job.workstation)
-            self.networkManager.sendMessage(networkId, CommandBuilder.buildGetResultsString(job.jobId))
-            return True
-        else:
-            return False
-
-    def getJobList(self, userId, showAll, showAllUser):
-        '''
-        @summary: Returns a list with all jobs of the user
-        @param userId: the user id
-        @param showAll: show all Jobs including archived
-        @result:
-        '''
-        user = self.getFromDatabase(User, userId=userId, first=True)
-        if not user:
-            return False
-
-        jobs = []
-        if user.admin and showAllUser:
-            jobs = self.getFromDatabase(Job)
-        else:
-            jobs = self.getFromDatabase(Job, userId=user.id)
-
-        returnList = []
-        for i in range(0, len(jobs)):
-            if (showAll and jobs[i].stateId == JobState.lookup("ARCHIVED")) or \
-               (jobs[i].stateId < JobState.lookup("ARCHIVED")):
-                returnList.append(jobs[i])
-
-        return returnList
-
     def archiveJob(self, jobId, userId):
         '''
         @summary: Archives a job
@@ -382,6 +291,17 @@ class PySchedServer(object):
         self.updateDatabaseEntry(job)
         return True
 
+    def addToJobLog(self, jobId, message):
+        job = self.getFromDatabase(Job, jobId=jobId, first=True)
+
+        if job:
+            logPath = os.path.join(self.workingDir, jobId, "logs")
+            m = "[{}] {}".format(datetime2Str(datetime.datetime.now()),
+                message)
+            FileUtils.createOrAppendToFile(logPath, m)
+
+    # User Functions
+    # ========================
     def createUser(self, userInformation):
         '''
         @summary: Creates a new user with the given informations.
@@ -411,45 +331,66 @@ class PySchedServer(object):
 
         return True
 
-    def updateJobState(self, jobInformations):
+    def getUser(self, userId):
         '''
-        @summary: updates the jobInformations
-        @param jobInformations: A dictionary containing the job informations.
+        @summary: Returns the user object for the given userId
+        @param userId: The userId to check.
+        @result: 
+        '''
+        if not userId:
+            return None
+
+        return self.getFromDatabase(User, first=True, userId=userId)
+
+    def getJobList(self, userId, showAll, showAllUser):
+        '''
+        @summary: Returns a list with all jobs of the user
+        @param userId: the user id
+        @param showAll: show all Jobs including archived
         @result:
         '''
-        job = self.getFromDatabase(Job, jobId=jobInformations.get("jobId", ""), first=True)
+        user = self.getFromDatabase(User, userId=userId, first=True)
+        if not user:
+            return False
 
-        if job:
-            self.logger.info("Updating job state of job {}".format(job.jobId))
-            for key in jobInformations:
-                if key in job.__dict__:
-                    value = jobInformations.get(key, None)
-                    if value != None and value != "":
-                        setattr(job, key, value)
-                else:
-                    job.otherAttr[key] = jobInformations[key]
-
-        self.updateDatabaseEntry(job)
-        if job.stateId >= JobState.lookup("DONE"):
-            self.cleanupJobDir(job.jobId)
-            self.getResultsFromWorkstation(job.jobId)            
-            reactor.callInThread(self.schedule)
-
-    def schedule(self, jobId=None):
-        '''
-        @summary: Starts scheduling.
-        @result:
-        '''
-        if not jobId:
+        jobs = []
+        if user.admin and showAllUser:
             jobs = self.getFromDatabase(Job)
-            for job in jobs:
-                if job.stateId < JobState.lookup("RUNNING"):
-                    self.scheduler.scheduleJob(self.workstations.values(), job)
         else:
-            job = self.getFromDatabase(Job, jobId=jobId, first=True)
-            if job:
-                self.scheduler.scheduleJob(self.workstations.values(), job)
+            jobs = self.getFromDatabase(Job, userId=user.id)
 
+        returnList = []
+        for i in range(0, len(jobs)):
+            if (showAll and jobs[i].stateId == JobState.lookup("ARCHIVED")) or \
+               (jobs[i].stateId < JobState.lookup("ARCHIVED")):
+                returnList.append(jobs[i])
+
+        return returnList
+
+    def returnResultsToClient(self, userId, jobId):
+        '''
+        @summary: Returns the results of the given job
+        @param userId: the userId of the job owner.
+        @param jobId: the id of the job.
+        @result:
+        '''
+        self.logger.info("Retrieving results of job {}".format(jobId))
+        job = self.getFromDatabase(Job, jobId=jobId, first=True)
+        user = self.getFromDatabase(User, userId=userId, first=True)
+
+        if not job or not user or not job.userId == user.id:
+            self.logger.info("Could not retrieve results for job {}".format(jobId))
+            return False
+
+        jobDir = os.path.join(self.workingDir, str(job.jobId))
+        archivePath = os.path.join(self.workingDir, "temp", "{}_results.tar".format(job.jobName))
+        FileUtils.createDirectory(os.path.split(archivePath)[0])
+        archive = Archive.packFolder(archivePath, jobDir)
+        self.logger.info("Results for job {} prepared.".format(jobId))
+        return archive        
+
+    # Workstation Functions
+    # ========================
     def addWorkstation(self, networkId, workstationInfo):
         '''
         @summary: Adds a new workstation to the list.
@@ -468,16 +409,6 @@ class PySchedServer(object):
 
         reactor.callInThread(self.schedule)
 
-    def removeWorkstation(self, networkId):
-        '''
-        @summary: Removes the workstation with the networkId from the list
-        @param networkId: the networkId to remove
-        @result:
-        '''
-        if networkId in self.workstations:
-            self.logger.info("Connection to workstation {} lost.".format(self.lookupNetworkId(networkId).get("workstationName")))
-            del self.workstations[networkId]
-
     def updateWorkstation(self, networkId, workstationInfo):
         '''
         @summary: Updates the workstation informations.
@@ -489,6 +420,16 @@ class PySchedServer(object):
         else:
             self.workstations[networkId].update(workstationInfo)
 
+    def removeWorkstation(self, networkId):
+        '''
+        @summary: Removes the workstation with the networkId from the list
+        @param networkId: the networkId to remove
+        @result:
+        '''
+        if networkId in self.workstations:
+            self.logger.info("Connection to workstation {} lost.".format(self.lookupNetworkId(networkId).get("workstationName")))
+            del self.workstations[networkId]            
+
     def getWorkstations(self):
         '''
         @summary: Returns all currently registered workstations
@@ -496,16 +437,23 @@ class PySchedServer(object):
         '''
         return self.workstations.values()
 
-    def getUser(self, userId):
+    def lookupWorkstationName(self, workstationName):
         '''
-        @summary: Returns the user object for the given userId
-        @param userId: The userId to check.
-        @result: 
+        @summary: Takes a machine name and search for a registered network client
+        @param workstationName: the name to look up
+        @result:
         '''
-        if not userId:
-            return None
+        for k, v in self.workstations.iteritems():
+            if v.get("workstationName", None) == workstationName:
+                return k
 
-        return self.getFromDatabase(User, first=True, userId=userId)
+    def lookupNetworkId(self, networkId):
+        '''
+        @summary: Takes a networkId and search for a registered workstation
+        @param workstationName: the networkId to look up
+        @result:
+        '''
+        return self.workstations.get(networkId, None)        
 
     def getJobCountOnWorkstation(self, workstation):
         '''
@@ -525,26 +473,95 @@ class PySchedServer(object):
 
         return runningJobs
 
+    def checkForPrograms(self, workstation, programs=None):
+        '''
+        @summary: Checks the workstation for the programs defined in the database.
+        @param workstation: the workstation which should be checked
+        @param programs: a List of program names to check for.
+        @param waitForAnswer: Wait 5 second for an answer
+        @result:
+        '''
+        p = []
+
+        if not programs:
+            programs = self.getFromDatabase(Program)
+            for program in programs:
+                p.append(program.programName)
+        else:
+            p = programs
+
+        networkId = self.lookupWorkstationName(workstation)
+
+        self.networkManager.sendMessage(networkId, CommandBuilder.buildCheckForProgramsString(p))    
+
+    def checkJobs(self, workstation=None):
+        '''
+        @summary: Checks all Jobs which are not in an end state and
+        updates them if necessary.
+        @result:
+        '''
+        jobs = self.getFromDatabase(Job)
+
+        for job in jobs:
+            if job.stateId == JobState.lookup("RUNNING"):
+                if not workstation or workstation == job.workstation:
+                    networkId = self.lookupWorkstationName(job.workstation)
+                    self.logger.debug("Sending getJobState command for Job {} to workstation {}".format(job.jobId, job.workstation))
+                    self.networkManager.sendMessage(networkId, CommandBuilder.buildGetJobStateString(job.jobId))
+            elif job.stateId >= JobState.lookup("DONE") and job.stateId < JobState.lookup("ARCHIVED"):
+                if not os.path.exists(os.path.join(self.workingDir, str(job.jobId), 'results')):
+                    self.getResultsFromWorkstation(job.jobId)
+    
+    def getResultsFromWorkstation(self, jobId):
+        '''
+        @summary: Is called to return the results of the given job from the workstation
+        @param jobId: the id of the job
+        @result:
+        '''
+        job = self.getFromDatabase(Job, jobId=jobId, first=True)
+
+        if job and job.stateId >= JobState.lookup("DONE"):
+            self.logger.info("Requesting results for job {} from {}".format(jobId, job.workstation))
+            networkId = self.lookupWorkstationName(job.workstation)
+            self.networkManager.sendMessage(networkId, CommandBuilder.buildGetResultsString(job.jobId))
+            return True
+        else:
+            return False
+
+    # FileTransfer Functions
+    # ========================
+    def fileReceived(self, pathToFile):
+        '''
+        @summary: Is called when a file was received successful
+        @param pathToFile: path to the file
+        @result:
+        '''
+        # The filename equals the job Id
+        jobId = os.path.splitext(os.path.split(pathToFile)[1])[0]
+        dest = os.path.join(self.workingDir, jobId, jobId)
+        FileUtils.copyFile(pathToFile, dest)
+        self.logger.info("Unpacking file...")
+        Archive.unpack(dest)
+        FileUtils.deleteFile(dest)
+        FileUtils.deleteFile(pathToFile)
+
+        reactor.callInThread(self.processJob, jobId)
+
+    def fileTransferFailed(self, pathToFile):
+        '''
+        @summary: Is called when a file transfer has failed due to invalid md5 hashsum
+        @param pathToFile: path to the file
+        @result:
+        '''
+        self.logger.error("Failed to receive {}".format(pathToFile))
+        jobId = os.path.splitext(os.path.split(pathToFile)[1])[0]
+        job = self.getFromDatabase(Job, jobId=jobId, first=True)
+
+        if job and job.stateId < JobState.lookup("RUNNING"):
+            self.deleteFromDatabase(job)        
+
     # Internal Functions
     # ========================
-    def lookupWorkstationName(self, workstationName):
-        '''
-        @summary: Takes a machine name and search for a registered network client
-        @param workstationName: the name to look up
-        @result:
-        '''
-        for k, v in self.workstations.iteritems():
-            if v.get("workstationName", None) == workstationName:
-                return k
-
-    def lookupNetworkId(self, networkId):
-        '''
-        @summary: Takes a networkId and search for a registered workstation
-        @param workstationName: the networkId to look up
-        @result:
-        '''
-        return self.workstations.get(networkId, None)
-
     def shutdown(self):
         '''
         @summary: Shut the server down.
