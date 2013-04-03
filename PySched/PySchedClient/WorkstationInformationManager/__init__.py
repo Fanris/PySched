@@ -117,17 +117,21 @@ class WIM(WIMInterface):
         @param programName: The program name
         @result: 
         '''
-        return self.programList[programName].get("programPath", None)            
+        return self.programList.get(programName, None)           
 
     def programInstalled(self, programExec):
+        self.logger.debug("Search for executable for {}".format(programExec))
+
         fpath, fname = os.path.split(programExec)
         if fpath:
+            self.logger.debug("Checking {}".format(fpath))
             if self.is_exe(programExec):
                 return os.path.join(fpath, fname)
         else:
             for path in os.environ["PATH"].split(os.pathsep):
                 path = path.strip('"')
                 exe_file = os.path.join(path, programExec)
+                self.logger.debug("Checking {}".format(exe_file))
                 if self.is_exe(exe_file):
                     return exe_file
 
