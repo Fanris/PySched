@@ -33,24 +33,28 @@ class SchedulerInterface(object):
         '''
         self.logger.info("Preparing Job {}...".format(job.jobId))
         if not self.prepareJob(job):
+            job.log("Failed to prepare Job.")
             self.logger.error("Failed to prepare Job {jobId}".format(jobId=job.jobId))
             job.stateId = JobState.lookup("SCHEDULER_ERROR")
             return False
 
         self.logger.info("Check job permissions for job {}...".format(job.jobId))
         if not self.checkJobPermission(job):
+            job.log("Job has not the demanded permissions")
             self.logger.error("Can't run job {jobId}. Job permission denied.".format(jobId=job.jobId))
             job.stateId = JobState.lookup("PERMISSION_DENIED")
             return False
 
         self.logger.info("Check user permissions for job {}...".format(job.jobId))
         if not self.checkUserPermission(job):
+            job.log("User has not the demanded permission")
             self.logger.error("Can't run job {jobId}. User permission denied".format(jobId=job.jobId))
             job.stateId = JobState.lookup("PERMISSION_DENIED")
             return False
 
         self.logger.info("Compile Job {}...".format(job.jobId))
         if not self.compileJob(job):
+            job.log("Failed to compile the Job.")
             self.logger.error("Failed to compile job {jobId}".format(jobId=job.jobId))
             job.stateId = JobState.lookup("COMPILER_ERROR")
             return False
@@ -58,7 +62,7 @@ class SchedulerInterface(object):
         self.logger.info("Selecting workstation for job {}...".format(job.jobId))
         job.workstation = self.selectWorkstation(workstations, job)
 
-        if job.stateId == JobState.lookup("COMPILED"):
+        if job.stateId == JobState.lookup("COMPILED"):            
             if self.transferJob(job):
                 job.stateId = JobState.lookup("DISPATCHED")
             else:

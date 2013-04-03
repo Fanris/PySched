@@ -64,10 +64,12 @@ class PyScheduler(SchedulerInterface):
             freeCpus = 0
             # First check the installed OS
             if not None and not workstation.get("os", None) == job.reqOS:
+                job.log("{} not appropriate: Wrong OS".format(
+                    workstation.get("workstationName"), None))
                 continue
 
             for load in workstation.get("cpuLoad", []):
-            # Count free cpus. Threshold of a free cpu is 20%
+            # Count free cpus. Threshold of a free cpu is 20% CPU-Load
                 if load < 20:
                     freeCpus += 1
 
@@ -75,11 +77,15 @@ class PyScheduler(SchedulerInterface):
             # when no cpu is free, this workstation should not
             # be considered any further
             if freeCpus == 0:
+                job.log("{} not appropriate: No free resources".
+                    format(workstation.get("workstationName"), None))
                 continue
 
             # when the workstation has not the required amount of
             # memory, it should not be considered any further
             if job.minMemory > workstation.get("memory", 0) * 1024:
+                job.log("{} not appropriate: Not enough Memory".
+                    format(workstation.get("workstationName"), None))
                 continue
 
             # Check for programs
@@ -90,9 +96,7 @@ class PyScheduler(SchedulerInterface):
                 self.logger.debug("Check workstation for Program: {}.".format(program))
                 p = filter(
                     lambda x: x.get("programName", None) ==
-                        program.get("programName", None) and
-                        x.get("programVersion", None) ==
-                        program.get("programVersion", None),
+                        program.get("programName", None),
                         workstation.get("programs")
                     )
                 if p.count == 0:
@@ -100,9 +104,7 @@ class PyScheduler(SchedulerInterface):
                     self.pySchedServer.checkForPrograms([program.get("programName", None)], waitForAnswer=True)
                     p = filter(
                     lambda x: x.get("programName", None) ==
-                        program.get("programName", None) and
-                        x.get("programVersion", None) ==
-                        program.get("programVersion", None),
+                        program.get("programName", None),
                         workstation.get("programs")
                     )
                     if p.count == 0:
@@ -128,15 +130,14 @@ class PyScheduler(SchedulerInterface):
             self.logger.debug("Scores: {}".format(scores))
 
         if len(scores) == 0:
+            job.log("No appropriate Workstation found.")
             return None
 
-
-        if max(scores) > 0:
             selected = max(scores, key=scores.get)
             self.logger.debug("Selected workstation: {}".format(selected))
+            job.log("Workstation {} ({}) selected.".
+                format(selected, max(scores)))
             return selected
-        else:
-            return None
 
 
     def prepareForTransfer(self, job):

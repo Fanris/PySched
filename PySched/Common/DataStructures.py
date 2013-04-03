@@ -5,6 +5,9 @@ Created on 2012-12-04 13:34
 @author: Martin Predki
 '''
 
+import datetime
+from Common import datetime2Str
+
 class Job(object):
     '''
     @summary: Objects of this class represent a scheduler job
@@ -44,6 +47,10 @@ class Job(object):
         self.log = []
 
         self.otherAttr = {}
+
+    def addLog(self, message):
+        self.log.append("[{}]: {}".format(
+            datetime2Str(datetime.datetime.now()), message))
 
 class Program(object):
     '''

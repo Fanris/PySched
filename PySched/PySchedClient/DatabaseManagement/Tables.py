@@ -40,6 +40,7 @@ class SqliteJob(Tables.declBase):
     started = Column('started', DateTime)
     finished = Column('finished', DateTime)
     stateId = Column('stateId', Integer)
+    log = Column('log', String)
 
     def __init__(self, name, jobDescription, executeStr):
         '''
@@ -58,6 +59,7 @@ class SqliteJob(Tables.declBase):
         self.started = None
         self.finished = None
         self.stateId = 0
+        self.log = None
 
     def update(self, updatedObject):
         '''
@@ -73,6 +75,7 @@ class SqliteJob(Tables.declBase):
         self.started = updatedObject.started
         self.finished = updatedObject.finished
         self.stateId = updatedObject.stateId
+        self.log = updatedObject.log
 
     def convertToPySched(self):
         '''
@@ -89,6 +92,7 @@ class SqliteJob(Tables.declBase):
         job.started = datetime2Str(self.started)
         job.finished = datetime2Str(self.finished)
         job.stateId = self.stateId
+        job.log = self.log.split(';')
 
         return job
 
@@ -104,6 +108,11 @@ class SqliteJob(Tables.declBase):
             reqPrograms += progs + ";"
         reqPrograms = reqPrograms.rstrip(";")
 
+        log = ""
+        for l in obj.log:
+            log += l + ";"
+        log = log.rstrip(";")        
+
         job = SqliteJob(obj.jobName, obj.jobDescription, obj.executeStr)
         job.id = obj.jobId
         job.reqPrograms = reqPrograms
@@ -111,6 +120,7 @@ class SqliteJob(Tables.declBase):
         job.started = str2Datetime(obj.started)
         job.finished = str2Datetime(obj.finished)
         job.stateId = obj.stateId
+        job.log = log
 
         return job  
 
