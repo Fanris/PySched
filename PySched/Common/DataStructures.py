@@ -113,8 +113,15 @@ class JobState(object):
              9: "WORKSTATION_ERROR",
              10: "PERMISSION_DENIED",
              11: "ERROR",
-             99: "ARCHIVED",
-             100: "DELETED"}
+             90: "ARCHIVED",
+             95: "ARCHIVED (DONE)",
+             96: "ARCHIVED (ABORTED)",
+             97: "ARCHIVED (SCHEDULER_ERROR)",
+             98: "ARCHIVED (COMPILER_ERROR)",
+             99: "ARCHIVED (WORKSTATION_ERROR)",
+             100: "ARCHIVED (PERMISSION_DENIED)",
+             101: "ARCHIVED (ERROR)",
+             999: "DELETED"}
 
     @staticmethod
     def lookup(state):

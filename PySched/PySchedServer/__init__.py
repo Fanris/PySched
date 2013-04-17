@@ -140,10 +140,12 @@ class PySchedServer(object):
             for job in jobs:
                 if job.stateId < JobState.lookup("RUNNING"):
                     self.scheduler.scheduleJob(self.workstations.values(), job)
+                    self.addToJobLog(job.jobId, "Job scheduled.")
         else:
             job = self.getFromDatabase(Job, jobId=jobId, first=True)
             if job:
                 self.scheduler.scheduleJob(self.workstations.values(), job)
+                self.addToJobLog(job.jobId, "Job scheduled.")
 
     # Job Functions
     # ========================
@@ -174,6 +176,7 @@ class PySchedServer(object):
         if job:
             jobDir = FileUtils.createDirectory(os.path.join(self.workingDir, str(job.jobId)))
             FileUtils.createDirectory(os.path.join(jobDir, "logs"))
+            self.addToJobLog(job.jobId, "Job added.")
             return job
 
         return False
@@ -199,7 +202,8 @@ class PySchedServer(object):
         self.updateDatabaseEntry(job)
         if job.stateId >= JobState.lookup("DONE"):
             self.cleanupJobDir(job.jobId)
-            self.getResultsFromWorkstation(job.jobId)            
+            self.getResultsFromWorkstation(job.jobId)    
+            self.addToJobLog(job.jobId, "Job Ended.")        
             reactor.callInThread(self.schedule)        
 
     def killJob(self, jobId, userId):
@@ -218,7 +222,8 @@ class PySchedServer(object):
 
         networkId = self.lookupWorkstationName(job.workstation)
         self.logger.info("Aborting job {} on workstation {} ({})".format(job.jobId, job.workstation, networkId))
-        self.networkManager.sendMessage(networkId, CommandBuilder.buildKillJobString(job.jobId))        
+        self.networkManager.sendMessage(networkId, CommandBuilder.buildKillJobString(job.jobId))    
+        self.addToJobLog(job.jobId, "Job aborted by user.")    
 
     def deleteJob(self, userId, jobId):
         '''
@@ -261,6 +266,7 @@ class PySchedServer(object):
             return False
 
         job.stateId = JobState.lookup("DISPATCHED")
+        self.addToJobLog(job.jobId, "Job sent to Workstation {}".format(job.workstation))
         self.updateDatabaseEntry(job)
 
         return True
@@ -274,21 +280,18 @@ class PySchedServer(object):
         jobDir = os.path.join(self.workingDir, str(jobId))
         FileUtils.clearDirectory(jobDir)
 
-    def archiveJob(self, jobId, userId):
+    def archiveJob(self, jobId):
         '''
         @summary: Archives a job
         @param jobId: the job id
-        @param userId: the userId of the user who requested this
         @result:
         '''
         job = self.getFromDatabase(Job, jobId=jobId, first=True)
-        user = self.getFromDatabase(User, userId=userId, first=True)
 
-        if not job.userId == user.id:
-            return False
-
-        job.archived = True
-        self.updateDatabaseEntry(job)
+        job.stateId += 90
+        self.updateDatabaseEntry(job.jobId)
+        self.cleanupJobDir(job.jobId)
+        self.addToJobLog(job.jobId, "Job Archived.")
         return True
 
     def addToJobLog(self, jobId, message):
@@ -366,7 +369,7 @@ class PySchedServer(object):
 
         returnList = []
         for i in range(0, len(jobs)):
-            if (showAll and jobs[i].stateId == JobState.lookup("ARCHIVED")) or \
+            if (showAll and jobs[i].stateId >= JobState.lookup("ARCHIVED")) or \
                (jobs[i].stateId < JobState.lookup("ARCHIVED")):
                 returnList.append(jobs[i])
 

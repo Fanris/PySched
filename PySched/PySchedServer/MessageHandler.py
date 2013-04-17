@@ -176,6 +176,7 @@ class MessageHandler(MessageHandlerInterface):
             return False
 
         FileUtils.deleteFile(resultsFile)
+        self.pySchedServer.archiveJob(jobId)
         return True
 
     def createUser(self, networkId, userInfo):
