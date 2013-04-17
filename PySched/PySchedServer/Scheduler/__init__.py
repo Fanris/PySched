@@ -45,10 +45,11 @@ class PyScheduler(SchedulerInterface):
         self.waiting = False
         if self.jobQueue.count > 0:
             self.waiting = True
-            job = self.jobQueue.popleft()
-            super(PyScheduler, self).scheduleJob(
-                self.pySchedServer.getWorkstations(),
-                job)
+            if self.jobQueue.count > 0:
+                job = self.jobQueue.popleft()
+                super(PyScheduler, self).scheduleJob(
+                    self.pySchedServer.getWorkstations(),
+                    job)
         else:
             self.logger.debug("All jobs scheduled. Stopping scheduling Loop.")
             try: 
