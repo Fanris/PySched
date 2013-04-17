@@ -51,6 +51,9 @@ class SchedulerInterface(object):
             self.logger.error("Can't run job {jobId}. User permission denied".format(jobId=job.jobId))
             job.stateId = JobState.lookup("PERMISSION_DENIED")
             return False
+            
+        self.logger.info("Selecting workstation for job {}...".format(job.jobId))
+        job.workstation = self.selectWorkstation(workstations, job)            
 
         self.logger.info("Compile Job {}...".format(job.jobId))
         if not self.compileJob(job):
@@ -58,9 +61,6 @@ class SchedulerInterface(object):
             self.logger.error("Failed to compile job {jobId}".format(jobId=job.jobId))
             job.stateId = JobState.lookup("COMPILER_ERROR")
             return False
-
-        self.logger.info("Selecting workstation for job {}...".format(job.jobId))
-        job.workstation = self.selectWorkstation(workstations, job)
 
         if job.stateId == JobState.lookup("COMPILED"):            
             if self.transferJob(job):
