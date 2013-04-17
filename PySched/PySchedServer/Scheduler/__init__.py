@@ -45,7 +45,7 @@ class PyScheduler(SchedulerInterface):
         if self.jobQueue.count > 0:
             self.waiting = True
             job = self.jobQueue.popleft()
-            self.scheduleJob(self.pySchedServer.getWorkstations, job)            
+            self.scheduleJob(self.pySchedServer.getWorkstations(), job)            
 
     def scheduleJob(self, workstations, job):
         '''
