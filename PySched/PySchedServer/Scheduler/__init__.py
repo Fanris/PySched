@@ -46,7 +46,9 @@ class PyScheduler(SchedulerInterface):
         if self.jobQueue.count > 0:
             self.waiting = True
             job = self.jobQueue.popleft()
-            self.scheduleJob(self.pySchedServer.getWorkstations(), job)
+            super(PyScheduler, self).scheduleJob(
+                self.pySchedServer.getWorkstations(),
+                job)
         else:
             self.logger.debug("All jobs scheduled. Stopping scheduling Loop.")
             try: 
@@ -77,9 +79,7 @@ class PyScheduler(SchedulerInterface):
                 except:
                     pass
 
-                return True
-
-        super(PyScheduler, self).scheduleJob(workstations, job)
+                return True        
 
 
     def checkJobPermission(self, job):
