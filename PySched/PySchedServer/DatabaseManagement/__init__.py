@@ -51,7 +51,7 @@ class SqliteManager(DatabaseInterface):
             sqliteObject = SqliteProgram.convertFromPySched(obj)
 
         if not sqliteObject:
-            self.logger.error("Could not convert to SqliteObject".format())
+            self.logger.error("Could not convert to SqliteObject")
             return
 
         s = self.sessionClass()
@@ -76,6 +76,11 @@ class SqliteManager(DatabaseInterface):
         elif obj == Program:
             sqliteObject = SqliteProgram
 
+        if not sqliteObject:
+            self.logger.debug("Something went wrong during database adding.")
+            self.logger.debug("Selected sqliteObject: {}".format(sqliteObject))
+            return None            
+
         self.logger.debug("selected SqliteObject: {}".format(sqliteObject))
 
         s = self.sessionClass()
@@ -84,7 +89,7 @@ class SqliteManager(DatabaseInterface):
         query = s.query(sqliteObject)
 
         for item in query:
-            self.logger.debug("Converting SqliteObject to PySchedObject".format())
+            self.logger.debug("Converting SqliteObject to PySchedObject")
             returnList.append(item.convertToPySched())
 
         s.close()
@@ -106,6 +111,12 @@ class SqliteManager(DatabaseInterface):
         elif isinstance(obj, Compiler):
             sqliteClass = SqliteCompiler
             sqliteObject = SqliteCompiler.convertFromPySched(obj)
+
+        if not sqliteClass or not sqliteObject:
+            self.logger.debug("Something went wrong during database updating.")
+            self.logger.debug("Selected sqliteClass: {}".format(sqliteClass))
+            self.logger.debug("Selected sqliteObject: {}".format(sqliteObject))
+            return None
 
         s = self.sessionClass()
 
@@ -136,6 +147,12 @@ class SqliteManager(DatabaseInterface):
         elif isinstance(obj, Compiler):
             sqliteClass = SqliteCompiler
             sqliteObject = SqliteCompiler.convertFromPySched(obj)
+
+        if not sqliteClass or not sqliteObject:
+            self.logger.debug("Something went wrong during database deleting.")
+            self.logger.debug("Selected sqliteClass: {}".format(sqliteClass))
+            self.logger.debug("Selected sqliteObject: {}".format(sqliteObject))
+            return None            
 
         s = self.sessionClass()
 

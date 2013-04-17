@@ -41,11 +41,18 @@ class PyScheduler(SchedulerInterface):
         @summary: Schedules the next job of the queue.
         @result: 
         '''
+        self.logger.debug("Scheduling next Job...")
         self.waiting = False
         if self.jobQueue.count > 0:
             self.waiting = True
             job = self.jobQueue.popleft()
-            self.scheduleJob(self.pySchedServer.getWorkstations(), job)            
+            self.scheduleJob(self.pySchedServer.getWorkstations(), job)
+        else:
+            self.logger.debug("All jobs scheduled. Stopping scheduling Loop.")
+            try: 
+                self.schedulingLoop.stop()
+            except:
+                pass
 
     def scheduleJob(self, workstations, job):
         '''
@@ -62,9 +69,14 @@ class PyScheduler(SchedulerInterface):
         @result: 
         '''
         if not job in self.jobQueue:
+            self.logger.debug("Added Job to queue.")
             self.jobQueue.append(job)
             if not self.schedulingLoop.running:
-                self.schedulingLoop.start(30, now=True)
+                try: 
+                    self.schedulingLoop.start(30, now=True)
+                except:
+                    pass
+
                 return True
 
         super(PyScheduler, self).scheduleJob(workstations, job)
