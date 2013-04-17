@@ -225,20 +225,27 @@ class PySchedClient(object):
 
         self.createFileIndex(jobId)
 
-        if self.jobRunner.runJob(job):
-            # updating job state
-            # ==============================
-            job.stateId = JobState.lookup("RUNNING")
-            job.started = datetime2Str(datetime.datetime.now())
-        else:
+        if not self.jobRunner.runJob(job):
             job.stateId = JobState.lookup("WORKSTATION_ERROR")
             job.started = datetime2Str(datetime.datetime.now())
             job.finished = job.started
+            self.updateDatabaseEntry(job)
+            self.logger.info("Sending updated JobState of Job {}".format(job.jobId))
+            self.networkManager.sendMessage(self.serverId, CommandBuilder.buildJobInformationString(**job.__dict__))
 
+    def jobStarted(self, jobId):
+        '''
+        @summary: Is called when a job is started.
+        @param jobId: the started job
+        @result: 
+        '''
+        job = self.getFromDatabase(Job, jobId=jobId, first=True)
+        job.stateId = JobState.lookup("RUNNING")
+        job.started = datetime2Str(datetime.datetime.now())
         self.updateDatabaseEntry(job)
-
         self.logger.info("Sending updated JobState of Job {}".format(job.jobId))
         self.networkManager.sendMessage(self.serverId, CommandBuilder.buildJobInformationString(**job.__dict__))
+        self.sendWorkstationState()
 
     def jobEnded(self, jobId, done=False, aborted=False, error=False):
         '''
@@ -436,7 +443,7 @@ class PySchedClient(object):
         # create file handler and set level to debug
         logPath = os.path.join(self.workingDir, "log")
         fh = logging.FileHandler(logPath)
-        fh.setLevel(logging.WARNING)
+        fh.setLevel(logging.DEBUG)
 
         # add formatter to ch
         fh.setFormatter(formatter)

@@ -32,7 +32,7 @@ class JobProcessProtocol(protocol.ProcessProtocol):
         self.stdErr = open(stdErrPath, "w+")
 
     def connectionMade(self):
-        pass
+        self.jobRunner.jobStarted(self.jobId)
 
     def outReceived(self, data):
         self.stdOut.write(data)

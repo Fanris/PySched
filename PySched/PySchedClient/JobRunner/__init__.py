@@ -68,11 +68,6 @@ class JobRunner(JobRunnerInterface):
             except Exception, e:
                 self.logger.error(e)
 
-
-            # write a log file
-            # ==============================
-            self.logger.info("Job {} started.".format(job.jobId))
-
             return True
 
         except Exception, e:
@@ -89,6 +84,16 @@ class JobRunner(JobRunnerInterface):
 
         if process:
             process.kill()
+
+    def jobStarted(self, jobId):
+        '''
+        @summary: Is called when a job is started.
+        @param jobId: The started job
+        @result: 
+        '''
+        self.logger.info("Job {} started.".format(jobId))
+        self.pySchedClient.jobStarted(jobId)
+
 
     def jobCompleted(self, jobId):
         '''
