@@ -114,22 +114,6 @@ class PySchedServer(object):
 
     # Scheduling Functions
     # ========================
-    def processJob(self, jobId):
-        '''
-        @summary: This function is called when a file within a job Folder was received.
-        The functions check, whether the job needs to be scheduled (if the jobstate is 0) or
-        updated (if the jobstate is 4). If none of these applies the file is considered as results of the job.
-        @param jobId:
-        @result:
-        '''
-        job = self.getFromDatabase(Job, jobId=jobId, first=True)
-
-        if job:
-            if job.stateId == JobState.lookup("QUEUED"):
-                self.schedule(job.jobId)
-            elif job.stateId == JobState.lookup("RUNNING"):
-                pass
-
     def schedule(self, jobId=None):
         '''
         @summary: Starts scheduling.
@@ -138,6 +122,7 @@ class PySchedServer(object):
         if not jobId:
             jobs = self.getFromDatabase(Job)
             for job in jobs:
+
                 if job.stateId < JobState.lookup("RUNNING"):
                     self.scheduler.scheduleJob(self.workstations.values(), job)
                     self.addToJobLog(job.jobId, "Job scheduled.")
@@ -572,7 +557,7 @@ class PySchedServer(object):
         FileUtils.deleteFile(dest)
         FileUtils.deleteFile(pathToFile)
 
-        reactor.callInThread(self.processJob, jobId)
+        reactor.callInThread(self.schedule, jobId)
 
     def fileTransferFailed(self, pathToFile):
         '''

@@ -7,10 +7,12 @@ Created on 2012-12-05 11:59
 
 from PySched.Common.Interfaces.SchedulerInterface import SchedulerInterface
 from PySched.Common.DataStructures import JobState
-
 from Compiler import Compiler as CompilerClass
 
+from twisted.internet.task import LoopingCall
+
 from time import sleep
+from collections import deque
 
 import copy
 import logging
@@ -29,6 +31,44 @@ class PyScheduler(SchedulerInterface):
         super(PyScheduler, self).__init__(workingDir, pySchedServer)
         self.compiler = CompilerClass(self)
         self.logger = logging.getLogger("PySchedServer")
+
+        self.jobQueue = deque()
+        self.waiting = False
+        self.schedulingLoop = LoopingCall(self.scheduleNext)
+
+    def scheduleNext(self):
+        '''
+        @summary: Schedules the next job of the queue.
+        @result: 
+        '''
+        self.waiting = False
+        if self.jobQueue.count > 0:
+            self.waiting = True
+            job = self.jobQueue.popleft()
+            self.scheduleJob(self.pySchedServer.getWorkstations, job)            
+
+    def scheduleJob(self, workstations, job):
+        '''
+        @summary:   Overrides the standard scheduleJob implementenation
+                    to add scheduling queue. The Problem is: If too many
+                    Jobs are added at once, the scheduling algorithm is
+                    faster than the workstation information loop. Thus
+                    the known state of the workstation by the scheduler
+                    doesn't represent the actual state. Therefore some kind
+                    of Queue is needed to add a wait time between the job
+                    scheduling.
+        @param workstations: List of available Workstations
+        @param job: The job to schedule
+        @result: 
+        '''
+        if not job in self.jobQueue:
+            self.jobQueue.append(job)
+            if not self.schedulingLoop.running:
+                self.schedulingLoop.start(30, now=True)
+                return True
+
+        super(PyScheduler, self).scheduleJob(workstations, job)
+
 
     def checkJobPermission(self, job):
         return True
