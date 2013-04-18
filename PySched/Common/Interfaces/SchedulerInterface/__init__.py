@@ -94,7 +94,6 @@ class SchedulerInterface(object):
         @result: return true if the job was sent successful.
         '''
         if not job.workstation:
-            self.logger.warning("Failed to schedule job {}. No appropriate workstation found.".format(job.jobId))
             return False
 
         self.logger.info("Preparing job {}".format(job.jobId))
