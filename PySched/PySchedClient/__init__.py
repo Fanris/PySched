@@ -90,7 +90,7 @@ class PySchedClient(object):
         @summary: Sends the workstation state to the server.
         @result:
         '''
-        self.logger.info("Sending workstation state to server...")
+        self.logger.debug("Sending workstation state to server...")
         self.networkManager.sendMessage(self.serverId, CommandBuilder.buildWorkstationInfoString(**self.wim.getWorkstationInformations()))
 
     def startNetworkServices(self):
