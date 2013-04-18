@@ -75,7 +75,7 @@ class PySchedClient(object):
         @result:
         '''
         self.logger.info("Starting the workstation information loop...")
-        self.workstationStateLoop.start(30, now=True)
+        self.workstationStateLoop.start(10, now=True)
 
     def stopWorkstationStateLoop(self):
         '''

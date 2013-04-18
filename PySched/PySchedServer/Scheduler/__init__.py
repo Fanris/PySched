@@ -46,9 +46,10 @@ class PyScheduler(SchedulerInterface):
         try:
             self.waiting = True
             job = self.jobQueue.popleft()
-            super(PyScheduler, self).scheduleJob(
-                self.pySchedServer.getWorkstations(),
-                job)
+            if job.stateId <= JobState.lookup("WAITING_FOR_WORKSTATION"):
+                super(PyScheduler, self).scheduleJob(
+                    self.pySchedServer.getWorkstations(),
+                    job)
         except IndexError:
             self.logger.debug("All jobs scheduled. Stopping scheduling Loop.")
             try: 
@@ -75,7 +76,7 @@ class PyScheduler(SchedulerInterface):
             self.jobQueue.append(job)
             if not self.schedulingLoop.running:
                 try: 
-                    self.schedulingLoop.start(60, now=True)
+                    self.schedulingLoop.start(15, now=True)
                 except:
                     pass
 
