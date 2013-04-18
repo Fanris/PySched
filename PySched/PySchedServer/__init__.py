@@ -378,7 +378,7 @@ class PySchedServer(object):
             return False
 
         jobDir = os.path.join(self.workingDir, str(job.jobId))
-        archivePath = os.path.join(self.workingDir, "temp", "{}_results.tar".format(job.jobName))
+        archivePath = os.path.join(self.workingDir, "temp", "{}_{}_results.tar".format(job.jobId, job.jobName))
         FileUtils.createDirectory(os.path.split(archivePath)[0])
         archive = Archive.packFolder(archivePath, jobDir)
         self.logger.info("Results for job {} prepared.".format(jobId))
