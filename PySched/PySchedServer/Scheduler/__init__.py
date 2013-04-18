@@ -43,14 +43,13 @@ class PyScheduler(SchedulerInterface):
         '''
         self.logger.debug("Scheduling next Job...")
         self.waiting = False
-        if self.jobQueue.count > 0:
+        try:
             self.waiting = True
-            if self.jobQueue.count > 0:
-                job = self.jobQueue.popleft()
-                super(PyScheduler, self).scheduleJob(
-                    self.pySchedServer.getWorkstations(),
-                    job)
-        else:
+            job = self.jobQueue.popleft()
+            super(PyScheduler, self).scheduleJob(
+                self.pySchedServer.getWorkstations(),
+                job)
+        except IndexError:
             self.logger.debug("All jobs scheduled. Stopping scheduling Loop.")
             try: 
                 self.schedulingLoop.stop()
@@ -76,7 +75,7 @@ class PyScheduler(SchedulerInterface):
             self.jobQueue.append(job)
             if not self.schedulingLoop.running:
                 try: 
-                    self.schedulingLoop.start(30, now=True)
+                    self.schedulingLoop.start(60, now=True)
                 except:
                     pass
 
@@ -92,7 +91,6 @@ class PyScheduler(SchedulerInterface):
     def compileJob(self, job):
         if job.compilerStr == None or job.compilerStr == "":
             self.logger.info("No compiler needed.")
-            job.stateId = JobState.lookup("COMPILED")
             return True
 
         if not self.compiler.compileJob(job):

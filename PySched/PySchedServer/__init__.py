@@ -250,10 +250,7 @@ class PySchedServer(object):
             FileUtils.deleteFile(archive)
             return False
 
-        job.stateId = JobState.lookup("DISPATCHED")
         self.addToJobLog(job.jobId, "Job sent to Workstation {}".format(job.workstation))
-        self.updateDatabaseEntry(job)
-
         return True
 
     def cleanupJobDir(self, jobId):
@@ -392,7 +389,7 @@ class PySchedServer(object):
         user = self.getUser(userId)
         job = self.getJob(jobId)
 
-        if user.userId == job.userId or user.admin:
+        if user.id == job.userId or user.admin:
             logPath = os.path.join(self.workingDir, str(jobId), "logs", "joblog.log")            
             log = ""
             for bytes in FileUtils.readBytesFromFile(logPath):
@@ -556,8 +553,11 @@ class PySchedServer(object):
         Archive.unpack(dest)
         FileUtils.deleteFile(dest)
         FileUtils.deleteFile(pathToFile)
+        
+        job = self.getFromDatabase(Job, first=True, jobId=jobId)
 
-        reactor.callInThread(self.schedule, jobId)
+        if job.stateId < JobState.lookup("PREPARED"):
+            reactor.callInThread(self.schedule, jobId)
 
     def fileTransferFailed(self, pathToFile):
         '''

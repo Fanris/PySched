@@ -36,6 +36,7 @@ class SchedulerInterface(object):
             job.log("Failed to prepare Job.")
             self.logger.error("Failed to prepare Job {jobId}".format(jobId=job.jobId))
             job.stateId = JobState.lookup("SCHEDULER_ERROR")
+            self.pySchedServer.updateDatabaseEntry(job)
             return False
 
         self.logger.info("Check job permissions for job {}...".format(job.jobId))
@@ -43,6 +44,7 @@ class SchedulerInterface(object):
             job.log("Job has not the demanded permissions")
             self.logger.error("Can't run job {jobId}. Job permission denied.".format(jobId=job.jobId))
             job.stateId = JobState.lookup("PERMISSION_DENIED")
+            self.pySchedServer.updateDatabaseEntry(job)
             return False
 
         self.logger.info("Check user permissions for job {}...".format(job.jobId))
@@ -50,6 +52,7 @@ class SchedulerInterface(object):
             job.log("User has not the demanded permission")
             self.logger.error("Can't run job {jobId}. User permission denied".format(jobId=job.jobId))
             job.stateId = JobState.lookup("PERMISSION_DENIED")
+            self.pySchedServer.updateDatabaseEntry(job)
             return False
             
         self.logger.info("Selecting workstation for job {}...".format(job.jobId))
@@ -60,13 +63,16 @@ class SchedulerInterface(object):
             job.log("Failed to compile the Job.")
             self.logger.error("Failed to compile job {jobId}".format(jobId=job.jobId))
             job.stateId = JobState.lookup("COMPILER_ERROR")
+            self.pySchedServer.updateDatabaseEntry(job)
             return False
 
         if job.stateId == JobState.lookup("COMPILED"):            
             if self.transferJob(job):
                 job.stateId = JobState.lookup("DISPATCHED")
+                self.pySchedServer.updateDatabaseEntry(job)
             else:
                 job.stateId = JobState.lookup("SCHEDULER_ERROR")
+                self.pySchedServer.updateDatabaseEntry(job)
         else:
             self.logger.info("Waiting for compiler...")
 
@@ -102,6 +108,7 @@ class SchedulerInterface(object):
         @result: True if the job is prepared successful
         '''
         job.stateId = JobState.lookup("PREPARED")
+        self.pySchedServer.updateDatabaseEntry(job)        
         return True
 
     def checkJobPermission(self, job):
@@ -133,6 +140,7 @@ class SchedulerInterface(object):
         to be compiled.
         '''
         job.stateId = JobState.lookup("COMPILED")
+        self.pySchedServer.updateDatabaseEntry(job)
         return True
 
     def selectWorkstation(self, workstations, job):
