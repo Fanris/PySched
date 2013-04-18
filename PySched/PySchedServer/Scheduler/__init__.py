@@ -202,10 +202,7 @@ class PyScheduler(SchedulerInterface):
             scores[workstation.get("workstationName", None)] = score
             self.logger.debug("Scores: {}".format(scores))
 
-        if len(scores) == 0:
-            self.pySchedServer.addToJobLog(
-                job.jobId,
-                "No appropriate Workstation found.")
+        if len(scores) == 0:                    
             return None
 
         selected = max(scores, key=scores.get)

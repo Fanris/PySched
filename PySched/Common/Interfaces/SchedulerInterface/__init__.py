@@ -31,13 +31,14 @@ class SchedulerInterface(object):
         @result: Returns true if the job was scheduled successful. Else
         false and a String containing the function name that failed.
         '''
-        self.logger.info("Preparing Job {}...".format(job.jobId))
-        if not self.prepareJob(job):
-            job.log("Failed to prepare Job.")
-            self.logger.error("Failed to prepare Job {jobId}".format(jobId=job.jobId))
-            job.stateId = JobState.lookup("SCHEDULER_ERROR")
-            self.pySchedServer.updateDatabaseEntry(job)
-            return False
+        if job.stateId < JobState.lookup("PREPARED"):
+            self.logger.info("Preparing Job {}...".format(job.jobId))
+            if not self.prepareJob(job):
+                job.log("Failed to prepare Job.")
+                self.logger.error("Failed to prepare Job {jobId}".format(jobId=job.jobId))
+                job.stateId = JobState.lookup("SCHEDULER_ERROR")
+                self.pySchedServer.updateDatabaseEntry(job)
+                return False
 
         self.logger.info("Check job permissions for job {}...".format(job.jobId))
         if not self.checkJobPermission(job):
@@ -57,6 +58,16 @@ class SchedulerInterface(object):
             
         self.logger.info("Selecting workstation for job {}...".format(job.jobId))
         job.workstation = self.selectWorkstation(workstations, job)            
+
+        if not job.workstation:
+            self.logger.info("No appropriate Workstation for job {} found.".
+                format(job.jobId))
+            self.pySchedServer.addToJobLog(
+                job.jobId,
+                "No appropriate Workstation found.") 
+            job.stateId = JobState.lookup("WAITING_FOR_WORKSTATION") 
+            self.pySchedServer.updateDatabaseEntry(job)
+            return False
 
         self.logger.info("Compile Job {}...".format(job.jobId))
         if not self.compileJob(job):
