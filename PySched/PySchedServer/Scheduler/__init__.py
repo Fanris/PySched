@@ -185,6 +185,11 @@ class PyScheduler(SchedulerInterface):
                 continue
                 
             score = 0
+            # Dont use machines with many programs that aren't
+            # used by the job
+            notReqProgramCount = len(workstation.get("programs", [])) - len(job.reqPrograms)
+            score -= 500 * notReqProgramCount
+
             # If someone working on the machine the scheduler
             # should select another one first.
             if workstation.get("activeUsers", 0) > 0:
