@@ -270,11 +270,16 @@ class PySchedServer(object):
         '''
         job = self.getFromDatabase(Job, jobId=jobId, first=True)
 
-        job.stateId += 90
-        self.updateDatabaseEntry(job.jobId)
-        self.cleanupJobDir(job.jobId)
-        self.addToJobLog(job.jobId, "Job Archived.")
-        return True
+        if job:
+            job.stateId += 90
+            self.updateDatabaseEntry(job)
+            self.cleanupJobDir(job.jobId)
+            self.addToJobLog(job.jobId, "Job Archived.")
+            self.logger.info("Job {} Archived: {}".format(job.jobId, 
+                JobState.lookup(job.stateId)))
+            return True
+        else:
+            return False
 
     def addToJobLog(self, jobId, message):
         job = self.getFromDatabase(Job, jobId=jobId, first=True)

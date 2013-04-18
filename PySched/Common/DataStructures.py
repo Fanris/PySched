@@ -103,8 +103,8 @@ class JobState(object):
     '''
     table = {0: "QUEUED",
              1: "PREPARED",
-             2: "COMPILED",
-             3: "WAITING_FOR_WORKSTATION",
+             2: "WAITING_FOR_WORKSTATION",
+             3: "COMPILED",
              4: "DISPATCHED",
              5: "RUNNING",
              6: "DONE",
