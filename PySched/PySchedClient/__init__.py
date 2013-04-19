@@ -265,7 +265,7 @@ class PySchedClient(object):
                 job.stateId = JobState.lookup("ERROR")
 
         self.updateDatabaseEntry(job)
-        #self.cleanupJobDir(jobId)
+        self.cleanupJobDir(jobId)
         self.networkManager.sendMessage(self.serverId, CommandBuilder.buildJobInformationString(**job.__dict__))
 
     # Command Handler
@@ -300,6 +300,8 @@ class PySchedClient(object):
         if job.stateId >= JobState.lookup("DONE"):
             jobDir = os.path.join(self.workingDir, str(job.jobId))
             archivePath = os.path.join(self.workingDir, "temp", "{}.tar".format(job.jobId))
+            self.cleanupJobDir(jobId)
+            
             FileUtils.createDirectory(os.path.split(archivePath)[0])
             archive = Archive.packFolder(archivePath, jobDir)
 
@@ -308,8 +310,10 @@ class PySchedClient(object):
                 self.logger.error("Could not transfer file {} to {}".format(archive, job.workstation))
                 FileUtils.deleteFile(archive)
                 return False
+            else:
+                FileUtils.clearDirectory(jobDir)
 
-        FileUtils.deleteFile(archive)
+        FileUtils.deleteFile(archive)        
         return True
 
     def checkJobs(self):
