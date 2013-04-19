@@ -93,6 +93,7 @@ class PyScheduler(SchedulerInterface):
     def compileJob(self, job):
         if job.compilerStr == None or job.compilerStr == "":
             self.logger.info("No compiler needed.")
+            self.compilingCompleted(job)
             return True
 
         if not self.compiler.compileJob(job):
