@@ -253,6 +253,7 @@ class PySchedServer(object):
             return False
 
         self.addToJobLog(job.jobId, "Job sent to Workstation {}".format(job.workstation))
+        FileUtils.deleteFile(archive)
         return True
 
     def cleanupJobDir(self, jobId):

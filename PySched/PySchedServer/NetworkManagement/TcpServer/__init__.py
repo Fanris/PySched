@@ -114,8 +114,7 @@ class TcpServer(object):
         '''
         client = self.getClient(identifier)
         if client:
-            client.sendFile(pathToFile, md5)
-            return True
+            return client.sendFile(pathToFile, md5)            
 
     def fileTransferCompleted(self, client, pathToFile, md5):
         '''
