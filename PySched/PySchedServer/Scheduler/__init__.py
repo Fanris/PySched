@@ -45,7 +45,8 @@ class PyScheduler(SchedulerInterface):
         self.waiting = False
         try:
             self.waiting = True
-            job = self.jobQueue.popleft()
+            jobId = self.jobQueue.popleft()
+            job = self.pySchedServer.getJob(jobId)
             if job.stateId <= JobState.lookup("WAITING_FOR_WORKSTATION"):
                 super(PyScheduler, self).scheduleJob(
                     self.pySchedServer.getWorkstations(),
@@ -71,9 +72,9 @@ class PyScheduler(SchedulerInterface):
         @param job: The job to schedule
         @result: 
         '''
-        if not job in self.jobQueue:
+        if not job.jobId in self.jobQueue:
             self.logger.debug("Added Job to queue.")
-            self.jobQueue.append(job)
+            self.jobQueue.append(job.jobId)
             if not self.schedulingLoop.running:
                 try: 
                     self.schedulingLoop.start(15, now=True)
