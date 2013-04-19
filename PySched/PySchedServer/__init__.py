@@ -251,6 +251,8 @@ class PySchedServer(object):
             self.logger.error("Could not transfer file {} to {}".format(archive, job.workstation))
             FileUtils.deleteFile(archive)
             return False
+        else:
+            FileUtils.clearDirectory(jobDir, deleteSubfolders=False)
 
         self.addToJobLog(job.jobId, "Job sent to Workstation {}".format(job.workstation))
         FileUtils.deleteFile(archive)

@@ -68,7 +68,7 @@ def deleteFile(pathToFile):
         if os.path.isfile(pathToFile):
             os.remove(pathToFile)
 
-def clearDirectory(pathToDir):
+def clearDirectory(pathToDir, deleteSubfolders=True):
     '''
     @summary: Deletes all files within the folder
     @param pathToDir: path to the folder
@@ -77,7 +77,9 @@ def clearDirectory(pathToDir):
     if os.path.isdir(pathToDir):
         files = os.listdir(pathToDir)
         for f in files:
-            deleteFile(os.path.join(pathToDir, f))
+            filepath = os.path.join(pathToDir, f)
+            if deleteSubfolders or not os.path.isdir(filepath):
+                deleteFile(filepath)
 
 def copyFile(source, dest):
     '''
