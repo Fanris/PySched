@@ -67,6 +67,8 @@ def deleteFile(pathToFile):
     if os.path.exists(pathToFile):
         if os.path.isfile(pathToFile):
             os.remove(pathToFile)
+        elif os.path.isdir(pathToFile):
+            shutil.rmtree(pathToFile)
 
 def clearDirectory(pathToDir, deleteSubfolders=True):
     '''
