@@ -71,6 +71,8 @@ class WIM(WIMInterface):
             "machine": platform.machine(),
             "cpuCount": psutil.NUM_CPUS,
             "memory": psutil.virtual_memory()[0] / (1024**3),
+            "diskAvailable": psutil.disk_usage(
+                self.pySchedClient.workingDir)[0] / (1024**3),            
         })
 
     def refreshData(self):
@@ -83,6 +85,10 @@ class WIM(WIMInterface):
             "cpuLoad": psutil.cpu_percent(interval=0, percpu=True),
             "memoryLoad": psutil.virtual_memory()[2],
             "activeUsers": len(psutil.get_users()),
+            "activeJobs": self.pySchedClient.getRunningJobCount(),
+            "diskLoad": psutil.disk_usage(self.pySchedClient.workingDir)[3],
+            "diskFree": psutil.disk_usage(
+                self.pySchedClient.workingDir)[2] / (1024**3),
         })
 
     def checkForPrograms(self, programs):

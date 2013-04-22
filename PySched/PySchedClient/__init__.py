@@ -266,7 +266,16 @@ class PySchedClient(object):
 
         self.updateDatabaseEntry(job)
         self.cleanupJobDir(jobId)
-        self.networkManager.sendMessage(self.serverId, CommandBuilder.buildJobInformationString(**job.__dict__))
+        self.networkManager.sendMessage(self.serverId, 
+            CommandBuilder.buildJobInformationString(**job.__dict__))
+
+    def getRunningJobCount(self):
+        '''
+        @summary: Returns the count of currently running Jobs.
+        @result: 
+        '''
+        return self.jobRunner.getRunningJobCount()
+
 
     # Command Handler
     # =====================================================

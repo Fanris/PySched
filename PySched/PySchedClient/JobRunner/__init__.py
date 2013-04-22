@@ -143,6 +143,13 @@ class JobRunner(JobRunnerInterface):
         if jobId in self.runningJobs:
             del self.runningJobs[jobId]
 
+    def getRunningJobCount(self):
+        '''
+        @summary: Returns the count of currently running jobs.
+        @result: 
+        '''
+        return len(self.runningJobs)
+
 
 
 

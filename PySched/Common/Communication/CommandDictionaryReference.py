@@ -44,5 +44,8 @@ dictionaryOverview = {
 	"memory":		"Overall memory of the workstation.",
 	"memoryLoad":	"Used memory.",
 	"activeUsers":	"Count of active users on the workstation.",
-	"machine": 		"Machine informations of the workstation"
+	"machine": 		"Machine informations of the workstation",
+	"diskLoad":		"Used Disk space",
+	"diskAvailable":"Disk size",
+	"diskFree":		"Free Disk space",
 }
