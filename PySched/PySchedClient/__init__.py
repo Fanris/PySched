@@ -297,7 +297,7 @@ class PySchedClient(object):
         @result:
         '''
         job = self.getFromDatabase(Job, jobId=jobId, first=True)
-        if job.stateId >= JobState.lookup("DONE"):
+        if job and job.stateId >= JobState.lookup("DONE"):
             jobDir = os.path.join(self.workingDir, str(job.jobId))
             archivePath = os.path.join(self.workingDir, "temp", "{}.tar".format(job.jobId))
             self.cleanupJobDir(jobId)
