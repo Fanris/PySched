@@ -21,7 +21,7 @@ class WIM(WIMInterface):
     informations of the workstation (eg. cpu load, used memory, etc.) and store them.
     This class uses psutil (http://code.google.com/p/psutil/) to get the informations.
     '''
-    def __init__(self, interval=5, programs=[]):
+    def __init__(self, pySchedClient, interval=5, programs=[]):
         '''
         @summary: Initializes the WIM
         @param interval: time between each information refresh.
@@ -29,7 +29,7 @@ class WIM(WIMInterface):
         which may be configured on the workstation
         @result:
         '''
-        super(WIM, self).__init__(programs)
+        super(WIM, self).__init__(pySchedClient, programs)
         self.logger = logging.getLogger("PySchedClient")
         self.informations = {}
         self.interval = interval

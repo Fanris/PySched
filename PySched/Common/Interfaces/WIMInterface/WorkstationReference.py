@@ -19,9 +19,13 @@ workstationDictionaryOverview = {
 	"cpuCount": "Count of available cpus",
 	"memory": "Maximal available memory",
 	"programs": "A list of available programs at the workstation",
+	"diskAvailable":"Disk size",
 
 	# dynamic entrie
 	"cpuLoad": "The current cpu load",
 	"memoryLoad": "The current memory load",
-	"activeUsers": "The count of currently signed in users at the workstation"
+	"activeUsers": "The count of currently signed in users at the workstation",
+	"diskLoad":		"Used Disk space",
+	"diskFree":		"Free Disk space",
+	"acitveJobs":	"Active Job count",
 }

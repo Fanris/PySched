@@ -11,7 +11,7 @@ class WIMInterface(object):
     by an Workstation Information Manager (WIM). It is highly recommended that
     the WorkstationReference.py is updated according to the provided workstation informations.
     '''
-    def __init__(self, programs=[]):
+    def __init__(self, pySchedClient, programs=[]):
         '''
         @summary: The consturctor takes one parameter containing 
         @param programs: a dictionary
@@ -19,6 +19,7 @@ class WIMInterface(object):
         by database entries. This dictionary is stored in programList
         @result: 
         '''
+        self.pySchedClient = pySchedClient
         self.programList = {}
         if not programs:
             return
