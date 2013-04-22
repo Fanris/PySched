@@ -618,8 +618,10 @@ class PySchedServer(object):
 
         # create file handler and set level to debug
         logPath = os.path.join(self.workingDir, "log")
+        with open(logPath, "w"):
+            pass
         fh = logging.FileHandler(logPath)
-        fh.setLevel(logging.DEBUG)
+        fh.setLevel(logging.INFO)
 
         # add formatter to ch
         fh.setFormatter(formatter)
