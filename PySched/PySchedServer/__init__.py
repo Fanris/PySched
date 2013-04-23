@@ -625,7 +625,7 @@ class PySchedServer(object):
             "cpuCount": psutil.NUM_CPUS,
             "memory": psutil.virtual_memory()[0] / (1024**3),
             "diskAvailable": psutil.disk_usage(
-                self.pySchedClient.workingDir)[0] / (1024**3),      
+                self.workingDir)[0] / (1024**3),      
             "diskLoad": psutil.disk_usage(self.workingDir)[3],
             "diskFree": psutil.disk_usage(self.workingDir)[2] / (1024**3),
         })
