@@ -483,7 +483,7 @@ class PySchedClient(object):
         print "| | |   | |_| |____) | (__| | | |  __/ (_| | |____| | |  __/ | | | |_  |"
         print "| |_|    \__, |_____/ \___|_| |_|\___|\__,_|\_____|_|_|\___|_| |_|\__| |"
         print "|         __/ |                        Copyright 2012 by Martin Predki |"
-        print "|        |___/                                                         |"
+        print "|        |___/                         Version {}                      |".format(self.version)
         print "|                                                                      |"
         print "+----------------------------------------------------------------------+"
         print ""
