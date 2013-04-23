@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='PySched',      
-      version='1.0',
+      version='1.1',
       description='PySched - A Python network scheduler.',
       author='Martin Predki',
       author_email='martin.predki@rub.de',
