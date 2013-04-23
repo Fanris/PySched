@@ -558,7 +558,8 @@ class PySchedServer(object):
         '''
         job = self.getFromDatabase(Job, jobId=jobId, first=True)
 
-        if job and job.stateId >= JobState.lookup("DONE"):
+        if job and job.stateId >= JobState.lookup("DONE") \
+            and job.stateId < JobState.lookup("SCHEDULER_ERROR"):
             self.logger.info("Requesting results for job {} from {}".format(jobId, job.workstation))
             networkId = self.lookupWorkstationName(job.workstation)
             self.networkManager.sendMessage(networkId, CommandBuilder.buildGetResultsString(job.jobId))
