@@ -27,6 +27,8 @@ import os
 import logging
 import datetime
 
+__VERSION = "1.1"
+
 class PySchedClient(object):
     def __init__(self, workingDir, args):
         '''
@@ -36,7 +38,6 @@ class PySchedClient(object):
         @param args: passed arguments from the start script
         @result:
         '''
-        self.version = "1.1"
         self.workingDir = os.path.normpath(workingDir)
         FileUtils.createDirectory(workingDir)
 
@@ -474,16 +475,19 @@ class PySchedClient(object):
         @summary: Prints the title
         @result:
         '''
+        print __TITLE
 
-        print "+----------------------------------------------------------------------+"
-        print "|  _____        _____      _              _  _____ _ _            _    |"
-        print "| |  __ \      / ____|    | |            | |/ ____| (_)          | |   |"
-        print "| | |__) |   _| (___   ___| |__   ___  __| | |    | |_  ___ _ __ | |_  |"
-        print "| |  ___/ | | |\___ \ / __| '_ \ / _ \/ _` | |    | | |/ _ \ '_ \| __| |"
-        print "| | |   | |_| |____) | (__| | | |  __/ (_| | |____| | |  __/ | | | |_  |"
-        print "| |_|    \__, |_____/ \___|_| |_|\___|\__,_|\_____|_|_|\___|_| |_|\__| |"
-        print "|         __/ |                        Copyright 2012 by Martin Predki |"
-        print "|        |___/                         Version {}                      |".format(self.version)
-        print "|                                                                      |"
-        print "+----------------------------------------------------------------------+"
-        print ""
+__TITLE = """
++----------------------------------------------------------------------+
+|  _____        _____      _              _  _____ _ _            _    |
+| |  __ \      / ____|    | |            | |/ ____| (_)          | |   |
+| | |__) |   _| (___   ___| |__   ___  __| | |    | |_  ___ _ __ | |_  |
+| |  ___/ | | |\___ \ / __| '_ \ / _ \/ _` | |    | | |/ _ \ '_ \| __| |
+| | |   | |_| |____) | (__| | | |  __/ (_| | |____| | |  __/ | | | |_  |
+| |_|    \__, |_____/ \___|_| |_|\___|\__,_|\_____|_|_|\___|_| |_|\__| |
+|         __/ |                        Copyright 2012 by Martin Predki |
+|        |___/                         Version {}                      |
+|                                                                      |
++----------------------------------------------------------------------+
+""".format(__VERSION)
+
