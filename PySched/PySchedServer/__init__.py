@@ -675,3 +675,4 @@ class PySchedServer(object):
         @summary: Prints the Title
         @result:
         '''
+        print TITLE
