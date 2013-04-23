@@ -27,8 +27,8 @@ import os
 import logging
 import datetime
 
-__VERSION = "1.1"
-__TITLE = """
+VERSION = "1.1"
+TITLE = """
 +----------------------------------------------------------------------+
 |  _____        _____      _              _  _____ _ _            _    |
 | |  __ \      / ____|    | |            | |/ ____| (_)          | |   |
@@ -40,7 +40,7 @@ __TITLE = """
 |        |___/                         Version {}                      |
 |                                                                      |
 +----------------------------------------------------------------------+
-""".format(__VERSION)
+""".format(VERSION)
 
 
 class PySchedClient(object):
@@ -489,5 +489,5 @@ class PySchedClient(object):
         @summary: Prints the title
         @result:
         '''
-        print __TITLE
+        print TITLE
 
