@@ -245,8 +245,9 @@ class MessageHandler(MessageHandlerInterface):
 
     def getWorkstations(self, networkId, data):
         workstations = self.pySchedServer.workstations
+        server = self.pySchedServer.getServerInformations()
 
-        self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, workstations=workstations.values()))
+        self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, workstations=workstations.values(), server=server))
 
     def deleteJob(self, networkId, data):
         '''

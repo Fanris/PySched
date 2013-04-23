@@ -22,6 +22,9 @@ from MessageHandler import MessageHandler
 
 from twisted.internet import reactor
 
+import psutil
+
+import platform
 import logging
 import datetime
 import os
@@ -511,7 +514,8 @@ class PySchedServer(object):
 
         networkId = self.lookupWorkstationName(workstation)
 
-        self.networkManager.sendMessage(networkId, CommandBuilder.buildCheckForProgramsString(p))    
+        self.networkManager.sendMessage(networkId, 
+            CommandBuilder.buildCheckForProgramsString(p))    
 
     def checkJobs(self, workstation=None):
         '''
@@ -592,6 +596,26 @@ class PySchedServer(object):
         self.logger.info("Shutting down...")
         self.networkManager.stopService()
         reactor.stop()
+
+    def getServerInformations(self):
+        '''
+        @summary: Uses psutils to get Informations of the Server.
+        @result: 
+        '''
+        server = {}
+        server.update({
+            "os": platform.system(),
+            "workstationName": "Server ({})".format(platform.node()),
+            "machine": platform.machine(),
+            "cpuCount": psutil.NUM_CPUS,
+            "memory": psutil.virtual_memory()[0] / (1024**3),
+            "diskAvailable": psutil.disk_usage(
+                self.pySchedClient.workingDir)[0] / (1024**3),      
+            "diskLoad": psutil.disk_usage(self.workingDir)[3],
+            "diskFree": psutil.disk_usage(self.workingDir)[2] / (1024**3),
+        })
+
+        return server
 
 
     def initializeLogger(self, workingDir, args):
