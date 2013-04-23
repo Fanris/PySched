@@ -36,6 +36,7 @@ class PySchedClient(object):
         @param args: passed arguments from the start script
         @result:
         '''
+        self.version = "1.1"
         self.workingDir = os.path.normpath(workingDir)
         FileUtils.createDirectory(workingDir)
 
