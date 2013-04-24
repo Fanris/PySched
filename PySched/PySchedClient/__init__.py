@@ -60,7 +60,7 @@ class PySchedClient(object):
         if not args.quiet:
             self.printTitle()
 
-        self.logger.info("Startin PySchedClient v{}".format(VERSION))
+        self.logger.info("Starting PySchedClient v{}".format(VERSION))
         # Job Runner
         self.jobRunner = JobRunner(self)
 
