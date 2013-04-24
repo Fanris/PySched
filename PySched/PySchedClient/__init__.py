@@ -55,6 +55,7 @@ class PySchedClient(object):
         FileUtils.createDirectory(workingDir)
 
         self.initializeLogger(self.workingDir, args)
+        self.logger.info 
 
         if not args.quiet:
             self.printTitle()
@@ -106,7 +107,10 @@ class PySchedClient(object):
         @result:
         '''
         self.logger.debug("Sending workstation state to server...")
-        self.networkManager.sendMessage(self.serverId, CommandBuilder.buildWorkstationInfoString(**self.wim.getWorkstationInformations()))
+        self.networkManager.sendMessage(self.serverId, 
+            CommandBuilder.buildWorkstationInfoString(
+                version=VERSION,
+                **self.wim.getWorkstationInformations()))
 
     def startNetworkServices(self):
         '''
