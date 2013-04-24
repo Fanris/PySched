@@ -100,8 +100,8 @@ class NetworkManager(NetworkInterface):
         self.tcpClient = None
         self.sshTunnel.closeTunnel()
 
-        self.logger.info("Restarting the udp listener")
-        self.startService()
+        self.logger.info("Restarting the UDP Listener in 10 Seconds...")
+        reactor.callLater(10, self.startService())
 
     def sendHeartBeat(self):
         '''
