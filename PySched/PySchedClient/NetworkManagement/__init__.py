@@ -101,7 +101,7 @@ class NetworkManager(NetworkInterface):
         self.sshTunnel.closeTunnel()
 
         self.logger.info("Restarting the UDP Listener in 10 Seconds...")
-        reactor.callLater(10, self.startService())
+        reactor.callLater(10, self.startService)
 
     def sendHeartBeat(self):
         '''
