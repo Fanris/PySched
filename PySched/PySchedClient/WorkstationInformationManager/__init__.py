@@ -90,7 +90,7 @@ class WIM(WIMInterface):
             "diskLoad": psutil.disk_usage(self.pySchedClient.workingDir)[3],
             "diskFree": psutil.disk_usage(
                 self.pySchedClient.workingDir)[2] / (1024**3),
-            "reservedCpus": self.pySchedClient.getReserverdCpus()
+            "reservedCpus": self.pySchedClient.getReservedCPUCount()
         })
 
     def checkForPrograms(self, programs):
