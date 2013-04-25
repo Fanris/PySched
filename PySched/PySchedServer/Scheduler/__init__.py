@@ -133,6 +133,10 @@ class PyScheduler(SchedulerInterface):
                 if load < 20:
                     freeCpus += 1
 
+            # reserved Cpus
+            reserved = workstation.get("reserved", 0)
+            freeCpus -= reserved
+
             self.logger.debug("Free cpu count: {}".format(freeCpus))
             # when no cpu is free, this workstation should not
             # be considered any further
@@ -221,6 +225,8 @@ class PyScheduler(SchedulerInterface):
             format(selected, max(scores)))
         return selected
 
+    def workstationSelected(self, job):
+        self.pySchedServer.reserveCPU(job.jobId)
 
     def prepareForTransfer(self, job):
         return True

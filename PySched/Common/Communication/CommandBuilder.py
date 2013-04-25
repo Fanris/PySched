@@ -168,3 +168,13 @@ class CommandBuilder(object):
         @result:
         '''
         return CommandBuilder.buildCommand("checkForPrograms", programs=programs)
+
+    @staticmethod
+    def buildReserveCPUString(jobId):
+        '''
+        @summary: Client command. Reserves a CPU on the client for 30 min.
+        @param jobId: the jobId of the job for which the cpu is reserved.
+        @result: 
+        '''
+        return CommandBuilder.buildCommand("reserveCPU", jobId=jobId)
+

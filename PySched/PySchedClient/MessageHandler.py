@@ -118,6 +118,18 @@ class MessageHandler(MessageHandlerInterface):
         self.logger.debug("Check programs...")
         self.pySchedClient.checkForPrograms(data.get("programs", []))
 
+    def reserveCPU(self, sender, data):
+        '''
+        @summary:       Client command. Causes the receiver to reserve a 
+                        CPU for a job.
+        @param sender:  The sender of the command
+        @param data:    The data contains only a key "jobId" which specifies
+                        the job, for which the cpu is reserved.
+        @result: 
+        '''
+        jobId = data.get("jobId", None)
+        self.pySchedClient.reserveCPU(jobId)
+
     def shutdown(self, sender, data=None):
         '''
         @summary:       Shuts the Workstation down.

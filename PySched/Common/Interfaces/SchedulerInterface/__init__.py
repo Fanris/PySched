@@ -14,9 +14,10 @@ class SchedulerInterface(object):
     '''
     def __init__(self, workingDir, pySchedServer):
         '''
-        @summary: Initializes the Scheduler class
-        @param workingDir: Path to the working directory of the pySchedServer.
-        All files and data should be saved within this folder.
+        @summary:           Initializes the Scheduler class
+        @param workingDir:  Path to the working directory of the pySchedServer.
+                            All files and data should be saved within this 
+                            folder.
         @param pySchedServer: A reference to the PySchedServer
         @result:
         '''
@@ -26,10 +27,12 @@ class SchedulerInterface(object):
 
     def scheduleJob(self, workstations, job):
         '''
-        @summary: This function is called when a job should be scheduled.
-        @param job: The job to schedule
-        @result: Returns true if the job was scheduled successful. Else
-        false and a String containing the function name that failed.
+        @summary:           This function is called when a job should 
+                            be scheduled.
+        @param job:         The job to schedule
+        @result:            Returns true if the job was scheduled successful. 
+                            Else false and a String containing the function 
+                            name that failed.
         '''
         if job.stateId < JobState.lookup("PREPARED"):
             self.logger.info("Preparing Job {}...".format(job.jobId))
@@ -68,6 +71,8 @@ class SchedulerInterface(object):
             job.stateId = JobState.lookup("WAITING_FOR_WORKSTATION") 
             self.pySchedServer.updateDatabaseEntry(job)
             return False
+        else:
+            self.workstationSelected(job)
 
         self.logger.info("Compile Job {}...".format(job.jobId))
         if not self.compileJob(job):
@@ -89,9 +94,10 @@ class SchedulerInterface(object):
 
     def transferJob(self, job):
         '''
-        @summary: This function is called when the job is successful compilied.
+        @summary:           This function is called when the job is 
+                            successful compilied.
         @param job:
-        @result: return true if the job was sent successful.
+        @result:            return true if the job was sent successful.
         '''
         if not job.workstation:
             return False
@@ -111,11 +117,13 @@ class SchedulerInterface(object):
 
     def prepareJob(self, job):
         '''
-        @summary: This is the first function to call in the schedule order.
-        Within this function all necessary files should be copied to the job
-        directory. This function must be overridden.
+        @summary:           This is the first function to call in the 
+                            schedule order.
+                            Within this function all necessary files should be 
+                            copied to the job directory. This function must be 
+                            overridden.
         @param job:
-        @result: True if the job is prepared successful
+        @result:            True if the job is prepared successful
         '''
         job.stateId = JobState.lookup("PREPARED")
         self.pySchedServer.updateDatabaseEntry(job)        
@@ -123,21 +131,48 @@ class SchedulerInterface(object):
 
     def checkJobPermission(self, job):
         '''
-        @summary: This function should be used for all security checks
-        regarding the job. This function may be overridden.
+        @summary:           This function should be used for all security checks
+                            regarding the job. This function may be overridden.
         @param job:
-        @result: Return true if the job got the permission to run
+        @result:            Return true if the job got the permission to run
         '''
         return True
 
     def checkUserPermission(self, job):
         '''
-        @summary: This function should be used for all security checks
-        regarding the user. This function may be overridden
+        @summary:           This function should be used for all security 
+                            checks regarding the user. This function may be 
+                            overridden
         @param job:
-        @result: Return True if the user got the permission to run the job
+        @result:            Return True if the user got the permission to run
+                            the job
         '''
         return True
+
+    def selectWorkstation(self, workstations, job):
+        '''
+        @summary:           This function should contains the scheduling logic.
+                            It must be overridden
+        @param workstations: A list of dictionaries containing the currently 
+                            available workstations.
+                            For further informations about the contents of the 
+                            dictionary, see the 
+                            Common.Interfaces.WorkstationReference.
+        @param job:
+        @result:            A reference or id of the workstation.
+        '''
+        raise NotImplementedError
+
+    def workstationSelected(self, job):
+        '''
+        @summary:           This function is called, after a workstation is
+                            selected. It can be used to reserve a Resource for
+                            a job, before it is transferred.
+        @param job: the job
+        @result: 
+        '''
+        pass 
+
 
     def compileJob(self, job):
         '''
@@ -151,18 +186,7 @@ class SchedulerInterface(object):
         '''
         job.stateId = JobState.lookup("COMPILED")
         self.pySchedServer.updateDatabaseEntry(job)
-        return True
-
-    def selectWorkstation(self, workstations, job):
-        '''
-        @summary: This function should contains the scheduling logic.
-        It must be overridden
-        @param workstations: A list of dictionaries containing the currently available workstations.
-        For further informations about the contents of the dictionary, see the Common.Interfaces.WorkstationReference.
-        @param job:
-        @result: A reference or id of the workstation.
-        '''
-        raise NotImplementedError
+        return True        
 
     def prepareForTransfer(self, job):
         '''

@@ -61,6 +61,10 @@ class PySchedClient(object):
             self.printTitle()
 
         self.logger.info("Starting PySchedClient v{}".format(VERSION))
+
+        # Init
+        self.reservedCpus = {}
+
         # Job Runner
         self.jobRunner = JobRunner(self)
 
@@ -79,7 +83,7 @@ class PySchedClient(object):
         rsaKey = args.key or os.path.join(self.workingDir, 'pysched.rsa')
         self.networkManager = NetworkManager(self.workingDir, MessageHandler(self), rsaKey)
         self.networkManager.startService()
-        self.serverId = None
+        self.serverId = None        
 
         self.checkJobs()
         reactor.run()
@@ -110,7 +114,6 @@ class PySchedClient(object):
         self.logger.debug("Sending workstation state to server...")
         self.networkManager.sendMessage(self.serverId, 
             CommandBuilder.buildWorkstationInfoString(
-                version=VERSION,
                 **self.wim.getWorkstationInformations()))
 
     def startNetworkServices(self):
@@ -211,6 +214,33 @@ class PySchedClient(object):
         '''
         return self.getFromDatabase(Program)
 
+    def reserveCpu(self, jobId):
+        '''
+        @summary: Reserves a CPU for an job.
+        @param jobId: the jobId
+        @result: 
+        '''
+        if jobId:
+            self.reservedCpus[jobId] = reactor.callLater(
+                1800, self.setCpuFree(), jobId)
+
+    def setCpuFree(self, jobId):
+        '''
+        @summary: Deletes a job reservation.
+        @param jobId:
+        @result: 
+        '''
+        try:
+            del self.reservedCpus[jobId]
+        except:
+            pass
+
+    def getReservedCPUCount(self):
+        '''
+        @summary: Returns the count of reserved CPUS
+        @result: 
+        '''
+        return len(self.reservedCpus)
 
 
     # Job Control Functions
@@ -250,6 +280,7 @@ class PySchedClient(object):
             job.started = datetime2Str(datetime.datetime.now())
             job.finished = job.started
             self.updateDatabaseEntry(job)
+            self.setCpuFree(jobId)
             self.logger.info("Sending updated JobState of Job {}".format(job.jobId))
             self.networkManager.sendMessage(self.serverId, CommandBuilder.buildJobInformationString(**job.__dict__))
 
@@ -261,7 +292,7 @@ class PySchedClient(object):
         '''
         job = self.getFromDatabase(Job, jobId=jobId, first=True)
         job.stateId = JobState.lookup("RUNNING")
-        job.started = datetime2Str(datetime.datetime.now())
+        job.started = datetime2Str(datetime.datetime.now())        
         self.updateDatabaseEntry(job)
         self.logger.info("Sending updated JobState of Job {}".format(job.jobId))
         self.networkManager.sendMessage(self.serverId, CommandBuilder.buildJobInformationString(**job.__dict__))
@@ -447,6 +478,13 @@ class PySchedClient(object):
         self.stopWorkstationStateLoop()
         self.stopNetworkServices()
         reactor.stop()
+
+    def getVersion(self):
+        '''
+        @summary: Returns the Version of the Software
+        @result: 
+        '''
+        return VERSION
 
 
     # Misc

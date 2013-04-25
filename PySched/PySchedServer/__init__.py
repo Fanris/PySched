@@ -318,6 +318,14 @@ class PySchedServer(object):
 
         return job
 
+    def reserveCPU(self, job):
+        self.logger.info("Reserving CPU for job {} on {}".format(
+            job.jobId,
+            job.workstation))
+        networkId = self.lookupWorkstationName(job.workstation)
+        self.networkManager.sendMessage(networkId,
+            CommandBuilder.builReserveCPUString(job.jobId))
+
     # User Functions
     # ========================
     def createUser(self, userInformation):

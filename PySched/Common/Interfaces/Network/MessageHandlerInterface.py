@@ -151,8 +151,8 @@ class MessageHandlerInterface(object):
 
     def checkForPrograms(self, sender, data):
         '''
-        @summary:       Client command. Causes the sender to if a list of 
-                        programs is installed.
+        @summary:       Client command. Causes the receiver to check if a list
+                        of programs is installed.
         @param sender:  the sender of the command.
         @param data:    the data dictionary contains a key ("programs") which 
                         consists of a list of dictionaries. Each dictionary 
@@ -163,6 +163,17 @@ class MessageHandlerInterface(object):
         @result:
         '''
         pass
+
+    def reserveCPU(self, sender, data):
+        '''
+        @summary:       Client command. Causes the receiver to reserve a 
+                        CPU for a job.
+        @param sender:  The sender of the command
+        @param data:    The data contains only a key "jobId" which specifies
+                        the job, for which the cpu is reserved.
+        @result: 
+        '''
+        pass        
 
     # Server Commands
     # ===============================================
