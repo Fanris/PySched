@@ -226,7 +226,7 @@ class PyScheduler(SchedulerInterface):
         return selected
 
     def workstationSelected(self, job):
-        self.pySchedServer.reserveCPU(job.jobId)
+        self.pySchedServer.reserveCPU(job)
 
     def prepareForTransfer(self, job):
         return True
