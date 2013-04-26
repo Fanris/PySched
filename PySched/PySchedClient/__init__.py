@@ -222,7 +222,7 @@ class PySchedClient(object):
         '''
         if jobId:
             self.reservedCpus[jobId] = reactor.callLater(
-                1800, self.setCpuFree(), jobId)
+                1800, self.setCpuFree, jobId)
 
     def setCpuFree(self, jobId):
         '''
