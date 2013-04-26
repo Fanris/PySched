@@ -42,7 +42,6 @@ class NetworkManager(NetworkInterface):
         self.sshTunnel = None
 
         self.udpPort = 50000
-        self.tcpPort = 49999
         self.udpMultigroup = "228.0.0.5"
 
         self.__retryCounter = 0
@@ -69,6 +68,9 @@ class NetworkManager(NetworkInterface):
         localPort = self.sshTunnel.buildTunnel()
         if localPort:
             self.connectTcp(localPort)
+        else:
+            self.logger.info("Retry in 30 min...")
+            reactor.callLater(1800, self.startService)
 
     def connectTcp(self, localPort):
         '''

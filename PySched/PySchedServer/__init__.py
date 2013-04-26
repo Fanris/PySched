@@ -58,6 +58,8 @@ class PySchedServer(object):
         if not args.quiet:
             self.printTitle()
 
+        self.logger.info("Starting PySchedServer v{}".format(VERSION))
+
         self.dbController = SqliteManager(self.workingDir)
         self.scheduler = PyScheduler(self.workingDir, self)
         
@@ -637,7 +639,8 @@ class PySchedServer(object):
                 self.workingDir)[0] / (1024**3),      
             "diskLoad": psutil.disk_usage(self.workingDir)[3],
             "diskFree": psutil.disk_usage(self.workingDir)[2] / (1024**3),
-        })
+            "version": VERSION,
+            })
 
         return server
 
