@@ -84,6 +84,7 @@ class SSHTunnel(object):
         except Exception, e:
             self.logger.error("Could not connect to server! Reason: {}".
                 format(e))
+            return False
 
     def closeTunnel(self):
         '''

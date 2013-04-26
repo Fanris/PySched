@@ -96,8 +96,12 @@ class NetworkManager(NetworkInterface):
         @summary: Is called when the tcp connection is lost
         @result:
         '''
-        self.logger.info("Tcp connection lost.")
-        self.heartBeat.stop()
+        self.logger.info("Tcp connection lost.")        
+        try:
+            self.heartBeat.stop()
+        except AssertionError:
+            pass
+        
         self.messageReceiver.connectionLost(self.tcpClient.server.id)
         self.tcpClient = None
         self.sshTunnel.closeTunnel()

@@ -16,8 +16,8 @@
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="PySchedClient"
-NAME=PySchedClient
-DAEMON=/home/pysched/src/pysched/PySched/PySchedClient/PySchedClient.sh
+NAME=PySchedClient.sh
+DAEMON=/home/pysched/src/pysched/PySched/PySchedClient/$NAME
 DAEMON_ARGS="/home/pysched/PySchedClient"
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME

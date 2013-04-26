@@ -214,7 +214,7 @@ class PySchedClient(object):
         '''
         return self.getFromDatabase(Program)
 
-    def reserveCpu(self, jobId):
+    def reserveCPU(self, jobId):
         '''
         @summary: Reserves a CPU for an job.
         @param jobId: the jobId
