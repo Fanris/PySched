@@ -142,15 +142,13 @@ class PySchedServer(object):
         if not jobId:
             jobs = self.getFromDatabase(Job)
             for job in jobs:
-                if job.stateId == JobState.lookup("WAITING_FOR_WORKSTATION") or \
-                    job.stateId == JobState.lookup("QUEUED"):
-                        self.scheduler.scheduleJob(self.workstations.values(), job)
-                        self.addToJobLog(job.jobId, "Job scheduled.")
+                self.schedule(job.jobId)
         else:
             job = self.getFromDatabase(Job, jobId=jobId, first=True)
             if job:
                 if job.stateId == JobState.lookup("WAITING_FOR_WORKSTATION") or \
-                    job.stateId == JobState.lookup("QUEUED"):
+                    job.stateId == JobState.lookup("QUEUED") or \
+                    job.stateId == JobState.lookup("PREPARED"):
                         self.scheduler.scheduleJob(self.workstations.values(), job)
                         self.addToJobLog(job.jobId, "Job scheduled.")
 
