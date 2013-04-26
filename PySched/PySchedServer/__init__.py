@@ -324,7 +324,7 @@ class PySchedServer(object):
             job.workstation))
         networkId = self.lookupWorkstationName(job.workstation)
         self.networkManager.sendMessage(networkId,
-            CommandBuilder.builReserveCPUString(job.jobId))
+            CommandBuilder.buildReserveCPUString(job.jobId))
 
     # User Functions
     # ========================
