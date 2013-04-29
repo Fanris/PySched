@@ -33,7 +33,6 @@ class PyScheduler(SchedulerInterface):
         self.logger = logging.getLogger("PySchedServer")
 
         self.jobQueue = deque()
-        self.waiting = False
         self.schedulingLoop = LoopingCall(self.scheduleNext)
 
     def scheduleNext(self):
@@ -42,9 +41,7 @@ class PyScheduler(SchedulerInterface):
         @result: 
         '''
         self.logger.debug("Scheduling next Job...")
-        self.waiting = False
         try:
-            self.waiting = True
             jobId = self.jobQueue.popleft()
             job = self.pySchedServer.getJob(jobId)
             if job.stateId <= JobState.lookup("WAITING_FOR_WORKSTATION"):
@@ -60,7 +57,7 @@ class PyScheduler(SchedulerInterface):
             except:
                 pass
 
-    def scheduleJob(self, workstations, job):
+    def scheduleJob(self, job, workstations=None):
         '''
         @summary:   Overrides the standard scheduleJob implementenation
                     to add scheduling queue. The Problem is: If too many
@@ -76,7 +73,10 @@ class PyScheduler(SchedulerInterface):
         '''
         if not job.jobId in self.jobQueue:
             self.logger.debug("Added Job to queue.")
-            self.jobQueue.append(job.jobId)
+            if job.stateId == JobState.lookup("COMPILED"):
+                self.jobQueue.appendleft(job.jobId)
+            else:
+                self.jobQueue.append(job.jobId)
             if not self.schedulingLoop.running:
                 try: 
                     self.schedulingLoop.start(15, now=True)
@@ -243,7 +243,7 @@ class PyScheduler(SchedulerInterface):
         self.logger.info("Compiling completed.")
         job.stateId = JobState.lookup("COMPILED")
         self.pySchedServer.updateDatabaseEntry(job)
-        self.transferJob(job)
+        self.scheduleJob(job)
 
     def compilingFailed(self, job):
         job.stateId = JobState.lookup("COMPILER_ERROR")
