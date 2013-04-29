@@ -102,7 +102,7 @@ class TcpClient(object):
             self.server.sendFile(pathToFile, md5)
             return True
 
-    def receivingFile(self, client, filename, md5):
+    def receivingFile(self):
         '''
         @summary: is called when a file is about to be received.
         @param pathToFile: path where the file should be stored
