@@ -104,7 +104,9 @@ class NetworkManager(NetworkInterface):
         except AssertionError:
             pass
         
-        self.messageReceiver.connectionLost(self.tcpClient.server.id)
+        if self.tcpClient:
+            self.messageReceiver.connectionLost(self.tcpClient.server.id)
+            
         self.tcpClient = None
         self.sshTunnel.closeTunnel()
 
