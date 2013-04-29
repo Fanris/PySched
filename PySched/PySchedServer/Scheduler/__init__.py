@@ -51,6 +51,8 @@ class PyScheduler(SchedulerInterface):
                 super(PyScheduler, self).scheduleJob(
                     self.pySchedServer.getWorkstations(),
                     job)
+            elif job.stateId == JobState.lookup("COMPILED"):
+                self.transfer(job)
         except IndexError:
             self.logger.debug("All jobs scheduled. Stopping scheduling Loop.")
             try: 

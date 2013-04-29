@@ -12,7 +12,6 @@ from twisted.internet import reactor
 from twisted.internet.endpoints import TCP4ClientEndpoint
 
 import logging
-import os
 
 class TcpClient(object):
     '''
@@ -50,12 +49,12 @@ class TcpClient(object):
         self.server = client
         self.networkManager.connectionMade()
 
-    def connectionLost(self):
+    def connectionLost(self, reason):
         '''
         @summary: Is called when the connection to the server is lost.
         @result:
         '''
-        self.networkManager.connectionLost()
+        self.networkManager.connectionLost(reason)
         self.server = None
 
     def commandReceived(self, client, command):
@@ -103,18 +102,14 @@ class TcpClient(object):
             self.server.sendFile(pathToFile, md5)
             return True
 
-    def receiveFile(self, client, filename, md5):
+    def receivingFile(self, client, filename, md5):
         '''
         @summary: is called when a file is about to be received.
         @param pathToFile: path where the file should be stored
         @param md5: md5 hashsum of the file
         @result:
         '''
-        pathToFile = os.path.join(self.networkManager.workingDir, filename)
-        self.logger.debug("Path to store the file: {}".format(pathToFile))
-
-        self.logger.debug("Setting client {} to raw mode".format(client.id))
-        client.receiveFile(pathToFile, md5)
+        self.networkManager.receivingFile()
 
     def fileTransferCompleted(self, client, pathToFile, md5):
         '''

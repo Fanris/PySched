@@ -46,6 +46,8 @@ class NetworkManager(NetworkInterface):
 
         self.__retryCounter = 0
 
+        self.fileTransferPending = False
+
     def startService(self):
         '''
         @summary: Starts the Network services
@@ -91,12 +93,12 @@ class NetworkManager(NetworkInterface):
         self.heartBeat.start(60)
         self.messageReceiver.connectionBuild(self.tcpClient.server.id)
 
-    def connectionLost(self):
+    def connectionLost(self, reason=None):
         '''
         @summary: Is called when the tcp connection is lost
         @result:
         '''
-        self.logger.info("Tcp connection lost.")        
+        self.logger.warning("Tcp connection lost. Reason {}".format(reason))        
         try:
             self.heartBeat.stop()
         except AssertionError:
@@ -116,7 +118,7 @@ class NetworkManager(NetworkInterface):
         @result: 
         '''
         self.tcpClient.sendHeartBeat()
-        self.heartBeatTimeout = reactor.callLater(5, self.connectionLost)
+        self.heartBeatTimeout = reactor.callLater(5, self.closeConnection)
 
     def heartBeatResponse(self):
         '''
@@ -131,6 +133,15 @@ class NetworkManager(NetworkInterface):
             finally:
                 self.heartBeatTimeout = None
 
+    def closeConnection(self):
+        '''
+        @summary: Is called, when a heartbeat got no response
+        @result: 
+        '''
+        if not self.fileTransferPending:
+            self.connectionLost("No response to heartbeat.")
+        else:
+            self.logger.warning("No heartbeat response. Maybe due to file transfer.")
 
     def commandReceived(self, client, command):
         '''
@@ -163,6 +174,10 @@ class NetworkManager(NetworkInterface):
         else:
             return False
 
+    def receivingFile(self):
+        self.fileTransferPending = True
+
     def fileReceived(self, networkId, pathToFile, md5):
+        self.fileTransferPending = False
         self.messageReceiver.fileTransferCompleted(networkId, pathToFile)
         deleteFile(pathToFile)

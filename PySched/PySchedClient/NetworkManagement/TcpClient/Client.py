@@ -61,7 +61,7 @@ class Client(object):
         @param reason: Reason for the connection lost
         @result:
         '''
-        self.tcpClient.connectionLost()
+        self.tcpClient.connectionLost(reason)
 
     def lineReceived(self, line):
         '''
@@ -140,7 +140,6 @@ class Client(object):
         @param message: The message to send
         @result:
         '''
-
         self.tcpProtocol.sendMessage(message)
 
     def receiveFile(self, destination, md5):
@@ -155,3 +154,4 @@ class Client(object):
         self.currentFilePath = os.path.join(self.tcpClient.networkManager.workingDir, destination)
         self.currentFile = open(self.currentFilePath, 'wb')
         self.currentMD5 = md5
+        self.tcpClient.receivingFile()
