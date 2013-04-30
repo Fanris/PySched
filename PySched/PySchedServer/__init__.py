@@ -443,6 +443,15 @@ class PySchedServer(object):
         @param networkId: the networkId
         @result:
         '''
+        newMachineName = workstationInfo.get("workstationName", None)
+        if not newMachineName:
+            self.logger.warning("Try to add a Workstation with no name.")
+
+        for k, v in self.workstations.iteritems():
+            if v.get("workstationName", None) == newMachineName:
+                self.logger.debug("Overriding old workstation Informations")
+                del self.workstationsp[k]
+
         self.workstations[networkId] = workstationInfo
         self.logger.info("New workstation {} added. Currently are {} workstations available."
             .format(workstationInfo.get("workstationName", None), len(self.workstations)))
