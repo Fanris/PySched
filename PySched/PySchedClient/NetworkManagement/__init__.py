@@ -140,7 +140,7 @@ class NetworkManager(NetworkInterface):
         @summary: Is called, when a heartbeat got no response
         @result: 
         '''
-        if not self.fileTransferPending:
+        if not self.connectionBusy:
             self.connectionLost("No response to heartbeat.")
         else:
             self.logger.warning("No heartbeat response. Maybe due to file transfer.")
