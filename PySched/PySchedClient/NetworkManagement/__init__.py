@@ -46,7 +46,7 @@ class NetworkManager(NetworkInterface):
 
         self.__retryCounter = 0
 
-        self.fileTransferPending = False
+        self.connectionBusy = False
 
     def startService(self):
         '''
@@ -120,7 +120,7 @@ class NetworkManager(NetworkInterface):
         @result: 
         '''
         self.tcpClient.sendHeartBeat()
-        self.heartBeatTimeout = reactor.callLater(5, self.closeConnection)
+        self.heartBeatTimeout = reactor.callLater(20, self.closeConnection)
 
     def heartBeatResponse(self):
         '''
@@ -161,7 +161,9 @@ class NetworkManager(NetworkInterface):
         @param message: the message
         @result:
         '''
+        self.connectionBusy = True
         self.tcpClient.sendMessage(message)
+        self.connectionBusy = False
 
     def sendFile(self, receiver, pathToFile):
         '''
@@ -171,15 +173,16 @@ class NetworkManager(NetworkInterface):
         @result:
         '''
         if self.tcpClient:
+            self.connectionBusy = True
             md5 = getFileMD5Hashsum(pathToFile)
             return self.tcpClient.sendFile(pathToFile, md5)
         else:
             return False
 
     def transferingFile(self, setTo=True):
-        self.fileTransferPending = setTo
+        self.connectionBusy = setTo
 
     def fileReceived(self, networkId, pathToFile, md5):
-        self.fileTransferPending = False
+        self.connectionBusy = False
         self.messageReceiver.fileTransferCompleted(networkId, pathToFile)
         deleteFile(pathToFile)
