@@ -64,11 +64,14 @@ def deleteFile(pathToFile):
     @param pathToFile: The file to delete
     @result:
     '''
-    if os.path.exists(pathToFile):
-        if os.path.isfile(pathToFile):
-            os.remove(pathToFile)
-        elif os.path.isdir(pathToFile):
-            shutil.rmtree(pathToFile)
+    try:
+        if os.path.exists(pathToFile):
+            if os.path.isfile(pathToFile):
+                os.remove(pathToFile)
+            elif os.path.isdir(pathToFile):
+                shutil.rmtree(pathToFile)
+    except:
+        pass
 
 def clearDirectory(pathToDir, deleteSubfolders=True):
     '''
