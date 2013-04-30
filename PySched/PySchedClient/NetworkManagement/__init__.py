@@ -166,9 +166,7 @@ class NetworkManager(NetworkInterface):
         @param message: the message
         @result:
         '''
-        self.connectionBusy = True
-        self.tcpClient.sendMessage(message)
-        self.connectionBusy = False
+        self.tcpClient.sendMessage(message)        
 
     def sendFile(self, receiver, pathToFile):
         '''
