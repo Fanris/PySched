@@ -120,6 +120,7 @@ class Client(object):
         @param jobId: Job id to which this file belongs
         @result:
         '''
+        self.tcpClient.transferingFile(setTo=True)
         filename = os.path.split(path)[1]
         cmd = json.dumps({"nCommand": "put", "filename": filename, "md5": md5})
         self.sendMessage(cmd)
@@ -132,6 +133,7 @@ class Client(object):
 
         cmd = json.dumps({"nCommand": "fileOk"})
         self.sendMessage(cmd)
+        self.tcpClient.transferingFile(setTo=False)
         return True
 
     def sendMessage(self, message):
@@ -154,4 +156,4 @@ class Client(object):
         self.currentFilePath = os.path.join(self.tcpClient.networkManager.workingDir, destination)
         self.currentFile = open(self.currentFilePath, 'wb')
         self.currentMD5 = md5
-        self.tcpClient.receivingFile()
+        self.tcpClient.transferingFile(setTo=True)

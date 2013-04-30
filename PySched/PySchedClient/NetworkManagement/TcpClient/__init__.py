@@ -102,14 +102,14 @@ class TcpClient(object):
             self.server.sendFile(pathToFile, md5)
             return True
 
-    def receivingFile(self):
+    def transferingFile(self, setTo=True):
         '''
         @summary: is called when a file is about to be received.
         @param pathToFile: path where the file should be stored
         @param md5: md5 hashsum of the file
         @result:
         '''
-        self.networkManager.receivingFile()
+        self.networkManager.transferingFile(setTo)
 
     def fileTransferCompleted(self, client, pathToFile, md5):
         '''

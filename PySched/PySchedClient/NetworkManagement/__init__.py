@@ -176,8 +176,8 @@ class NetworkManager(NetworkInterface):
         else:
             return False
 
-    def receivingFile(self):
-        self.fileTransferPending = True
+    def transferingFile(self, setTo=True):
+        self.fileTransferPending = setTo
 
     def fileReceived(self, networkId, pathToFile, md5):
         self.fileTransferPending = False
