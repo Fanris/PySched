@@ -446,6 +446,10 @@ class PySchedClient(object):
         '''
         self.logger.info("Cleaning up job {}...".format(jobId))
         jobDir = os.path.join(self.workingDir, str(jobId))
+
+        if not os.path.exists(jobDir):
+            return
+
         indexFilePath = os.path.join(jobDir, 'index')
         files = []
 
