@@ -36,6 +36,7 @@ class NetworkManager(NetworkInterface):
 
         self.heartBeat = LoopingCall(self.sendHeartBeat)
         self.heartBeatTimeout = None
+        self.heartBeatCounter = 0
 
         self.tcpClient = None
         self.udpClient = None
@@ -130,6 +131,7 @@ class NetworkManager(NetworkInterface):
         if self.heartBeatTimeout:
             try:
                 self.heartBeatTimeout.cancel()
+                self.heartBeatCounter = 0
             except:
                 pass
             finally:
@@ -141,7 +143,10 @@ class NetworkManager(NetworkInterface):
         @result: 
         '''
         if not self.connectionBusy:
-            self.connectionLost("No response to heartbeat.")
+            if self.heartBeatCounter < 3:
+                self.heartBeatCounter += 1
+            else:
+                self.connectionLost("No response to heartbeat.")
         else:
             self.logger.warning("No heartbeat response. Maybe due to file transfer.")
 
