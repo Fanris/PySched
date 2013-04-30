@@ -285,6 +285,7 @@ class PySchedServer(object):
         '''
         jobDir = os.path.join(self.workingDir, str(jobId))
         FileUtils.clearDirectory(jobDir)
+        FileUtils.deleteFile(jobDir)
 
     def archiveJob(self, jobId):
         '''

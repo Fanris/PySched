@@ -468,6 +468,7 @@ class PySchedClient(object):
             if os.path.isfile(filepath):
                 newPath = os.path.join(jobDir, 'results', f)
                 FileUtils.moveFile(filepath, newPath)
+        FileUtils.deleteFile(jobDir)
 
     def shutdown(self):
         '''
