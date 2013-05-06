@@ -27,7 +27,7 @@ import os
 import logging
 import datetime
 
-VERSION = "1.1.6"
+VERSION = "1.1.7"
 TITLE = """
  _____        _____      _              _  _____ _ _            _    
 |  __ \      / ____|    | |            | |/ ____| (_)          | |   
@@ -85,7 +85,7 @@ class PySchedClient(object):
             self.workingDir, 
             MessageHandler(self), 
             rsaKey,
-            debugMode=args.debug or False)
+            multiGroup=args.multicast)
         self.networkManager.startService()
         self.serverId = None        
 

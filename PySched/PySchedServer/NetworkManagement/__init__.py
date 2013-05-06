@@ -15,13 +15,14 @@ from TcpServer import TcpServer
 import os
 import logging
 
+DEFAULT_MULTIGROUP = "228.0.0.5"
 
 class NetworkManager(NetworkInterface):
     '''
     @summary: A NetworkManager.
     '''
 
-    def __init__(self, workingDir, messageReceiver, debugMode=False):
+    def __init__(self, workingDir, messageReceiver, multiGroup=None):
         '''
         @summary: Initializes this NetworkManager.
         @param messageReceiver: A MessageReceiver. See Common.Interfaces.Network.MessageReceiverInterface
@@ -37,10 +38,8 @@ class NetworkManager(NetworkInterface):
 
         self.udpPort = 50000
         self.tcpPort = 49999
-        if debugMode:
-            self.udpMultigroup = "228.0.0.10"
-        else:
-            self.udpMultigroup = "228.0.0.5"
+        self.udpMultigroup = multiGroup or DEFAULT_MULTIGROUP
+        self.logger.debug("Joining Multicast group {}".format(self.udpMultigroup))
 
     def startService(self):
         '''

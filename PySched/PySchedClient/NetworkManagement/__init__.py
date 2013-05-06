@@ -17,12 +17,14 @@ from twisted.internet.task import LoopingCall
 import os
 import logging
 
+DEFAULT_MULTIGROUP = "228.0.0.5"
+
 class NetworkManager(NetworkInterface):
     '''
     @summary: A NetworkManager.
     '''
 
-    def __init__(self, workingDir, messageReceiver, pathToRsa, debugMode=False):
+    def __init__(self, workingDir, messageReceiver, pathToRsa, multiGroup=None):
         '''
         @summary: Initializes this NetworkManager.
         @param messageReceiver: A MessageReceiver.
@@ -43,10 +45,8 @@ class NetworkManager(NetworkInterface):
         self.sshTunnel = None
 
         self.udpPort = 50000
-        if debugMode:
-            self.udpMultigroup = "228.0.0.10"
-        else:
-            self.udpMultigroup = "228.0.0.5"
+        self.udpMultigroup = multiGroup or DEFAULT_MULTIGROUP
+        self.logger.debug("Joining Multicast group {}".format(self.udpMultigroup))
 
         self.__retryCounter = 0
 

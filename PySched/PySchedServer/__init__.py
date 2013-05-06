@@ -30,7 +30,7 @@ import datetime
 import os
 
 
-VERSION = "1.1.6"
+VERSION = "1.1.7"
 TITLE = """
  _____        _____      _              _  _____                           
 |  __ \      / ____|    | |            | |/ ____|                          
@@ -66,7 +66,7 @@ class PySchedServer(object):
         self.networkManager = NetworkManager(
             self.workingDir, 
             MessageHandler(self),
-            debugMode=args.debug or False)
+            multiGroup=args.multicast)
 
         self.workstations = {}
 
