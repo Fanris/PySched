@@ -22,7 +22,7 @@ class NetworkManager(NetworkInterface):
     @summary: A NetworkManager.
     '''
 
-    def __init__(self, workingDir, messageReceiver, pathToRsa):
+    def __init__(self, workingDir, messageReceiver, pathToRsa, debugMode=False):
         '''
         @summary: Initializes this NetworkManager.
         @param messageReceiver: A MessageReceiver.
@@ -43,7 +43,10 @@ class NetworkManager(NetworkInterface):
         self.sshTunnel = None
 
         self.udpPort = 50000
-        self.udpMultigroup = "228.0.0.5"
+        if debugMode:
+            self.udpMultigroup = "228.0.0.10"
+        else:
+            self.udpMultigroup = "228.0.0.5"
 
         self.__retryCounter = 0
 

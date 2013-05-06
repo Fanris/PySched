@@ -30,7 +30,7 @@ import datetime
 import os
 
 
-VERSION = "1.1.4"
+VERSION = "1.1.6"
 TITLE = """
  _____        _____      _              _  _____                           
 |  __ \      / ____|    | |            | |/ ____|                          
@@ -63,7 +63,10 @@ class PySchedServer(object):
         self.dbController = SqliteManager(self.workingDir)
         self.scheduler = PyScheduler(self.workingDir, self)
         
-        self.networkManager = NetworkManager(self.workingDir, MessageHandler(self))
+        self.networkManager = NetworkManager(
+            self.workingDir, 
+            MessageHandler(self),
+            debugMode=args.debug or False)
 
         self.workstations = {}
 
@@ -207,6 +210,8 @@ class PySchedServer(object):
 
         self.updateDatabaseEntry(job)
         if job.stateId >= JobState.lookup("DONE"):
+            self.logger.info("Job {} ended with state {}.".format(
+                job.jobId, JobState.lookup(job.stateId)))
             self.cleanupJobDir(job.jobId)
             self.getResultsFromWorkstation(job.jobId)    
             self.addToJobLog(job.jobId, "Job Ended.")        
