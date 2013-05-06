@@ -149,6 +149,13 @@ class PyScheduler(SchedulerInterface):
                     workstation.get("workstationName"), None))
                 continue
 
+            if freeCpus < job.minCpu:
+                self.pySchedServer.addToJobLog(
+                    job.jobId,
+                    "{} not appropriate: not enough free CPUs".format(
+                    workstation.get("workstationName"), None))
+                continue
+
             # when the workstation has not the required amount of
             # memory, it should not be considered any further
             if job.minMemory > workstation.get("memory", 0) * 1024:
