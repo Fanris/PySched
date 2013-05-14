@@ -234,7 +234,8 @@ class PySchedServer(object):
         networkId = self.lookupWorkstationName(job.workstation)
         self.logger.info("Aborting job {} on workstation {} ({})".format(job.jobId, job.workstation, networkId))
         self.networkManager.sendMessage(networkId, CommandBuilder.buildKillJobString(job.jobId))    
-        self.addToJobLog(job.jobId, "Job aborted by user.")    
+        self.addToJobLog(job.jobId, "Job aborted by user.")  
+        return True  
 
     def deleteJob(self, userId, jobId):
         '''
@@ -243,11 +244,15 @@ class PySchedServer(object):
         @param jobId: the jobId
         @result:
         '''
+        self.logger.info("Deleting Job {}...".format(jobId))
         job = self.getFromDatabase(Job, jobId=jobId, first=True)
         user = self.getFromDatabase(User, userId=userId, first=True)
 
         if not (job or user) or not (job.userId == user.id):
             return False
+
+        if job.stateId == JobState.lookup("RUNNING"):
+            self.killJob(jobId, userId)
 
         self.logger.info("Deleting job {} from database.".format(jobId))
         self.cleanupJobDir(jobId)
