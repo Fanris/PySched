@@ -72,6 +72,7 @@ class PySchedClient(object):
             append = ""
             for p in paths:
                 append += ":{}".format(p)
+                append = append.strip()
             os.environ['PATH'] = os.environ['PATH'] + append
 
 
