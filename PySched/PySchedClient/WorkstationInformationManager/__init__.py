@@ -130,6 +130,7 @@ class WIM(WIMInterface):
             if self.is_exe(programExec):
                 return os.path.join(fpath, fname)
         else:
+            self.logger.debug("PATH: {}".format(os.environ["PATH"]))
             for path in os.environ["PATH"].split(os.pathsep):
                 path = path.strip('"')
                 exe_file = os.path.join(path, programExec)
