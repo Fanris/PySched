@@ -69,10 +69,8 @@ class PySchedClient(object):
         if os.path.exists(os.path.join(self.workingDir, "PATHS")):
             self.logger.info("Reading additional PATHS...")
             paths = FileUtils.readFile(os.path.join(self.workingDir, "PATHS"))
-            env = os.getenv('PATH')
             for p in paths:
-                env += ":{}".format(p)
-            os.putenv('PATH', env)
+                os.environ['PATH'].append(p)
 
 
         # Job Runner
