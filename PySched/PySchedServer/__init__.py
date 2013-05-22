@@ -30,7 +30,7 @@ import datetime
 import os
 
 
-VERSION = "1.1.7"
+VERSION = "1.1.8"
 TITLE = """
  _____        _____      _              _  _____                           
 |  __ \      / ____|    | |            | |/ ____|                          
@@ -284,7 +284,7 @@ class PySchedServer(object):
             FileUtils.clearDirectory(jobDir, deleteSubfolders=False)
 
         self.addToJobLog(job.jobId, "Job sent to Workstation {}".format(job.workstation))
-        #FileUtils.deleteFile(archive)
+        FileUtils.deleteFile(archive)
         return True
 
     def cleanupJobDir(self, jobId):
