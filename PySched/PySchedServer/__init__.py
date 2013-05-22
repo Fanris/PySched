@@ -284,7 +284,7 @@ class PySchedServer(object):
             FileUtils.clearDirectory(jobDir, deleteSubfolders=False)
 
         self.addToJobLog(job.jobId, "Job sent to Workstation {}".format(job.workstation))
-        FileUtils.deleteFile(archive)
+        #FileUtils.deleteFile(archive)
         return True
 
     def cleanupJobDir(self, jobId):
