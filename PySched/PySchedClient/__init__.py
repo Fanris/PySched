@@ -27,7 +27,7 @@ import os
 import logging
 import datetime
 
-VERSION = "1.1.7"
+VERSION = "1.1.8"
 TITLE = """
  _____        _____      _              _  _____ _ _            _    
 |  __ \      / ____|    | |            | |/ ____| (_)          | |   
