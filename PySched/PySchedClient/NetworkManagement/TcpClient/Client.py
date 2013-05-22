@@ -84,6 +84,7 @@ class Client(object):
 
         if networkCommand == "fileOk":
             self.logger.info("File received!")
+            self.currentFile.close()
             self.tcpClient.fileTransferCompleted(self, self.currentFilePath, self.currentMD5)
             self.currentFilePath = None
             self.currentFile = None
