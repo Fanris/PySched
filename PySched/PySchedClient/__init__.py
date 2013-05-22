@@ -378,8 +378,9 @@ class PySchedClient(object):
                 FileUtils.deleteFile(archive)
                 return False
             else:
-                FileUtils.clearDirectory(jobDir)
-                FileUtils.deleteFile(jobDir)
+                if not self.debugMode:
+                    FileUtils.clearDirectory(jobDir)
+                    FileUtils.deleteFile(jobDir)
 
         FileUtils.deleteFile(archive)        
         return True
