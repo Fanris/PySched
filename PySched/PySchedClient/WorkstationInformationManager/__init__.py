@@ -136,8 +136,10 @@ class WIM(WIMInterface):
                 exe_file = os.path.join(path, programExec)
                 self.logger.debug("Checking {}".format(exe_file))
                 if self.is_exe(exe_file):
+                    self.logger.debug("File found!")
                     return exe_file
 
 
     def is_exe(self, fpath):
-        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
+        return os.path.isfile(fpath)
+        
