@@ -37,7 +37,7 @@ class Client(object):
         self.currentFile = None
         self.currentMD5 = None
 
-        self.logger = logging.getLogger("PySchedServer")
+        self.logger = logging.getLogger("PySchedClient")
 
     def assignTcpProtocol(self, tcpProtocol):
         '''
