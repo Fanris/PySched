@@ -103,7 +103,9 @@ class Client(object):
         @param chunk: the new chunk
         @result:
         '''
-        self.currentFile.write(base64.b64decode(chunk))
+        decodedData = base64.b64decode(chunk)
+        self.logger.debug("Received File Data: {}".format(decodedData))
+        self.currentFile.write(decodedData)
 
     def sendHeartBeat(self):
         '''
