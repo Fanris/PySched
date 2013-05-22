@@ -156,3 +156,13 @@ def getFileSize(pathToFile):
         return os.path.getsize(pathToFile) / 1024
     else:
         return None
+
+def readFile(pathToFile):
+    '''
+    @summary: Reads a complete file
+    @param pathToFile:
+    @result: Returns a list with all lines
+    '''
+    with open(pathToFile, "r") as f:
+        return f.readlines()
+

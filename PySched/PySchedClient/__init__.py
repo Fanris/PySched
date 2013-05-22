@@ -27,7 +27,7 @@ import os
 import logging
 import datetime
 
-VERSION = "1.1.8"
+VERSION = "1.1.9"
 TITLE = """
  _____        _____      _              _  _____ _ _            _    
 |  __ \      / ____|    | |            | |/ ____| (_)          | |   
@@ -67,6 +67,7 @@ class PySchedClient(object):
 
         # Load additional Path
         if os.path.exists(os.path.join(self.workingDir, "PATHS")):
+            self.logger.info("Reading additional PATHS...")
             paths = FileUtils.readFile(os.path.join(self.workingDir, "PATHS"))
             env = os.getenv('PATH')
             env.extend(paths)
