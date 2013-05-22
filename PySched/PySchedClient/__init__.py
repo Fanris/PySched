@@ -65,6 +65,14 @@ class PySchedClient(object):
         # Init
         self.reservedCpus = {}
 
+        # Load additional Path
+        if os.path.exists(os.path.join(self.workingDir, "PATHS")):
+            paths = FileUtils.readFile(os.path.join(self.workingDir, "PATHS"))
+            env = os.getenv('PATH')
+            env.extend(paths)
+            os.putenv('PATH', env)
+
+
         # Job Runner
         self.jobRunner = JobRunner(self)
 
