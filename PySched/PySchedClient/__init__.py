@@ -424,9 +424,9 @@ class PySchedClient(object):
         FileUtils.createDirectory(jobDir)
         FileUtils.copyFile(pathToFile, dest)
         Archive.unpack(dest)
-        #FileUtils.deleteFile(dest)
 
-        #reactor.callInThread(self.runJob, jobId)
+        FileUtils.deleteFile(dest)
+        reactor.callInThread(self.runJob, jobId)
 
     def createFileIndex(self, jobId):
         '''
