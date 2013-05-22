@@ -423,8 +423,8 @@ class PySchedClient(object):
         dest = os.path.join(jobDir, jobId)
         FileUtils.createDirectory(jobDir)
         FileUtils.copyFile(pathToFile, dest)
-        #Archive.unpack(dest)
-        FileUtils.deleteFile(dest)
+        Archive.unpack(dest)
+        #FileUtils.deleteFile(dest)
 
         #reactor.callInThread(self.runJob, jobId)
 
