@@ -70,7 +70,8 @@ class PySchedClient(object):
             self.logger.info("Reading additional PATHS...")
             paths = FileUtils.readFile(os.path.join(self.workingDir, "PATHS"))
             env = os.getenv('PATH')
-            env.extend(paths)
+            for p in paths:
+                env += ":{}".format(p)
             os.putenv('PATH', env)
 
 
