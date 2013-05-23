@@ -178,3 +178,11 @@ class CommandBuilder(object):
         '''
         return CommandBuilder.buildCommand("reserveCPU", jobId=jobId)
 
+    @staticmethod
+    def createUpdatePathString(path):
+        '''
+        @summary: Client command. Updates the Path list on the client.
+        @param path: the path to append
+        @result: 
+        '''
+        return CommandBuilder.buildCommand("updatePath", path=path)

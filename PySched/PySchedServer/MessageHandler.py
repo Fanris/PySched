@@ -336,3 +336,17 @@ class MessageHandler(MessageHandlerInterface):
         log = self.pySchedServer.getLog(data.get("jobId", None), data.get("userId", None))
         self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, log=log))
 
+    def addPath(self, networkId, data):
+        '''
+        @summary:           Appends a new search Path for programs at the 
+                            workstations
+        @param networkId:   The sender
+        @param data:
+        @result: 
+        '''
+        userId = data.get("userId", None)
+        path = data.get("path", None)
+
+        if userId and path:
+            self.pySchedServer.appendPath(userId, path)
+

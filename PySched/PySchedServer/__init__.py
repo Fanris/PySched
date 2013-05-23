@@ -485,7 +485,7 @@ class PySchedServer(object):
         for k, v in self.workstations.iteritems():
             if v.get("workstationName", None) == newMachineName:
                 self.logger.debug("Overriding old workstation Informations")
-                del self.workstationsp[k]
+                del self.workstations[k]
 
         self.workstations[networkId] = workstationInfo
         self.logger.info("New workstation {} added. Currently are {} workstations available."
@@ -681,6 +681,17 @@ class PySchedServer(object):
 
         return server
 
+    def appendPath(self, userId, path):
+        user = self.getUser(userId)
+        if user.admin:
+            FileUtils.createOrAppendToFile(
+                os.path.join(self.pySchedServer.workingDir, "PATHS"),
+                path)
+
+            for networkId in self.workstations.keys():
+                self.networkManager.sendMessage(
+                    networkId,
+                    CommandBuilder.createUpdatePathString(path))
 
     def initializeLogger(self, workingDir, args):
         '''

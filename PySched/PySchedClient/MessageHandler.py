@@ -138,3 +138,12 @@ class MessageHandler(MessageHandlerInterface):
         @result: 
         '''
         self.pySchedClient.shutdown()
+
+    def updatePath(self, sender, data):
+        '''
+        @summary:       Updates the program path file
+        @param sender:  the sender of the command
+        @param data:
+        @result: 
+        '''
+        self.pySchedClient.updatePath(data.get("path", None))
