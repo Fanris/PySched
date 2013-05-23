@@ -30,7 +30,7 @@ import datetime
 import os
 
 
-VERSION = "1.1.8"
+VERSION = "1.1.9"
 TITLE = """
  _____        _____      _              _  _____                           
 |  __ \      / ____|    | |            | |/ ____|                          
@@ -445,6 +445,30 @@ class PySchedServer(object):
 
             return log
 
+    def addProgram(self, userId, program):
+        '''
+        @summary: Adds a new program to the database
+        @param userId: The user who sends the request
+        @param program: the new program
+        @result: 
+        '''
+        user = self.getUser(userId)
+
+        if user.admin:
+            programs = self.getFromDatabase(Program)
+            for p in programs:
+                if p.programName == program.programName and \
+                    p.programVersion == program.programVersion:
+
+                    program.id = p.id
+                    if self.updateDatabaseEntry(p):
+                        return True
+                    else:
+                        return False
+            if self.addToDatabase(program):
+                return True
+
+        return False
 
     # Workstation Functions
     # ========================
@@ -547,19 +571,13 @@ class PySchedServer(object):
         @param waitForAnswer: Wait 5 second for an answer
         @result:
         '''
-        p = []
+        programs = self.getFromDatabase(Program)
 
-        if not programs:
-            programs = self.getFromDatabase(Program)
-            for program in programs:
-                p.append(program.programName)
-        else:
-            p = programs
+        if not programs and len(programs) > 0:
+            networkId = self.lookupWorkstationName(workstation)
 
-        networkId = self.lookupWorkstationName(workstation)
-
-        self.networkManager.sendMessage(networkId, 
-            CommandBuilder.buildCheckForProgramsString(p))    
+            self.networkManager.sendMessage(networkId, 
+                CommandBuilder.buildCheckForProgramsString(programs))    
 
     def checkJobs(self, workstation=None):
         '''

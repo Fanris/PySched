@@ -80,9 +80,15 @@ class SqliteProgram(Tables.declBase):
     __tablename__ = "programs"
     id = Column("id", Integer, primary_key=True)
     programName = Column('programName', String)
+    programPath = Column('programPath', String)
+    programExec = Column('programExec', String)
+    programVersion = Column('programVersion', String)
 
-    def __init__(self, programName, programExec, programVersion):
+    def __init__(self, programName, programExec, programPath, programVersion):
         self.programName = programName
+        self.programExec = programExec
+        self.programPath = programPath
+        self.programVersion = programVersion
 
     def update(self, updatedObject):
         '''
@@ -91,6 +97,9 @@ class SqliteProgram(Tables.declBase):
         @result:
         '''
         self.programName = updatedObject.programName
+        self.programExec = updatedObject.programExec
+        self.programPath = updatedObject.programPath
+        self.programVersion = updatedObject.programVersion
 
     def convertToPySched(self):
         '''
@@ -100,6 +109,9 @@ class SqliteProgram(Tables.declBase):
         program = Program()
         program.id = self.id
         program.programName = self.programName
+        program.programExec = self.programExec
+        program.programPath = self.programPath
+        program.programVersion = self.programVersion
 
         return program
 
@@ -112,6 +124,10 @@ class SqliteProgram(Tables.declBase):
         '''
         program = SqliteProgram(obj.programName)
         program.id = obj.id
+        program.programName = obj.programName
+        program.programExec = obj.programExec
+        program.programPath = obj.programPath
+        program.programVersion = obj.programVersion
 
         return program
 

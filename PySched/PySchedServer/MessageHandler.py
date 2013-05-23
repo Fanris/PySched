@@ -7,7 +7,7 @@ Created on 2013-01-11 14:45
 
 from PySched.Common.Interfaces.Network.MessageHandlerInterface import MessageHandlerInterface
 from PySched.Common.Communication.CommandBuilder import CommandBuilder
-from PySched.Common.DataStructures import JobState, Compiler
+from PySched.Common.DataStructures import JobState, Compiler, Program
 from PySched.Common.IO import FileUtils
 
 import json
@@ -233,21 +233,50 @@ class MessageHandler(MessageHandlerInterface):
         self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, compiler=compiler))
 
 
-    def getParser(self, networkId, data):
+    def getPrograms(self, networkId, data):
         '''
         @summary:           Is called when a client requests a list of all 
-                            available Parsers.
+                            available Programs.
         @param networkId:   The client which sends the request.
         @param data:
         @result:
         '''
-        pass
+        programs = self.pySchedServer.getFromDatabase(Program)
+
+        self.pySchedServer.networkManager.sendMessage(
+            networkId, 
+            CommandBuilder.buildResponseString(result=True, programs=programs))
+
+    def addProgram(self, networkId, data):
+        '''
+        @summary:           Is called when a new program should be added to 
+                            the database
+        @param networkId:
+        @param data:
+        @result: 
+        '''
+        user = data.get("userId")
+        program = Program()
+        program.programName = data.get("programName", None)
+        program.programExec = data.get("programExec", None)
+        program.programPath = data.get("programPath", None)
+        program.programVersion = data.get("programVersion", None)
+
+        if self.pySchedServer.addProgram(user, program):
+            self.pySchedServer.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(result=True))
 
     def getWorkstations(self, networkId, data):
         workstations = self.pySchedServer.workstations
         server = self.pySchedServer.getServerInformations()
 
-        self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, workstations=workstations.values(), server=server))
+        self.pySchedServer.networkManager.sendMessage(
+            networkId, 
+            CommandBuilder.buildResponseString(
+                result=True, 
+                workstations=workstations.values(), 
+                server=server))
 
     def deleteJob(self, networkId, data):
         '''

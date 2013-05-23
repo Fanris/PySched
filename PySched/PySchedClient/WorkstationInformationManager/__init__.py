@@ -35,6 +35,8 @@ class WIM(WIMInterface):
         self.interval = interval
         self.refreshLoop = LoopingCall(self.refreshData)
         self.programList = {}
+        for program in programs:
+            self.programList[program.programName] = program
 
     def startCollectingData(self):
         '''
@@ -102,9 +104,12 @@ class WIM(WIMInterface):
         '''
         for p in programs:
             if p  in self.programList:
-                continue
+                prog = self.programList.get(p.programName, None)
+                if prog and prog.equals(p):
+                    continue
+
             else:
-                prog = self.programInstalled(p)
+                prog = self.programInstalled(p.programExec)
                 if prog:
                     self.programList[p] = prog
 
@@ -141,5 +146,4 @@ class WIM(WIMInterface):
 
 
     def is_exe(self, fpath):
-        return os.path.isfile(fpath)
-        
+        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)

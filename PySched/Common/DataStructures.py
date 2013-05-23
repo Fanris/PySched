@@ -62,6 +62,18 @@ class Program(object):
     '''
     def __init__(self):
         self.programName = None
+        self.programExec = None
+        self.programPath = None
+        self.programVersion = None
+
+    def equals(self, program):
+        if self.programName == program.programName and \
+            self.programExec == program.programExec and \
+            self.programPath == program.programPath and \
+            self.programVersion == program.programVersion:
+            return True
+
+        return False
 
 class User(object):
     '''
