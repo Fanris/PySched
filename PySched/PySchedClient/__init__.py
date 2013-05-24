@@ -27,7 +27,7 @@ import os
 import logging
 import datetime
 
-VERSION = "1.2"
+VERSION = "1.2.1"
 TITLE = """
  _____        _____      _              _  _____ _ _            _    
 |  __ \      / ____|    | |            | |/ ____| (_)          | |   
@@ -514,7 +514,7 @@ class PySchedClient(object):
 
         for p in paths:
             current = os.environ['PATH']
-            if p.strip() in current:
+            if not p.strip() in current:
                 append = ":{}".format(p)
                 append = append.strip()
                 os.environ['PATH'] = os.environ['PATH'] + append

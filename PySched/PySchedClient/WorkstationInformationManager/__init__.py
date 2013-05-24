@@ -102,10 +102,14 @@ class WIM(WIMInterface):
         and executable to check for.
         @result: a list of
         '''
-        filenames = map(self.programInstalled,programs)
-        for prog,name in zip(programs,filenames):
-            if name is not None:
-                self.programDict[prog] = name
+        for program in programs:
+            path = program.programExec
+            if program.programPath:
+                path = os.path.join(program.programPath, program.programExec)
+            installPath = self.programInstalled(path)
+        
+            if installPath:
+                self.programDict[program.programName] = installPath
 
         self.informations["programs"] = self.programDict.keys()
 

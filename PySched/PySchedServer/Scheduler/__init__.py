@@ -6,7 +6,7 @@ Created on 2012-12-05 11:59
 '''
 
 from PySched.Common.Interfaces.SchedulerInterface import SchedulerInterface
-from PySched.Common.DataStructures import JobState
+from PySched.Common.DataStructures import JobState, Program
 from Compiler import Compiler as CompilerClass
 
 from twisted.internet.task import LoopingCall
@@ -180,9 +180,12 @@ class PyScheduler(SchedulerInterface):
                             program,
                             workstation.get("workstationName", None))
                         )
+                    p = Program()
+                    p.programName = program
+                    p.programExec = program
                     self.pySchedServer.checkForPrograms(
                         workstation.get("workstationName", None),
-                        [program]
+                        [p]
                         )
                     sleep(2)
                     
