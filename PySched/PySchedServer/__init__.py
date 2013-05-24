@@ -687,6 +687,7 @@ class PySchedServer(object):
         user = self.getUser(userId)
         if user.admin:
             for networkId in self.workstations.keys():
+                self.logger.info("Shutting down {}".format(self.lookupNetworkId(networkId)))
                 self.networkManager.sendMessage(
                     networkId, 
                     CommandBuilder.createShutdownString())
