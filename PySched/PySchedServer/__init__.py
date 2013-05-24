@@ -495,7 +495,7 @@ class PySchedServer(object):
         self.sendSearchPaths(workstationInfo.get("workstationName", None))
 
         self.logger.info("Checking programs on workstation {}".format(workstationInfo.get("workstationName", None)))
-        self.checkForPrograms(workstationInfo.get("workstationName"))
+        self.checkForPrograms(workstationInfo.get("workstationName"), None)
 
         self.logger.info("Checking Jobs of workstation {}".format(workstationInfo.get("workstationName", None)))
         self.checkJobs(workstationInfo.get("workstationName", None))
@@ -575,12 +575,12 @@ class PySchedServer(object):
         @result:
         '''
         progs = self.getFromDatabase(Program)
+        if not isinstance(progs, list):
+            progs = [progs]
+
         checkFor = programs
         if progs:
-            for p in progs:
-                checkFor.append(os.path.join(
-                    p.programPath,
-                    p.programExec))
+            checkFor.extend(progs)
 
         if len(checkFor) > 0:
             temp = [x.__dict__ for x in checkFor]
