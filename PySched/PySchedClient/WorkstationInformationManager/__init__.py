@@ -10,6 +10,8 @@ from PySched.Common.Interfaces.WIMInterface import WIMInterface
 
 from twisted.internet.task import LoopingCall
 
+from Common.DataStructures import Program
+
 import psutil
 import platform
 import os
@@ -103,13 +105,15 @@ class WIM(WIMInterface):
         @result: a list of
         '''
         for program in programs:
-            path = program.programExec
-            if program.programPath:
-                path = os.path.join(program.programPath, program.programExec)
+            p = Program()
+            p.__dict__ = program
+            path = p.programExec
+            if p.programPath:
+                path = os.path.join(p.programPath, p.programExec)
             installPath = self.programInstalled(path)
         
             if installPath:
-                self.programDict[program.programName] = installPath
+                self.programDict[p.programName] = installPath
 
         self.informations["programs"] = self.programDict.keys()
 
