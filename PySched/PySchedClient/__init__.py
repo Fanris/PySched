@@ -500,6 +500,7 @@ class PySchedClient(object):
         self.logger.info("Updating search Paths: {}".format(paths))
         if paths:
             for p in paths:
+                self.logger.debug("Adding {} to search Path".format(p))
                 FileUtils.createOrAppendToFile(
                     os.path.join(self.workingDir, "PATHS"),
                     p + "\n")

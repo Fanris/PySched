@@ -574,9 +574,9 @@ class PySchedServer(object):
         @param waitForAnswer: Wait 5 second for an answer
         @result:
         '''
-        programs = self.getFromDatabase(Program)
+        progs = self.getFromDatabase(Program)
 
-        if not programs and len(programs) > 0:
+        if not progs and len(programs) > 0:
             networkId = self.lookupWorkstationName(workstation)
 
             self.networkManager.sendMessage(networkId, 
