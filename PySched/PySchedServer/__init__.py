@@ -495,7 +495,7 @@ class PySchedServer(object):
         self.sendSearchPaths(workstationInfo.get("workstationName", None))
 
         self.logger.info("Checking programs on workstation {}".format(workstationInfo.get("workstationName", None)))
-        self.checkForPrograms(workstationInfo.get("workstationName"), None)
+        self.checkForPrograms(workstationInfo.get("workstationName"))
 
         self.logger.info("Checking Jobs of workstation {}".format(workstationInfo.get("workstationName", None)))
         self.checkJobs(workstationInfo.get("workstationName", None))
