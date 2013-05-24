@@ -491,6 +491,9 @@ class PySchedServer(object):
         self.logger.info("New workstation {} added. Currently are {} workstations available."
             .format(workstationInfo.get("workstationName", None), len(self.workstations)))
 
+        self.logger.info("Sending global search Paths to workstation")
+        self.sendSearchPaths(workstationInfo.get("workstationName", None))
+
         self.logger.info("Checking programs on workstation {}".format(workstationInfo.get("workstationName", None)))
         self.checkForPrograms(workstationInfo.get("workstationName", None))
 
@@ -614,6 +617,21 @@ class PySchedServer(object):
         else:
             return False
 
+    def sendSearchPaths(self, workstationName):
+        '''
+        @summary: Sends the configured search path to the workstation
+        @param workstation:
+        @result: 
+        '''
+        paths = self.getPath()
+        if paths and len(paths) > 0:
+            networkId = self.lookupWorkstationName(workstationName)
+            if networkId:
+                self.networkManager.sendMessage(
+                    networkId,
+                    CommandBuilder.createUpdatePathString(paths))
+
+
     # FileTransfer Functions
     # ========================
     def fileReceived(self, pathToFile):
@@ -687,12 +705,12 @@ class PySchedServer(object):
             self.logger.info("Adding a new search path: {}".format(path))
             FileUtils.createOrAppendToFile(
                 os.path.join(self.workingDir, "PATHS"),
-                path)
+                path + "\n")
 
             for networkId in self.workstations.keys():
                 self.networkManager.sendMessage(
                     networkId,
-                    CommandBuilder.createUpdatePathString(path))
+                    CommandBuilder.createUpdatePathString([path]))
 
     def getPath(self):
         return FileUtils.readFile(os.path.join(self.workingDir, "PATHS"))

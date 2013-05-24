@@ -491,22 +491,27 @@ class PySchedClient(object):
                     newPath = os.path.join(jobDir, 'results', f)
                     FileUtils.moveFile(filepath, newPath)
 
-    def updatePath(self, path):
+    def updatePath(self, paths):
         '''
         @summary: Updates the program Path list.
         @param path: the new path
         @result: 
         '''
-        FileUtils.createOrAppendToFile(
-            os.path.join(self.workingDir, "PATHS"),
-            path)
+        if paths:
+            for p in paths:
+                FileUtils.createOrAppendToFile(
+                    os.path.join(self.workingDir, "PATHS"),
+                    p + "\n")
 
-        self.updatePathEnv(path)
+            self.updatePathEnv(paths)
 
-    def updatePathEnv(self, path):
-        append = ":{}".format(path)
-        append = append.strip()
-        os.environ['PATH'] = os.environ['PATH'] + append
+    def updatePathEnv(self, paths):
+        for p in paths:
+            current = os.environ['PATH']
+            if p.strip() in current:
+                append = ":{}".format(p)
+                append = append.strip()
+                os.environ['PATH'] = os.environ['PATH'] + append
 
     def shutdown(self):
         '''
