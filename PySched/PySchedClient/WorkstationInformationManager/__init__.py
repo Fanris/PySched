@@ -103,20 +103,17 @@ class WIM(WIMInterface):
         @result: a list of
         '''
         for p in programs:
-            if p  in self.programList:
-                prog = self.programList.get(p.programName, None)
-                if prog and prog.equals(p):
-                    continue
-
+            if p in self.programList:
+                continue
             else:
-                prog = self.programInstalled(p.programExec)
+                prog = self.programInstalled(p)
                 if prog:
                     self.programList[p] = prog
 
 
         self.informations["programs"] = []
         for p in self.programList.keys():
-            self.informations["programs"].append(p)        
+            self.informations["programs"].append(p)       
 
     def getProgramPath(self, programName):
         '''
