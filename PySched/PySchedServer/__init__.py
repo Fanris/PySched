@@ -691,6 +691,7 @@ class PySchedServer(object):
                     networkId, 
                     CommandBuilder.createShutdownString())
 
+        self.shutdown()
 
     def shutdown(self):
         '''
