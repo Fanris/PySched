@@ -10,7 +10,7 @@ from PySched.Common.Interfaces.WIMInterface import WIMInterface
 
 from twisted.internet.task import LoopingCall
 
-from Common.DataStructures import Program
+from PySched.Common.DataStructures import Program
 
 import psutil
 import platform
