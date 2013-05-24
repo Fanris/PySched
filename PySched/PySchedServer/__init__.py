@@ -687,12 +687,13 @@ class PySchedServer(object):
         user = self.getUser(userId)
         if user.admin:
             for networkId in self.workstations.keys():
-                self.logger.info("Shutting down {}".format(self.lookupNetworkId(networkId)))
+                self.logger.info("Shutting down {}".format(
+                    self.lookupNetworkId(networkId).get("workstationName", "")))
                 self.networkManager.sendMessage(
                     networkId, 
                     CommandBuilder.createShutdownString())
 
-        self.shutdown()
+        reactor.callLater(30, self.shutdown)
 
     def shutdown(self):
         '''
