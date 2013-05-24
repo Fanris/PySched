@@ -583,10 +583,12 @@ class PySchedServer(object):
                     p.programExec))
 
         if len(checkFor) > 0:
+            temp = [x.__dict__ for x in checkFor]
+
             networkId = self.lookupWorkstationName(workstation)
 
             self.networkManager.sendMessage(networkId, 
-                CommandBuilder.buildCheckForProgramsString(checkFor))    
+                CommandBuilder.buildCheckForProgramsString(temp))    
 
     def checkJobs(self, workstation=None):
         '''
