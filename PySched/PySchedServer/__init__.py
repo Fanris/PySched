@@ -687,7 +687,7 @@ class PySchedServer(object):
             for networkId in self.workstations.keys():
                 self.networkManager.sendMessage(
                     networkId, 
-                    CommandBuilder.buildShutdownString())
+                    CommandBuilder.createShutdownString())
 
 
     def shutdown(self):
