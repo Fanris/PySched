@@ -30,7 +30,7 @@ import datetime
 import os
 
 
-VERSION = "1.1.9"
+VERSION = "1.2"
 TITLE = """
  _____        _____      _              _  _____                           
 |  __ \      / ____|    | |            | |/ ____|                          
@@ -495,7 +495,7 @@ class PySchedServer(object):
         self.sendSearchPaths(workstationInfo.get("workstationName", None))
 
         self.logger.info("Checking programs on workstation {}".format(workstationInfo.get("workstationName", None)))
-        self.checkForPrograms(workstationInfo.get("workstationName", None))
+        self.checkForPrograms(workstationInfo.get("workstationName"))
 
         self.logger.info("Checking Jobs of workstation {}".format(workstationInfo.get("workstationName", None)))
         self.checkJobs(workstationInfo.get("workstationName", None))
@@ -575,12 +575,18 @@ class PySchedServer(object):
         @result:
         '''
         progs = self.getFromDatabase(Program)
+        checkFor = programs
+        if progs:
+            for p in progs:
+                checkFor.append(os.path.join(
+                    p.programPath,
+                    p.programExec))
 
-        if not progs and len(programs) > 0:
+        if len(checkFor) > 0:
             networkId = self.lookupWorkstationName(workstation)
 
             self.networkManager.sendMessage(networkId, 
-                CommandBuilder.buildCheckForProgramsString(programs))    
+                CommandBuilder.buildCheckForProgramsString(checkFor))    
 
     def checkJobs(self, workstation=None):
         '''
