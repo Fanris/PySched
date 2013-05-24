@@ -192,3 +192,7 @@ class NetworkManager(NetworkInterface):
         self.connectionBusy = False
         self.messageReceiver.fileTransferCompleted(networkId, pathToFile)
         deleteFile(pathToFile)
+
+    def stopService(self):
+        self.logger.info("Shutting down tcp server...")
+        self.tcpClient.stopClient()

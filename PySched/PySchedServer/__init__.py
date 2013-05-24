@@ -693,7 +693,7 @@ class PySchedServer(object):
                     networkId, 
                     CommandBuilder.createShutdownString())
 
-        reactor.callLater(30, self.shutdown)
+        reactor.callLater(10, self.shutdown)
 
     def shutdown(self):
         '''

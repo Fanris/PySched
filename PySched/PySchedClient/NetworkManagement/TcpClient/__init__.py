@@ -41,6 +41,9 @@ class TcpClient(object):
         endPoint = TCP4ClientEndpoint(reactor, self.host, self.port)
         endPoint.connect(self.clientFactory)
 
+    def stopClient(self):
+        pass
+
     def connectionMade(self, client):
         '''
         @summary: Is called when the tcp connections is established.

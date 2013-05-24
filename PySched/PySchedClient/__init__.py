@@ -525,8 +525,16 @@ class PySchedClient(object):
         @result: 
         '''
         self.logger.info("Shutting down...")
-        self.stopWorkstationStateLoop()
-        self.stopNetworkServices()
+        try:
+            self.stopWorkstationStateLoop()
+        except:
+            pass
+
+        try:
+            self.stopNetworkServices()
+        except:
+            pass
+        
         reactor.stop()
 
     def getVersion(self):
