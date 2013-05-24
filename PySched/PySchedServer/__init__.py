@@ -686,7 +686,7 @@ class PySchedServer(object):
         if user.admin:
             self.logger.info("Adding a new search path: {}".format(path))
             FileUtils.createOrAppendToFile(
-                os.path.join(self.pySchedServer.workingDir, "PATHS"),
+                os.path.join(self.workingDir, "PATHS"),
                 path)
 
             for networkId in self.workstations.keys():
