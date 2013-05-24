@@ -51,10 +51,9 @@ def createOrAppendToFile(pathToFile, filedata):
     if not os.path.exists(path):
         createFile(pathToFile, None)
 
-    fileHandler = open(os.path.normpath(pathToFile), "a")
-    if filedata:
-        fileHandler.write(filedata)
-    fileHandler.close()
+    with open(os.path.normpath(pathToFile), "a") as fileHandler:
+        if filedata:
+            fileHandler.write(filedata)    
 
     return os.path.normpath(pathToFile)
 
