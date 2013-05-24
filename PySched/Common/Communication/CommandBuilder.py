@@ -186,3 +186,7 @@ class CommandBuilder(object):
         @result: 
         '''
         return CommandBuilder.buildCommand("updatePath", path=path)
+
+    @staticmethod
+    def createShutdownString():
+        return CommandBuilder.buildCommand("shutdown")

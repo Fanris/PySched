@@ -365,3 +365,5 @@ class MessageHandler(MessageHandlerInterface):
             CommandBuilder.buildResponseString(
                 result=False))
 
+    def shutdownAll(self, networkId, data):
+        self.pySchedServer.stopAll(data.get("userId", None))

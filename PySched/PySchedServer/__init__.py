@@ -675,6 +675,21 @@ class PySchedServer(object):
 
     # Internal Functions
     # ========================
+
+    def stopAll(self, userId):
+        '''
+        @summary: Shuts down all Workstations and the server
+        @param userId:
+        @result: 
+        '''
+        user = self.getUser(userId)
+        if user.admin:
+            for networkId in self.workstations.keys():
+                self.networkManager.sendMessage(
+                    networkId, 
+                    CommandBuilder.buildShutdownString())
+
+
     def shutdown(self):
         '''
         @summary: Shut the server down.
