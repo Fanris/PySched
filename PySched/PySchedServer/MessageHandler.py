@@ -354,9 +354,14 @@ class MessageHandler(MessageHandlerInterface):
         user = self.pySchedServer.getUser(data.get("userId", None))
         if user.admin:
             paths = self.pySchedServer.getPath()
-            if paths:
-                self.pySchedServer.networkManager.sendMessage(
-                    networkId,
-                    CommandBuilder.buildResponseString(
-                        result=True,
-                        paths=paths))
+            self.pySchedServer.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(
+                    result=True,
+                    paths=paths))
+            return True
+        self.pySchedServer.networkManager.sendMessage(
+            networkId,
+            CommandBuilder.buildResponseString(
+                result=False))
+
