@@ -34,9 +34,9 @@ class WIM(WIMInterface):
         self.informations = {}
         self.interval = interval
         self.refreshLoop = LoopingCall(self.refreshData)
-        self.programList = {}
+        self.programDict = {}
         for program in programs:
-            self.programList[program.programName] = program
+            self.programDict[program.programName] = program
 
     def startCollectingData(self):
         '''
@@ -102,18 +102,13 @@ class WIM(WIMInterface):
         and executable to check for.
         @result: a list of
         '''
-        for p in programs:
-            if p in self.programList:
-                continue
-            else:
-                prog = self.programInstalled(p)
-                if prog:
-                    self.programList[p] = prog
+        filenames = map(self.programInstalled,programs)
+        for prog,name in zip(programs,filenames):
+            if name is not None:
+                self.programDict[prog] = name
 
+        self.informations["programs"] = self.programDict.keys()
 
-        self.informations["programs"] = []
-        for p in self.programList.keys():
-            self.informations["programs"].append(p)       
 
     def getProgramPath(self, programName):
         '''
@@ -121,7 +116,7 @@ class WIM(WIMInterface):
         @param programName: The program name
         @result: 
         '''
-        return self.programList.get(programName, None)           
+        return self.programDict.get(programName, None)           
 
     def programInstalled(self, programExec):
         self.logger.debug("Search for executable for {}".format(programExec))

@@ -507,7 +507,11 @@ class PySchedClient(object):
 
             self.updatePathEnv(paths)
 
-    def updatePathEnv(self, paths):
+    def updatePathEnv(self, pathsToUpdate):
+        paths = pathsToUpdate
+        if not isinstance(paths, list):
+            paths = [paths]
+
         for p in paths:
             current = os.environ['PATH']
             if p.strip() in current:
