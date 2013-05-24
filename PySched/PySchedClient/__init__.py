@@ -81,7 +81,7 @@ class PySchedClient(object):
         self.logger.info("Database Manager initialized.")
 
         # WIM
-        self.wim = WIM(self, programs=self.getFromDatabase(Program))
+        self.wim = WIM(self)
         self.wim.startCollectingData()
         self.workstationStateLoop = LoopingCall(self.sendWorkstationState)
         self.logger.info("Workstation Information Manager initialized.")

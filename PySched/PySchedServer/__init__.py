@@ -681,9 +681,10 @@ class PySchedServer(object):
 
         return server
 
-    def appendPath(self, userId, path):
+    def appendPath(self, userId, path):        
         user = self.getUser(userId)
         if user.admin:
+            self.logger.info("Adding a new search path: {}".format(path))
             FileUtils.createOrAppendToFile(
                 os.path.join(self.pySchedServer.workingDir, "PATHS"),
                 path)
@@ -692,6 +693,9 @@ class PySchedServer(object):
                 self.networkManager.sendMessage(
                     networkId,
                     CommandBuilder.createUpdatePathString(path))
+
+    def getPath(self):
+        return FileUtils.readFile(os.path.join(self.workingDir, "PATHS"))
 
     def initializeLogger(self, workingDir, args):
         '''

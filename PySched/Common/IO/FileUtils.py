@@ -163,6 +163,7 @@ def readFile(pathToFile):
     @param pathToFile:
     @result: Returns a list with all lines
     '''
-    with open(pathToFile, "r") as f:
-        return f.readlines()
+    if os.path.exists(pathToFile):
+        with open(pathToFile, "r") as f:
+            return f.readlines()    
 
