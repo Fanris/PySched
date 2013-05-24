@@ -566,7 +566,7 @@ class PySchedServer(object):
 
         return runningJobs
 
-    def checkForPrograms(self, workstation, programs=None):
+    def checkForPrograms(self, workstation, programs=[]):
         '''
         @summary: Checks the workstation for the programs defined in the database.
         @param workstation: the workstation which should be checked
