@@ -340,6 +340,26 @@ class PySchedServer(object):
         self.networkManager.sendMessage(networkId,
             CommandBuilder.buildReserveCPUString(job.jobId))
 
+    def pauseJob(self, userId, jobId):
+        user = self.getUser(userId)
+        job = self.getJob(jobId)
+
+        if (job and user) and \
+            (job.userId == user.id or user.admin):
+            networkId = self.lookupWorkstationName(job.workstation)
+            self.networkManager.sendMessage(networkId,
+                CommandBuilder.buildPauseJobString(job.jobId))
+
+    def resumeJob(self, userId, jobId):
+        user = self.getUser(userId)
+        job = self.getJob(jobId)
+
+        if (job and user) and \
+            (job.userId == user.id or user.admin):
+            networkId = self.lookupWorkstationName(job.workstation)
+            self.networkManager.sendMessage(networkId,
+                CommandBuilder.buildResumeJobString(job.jobId))            
+
     # User Functions
     # ========================
     def createUser(self, userInformation):
@@ -639,7 +659,7 @@ class PySchedServer(object):
             if networkId:
                 self.networkManager.sendMessage(
                     networkId,
-                    CommandBuilder.createUpdatePathString(paths))
+                    CommandBuilder.buildUpdatePathString(paths))
 
 
     # FileTransfer Functions
@@ -693,7 +713,7 @@ class PySchedServer(object):
                     self.lookupNetworkId(networkId).get("workstationName", "")))
                 self.networkManager.sendMessage(
                     networkId, 
-                    CommandBuilder.createShutdownString())
+                    CommandBuilder.buildShutdownString())
 
         reactor.callLater(10, self.shutdown)
 

@@ -367,3 +367,15 @@ class MessageHandler(MessageHandlerInterface):
 
     def shutdownAll(self, networkId, data):
         self.pySchedServer.stopAll(data.get("userId", None))
+
+    def pauseJob(self, networkId, data): 
+        user = data.get("userId", None)
+        jobId = data.get("jobId", None)
+
+        self.pySchedServer.pauseJob(user, jobId)
+
+    def resumeJob(self, networkId, data):
+        user = data.get("userId", None)
+        jobId = data.get("jobId", None)
+
+        self.pySchedServer.resumeJob(user, jobId)

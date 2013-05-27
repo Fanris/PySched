@@ -179,7 +179,7 @@ class CommandBuilder(object):
         return CommandBuilder.buildCommand("reserveCPU", jobId=jobId)
 
     @staticmethod
-    def createUpdatePathString(path):
+    def buildUpdatePathString(path):
         '''
         @summary: Client command. Updates the Path list on the client.
         @param path: the path to append
@@ -188,5 +188,13 @@ class CommandBuilder(object):
         return CommandBuilder.buildCommand("updatePath", path=path)
 
     @staticmethod
-    def createShutdownString():
+    def buildShutdownString():
         return CommandBuilder.buildCommand("shutdown")
+
+    @staticmethod
+    def buildPauseJobString(jobId):
+        return CommandBuilder.buildCommand("pauseJob", jobId=jobId)
+
+    @staticmethod
+    def buildResumeJobString(jobId):
+        return CommandBuilder.buildCommand("resumeJob", jobId=jobId)
