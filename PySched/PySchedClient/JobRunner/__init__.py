@@ -94,13 +94,10 @@ class JobRunner(JobRunnerInterface):
         process = self.runningJobs.get(jobId, None)
 
         if process:
-            try:
-                pid = process.pid
-                p = psutil.Process(pid)
-                p.suspend()
-                return True
-            except:
-                return False
+            pid = process.pid
+            p = psutil.Process(pid)
+            p.suspend()
+            return True
         return False
 
     def resumeJob(self, jobId):
@@ -112,8 +109,8 @@ class JobRunner(JobRunnerInterface):
         process = self.runningJobs.get(jobId, None)
 
         if process:
-            try:
-                pid = process.pid
+            try:                
+                pid = process.pid                
                 p = psutil.Process(pid)
                 p.resume()
                 return True
