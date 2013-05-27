@@ -14,7 +14,7 @@ from twisted.internet import reactor
 
 import os
 import logging
-
+import psutils
 
 class JobRunner(JobRunnerInterface):
     '''
@@ -84,6 +84,43 @@ class JobRunner(JobRunnerInterface):
 
         if process:
             process.kill()
+
+    def pauseJob(self, jobId):
+        '''
+        @summary: Pauses a job. 
+        @param jobId:
+        @result: True if the job is paused
+        '''
+        process = self.runningJobs.get(jobId, None)
+
+        if process:
+            try:
+                pid = process.pid
+                p = psutils.Process(pid)
+                p.suspend()
+                return True
+            except:
+                return False
+        return False
+
+    def resumeJob(self, jobId):
+        '''
+        @summary: Resumes the job with the given id
+        @param jobId: the jobId
+        @result: True if the job is resumed
+        '''
+        process = self.runningJobs.get(jobId, None)
+
+        if process:
+            try:
+                pid = process.pid
+                p = psutils.Process(pid)
+                p.resume()
+                return True
+            except:
+                return False
+        return False    
+
 
     def jobStarted(self, jobId):
         '''

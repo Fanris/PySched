@@ -27,7 +27,7 @@ import os
 import logging
 import datetime
 
-VERSION = "1.2.2"
+VERSION = "1.2.3"
 TITLE = """
  _____        _____      _              _  _____ _ _            _    
 |  __ \      / ____|    | |            | |/ ____| (_)          | |   
@@ -338,6 +338,38 @@ class PySchedClient(object):
         @result: 
         '''
         return self.jobRunner.getRunningJobCount()
+
+    def pauseJob(self, jobId):
+        '''
+        @summary: Pauses a job.
+        @param jobId: the jobId to pause
+        @result: 
+        '''
+        if self.jobRunner.pauseJob(jobId):
+            job = self.getFromDatabase(Job, first=True, jobId=jobId)
+            if job:
+                job.stateId = JobState.lookup("PAUSED")
+                self.updateDatabaseEntry(job)
+                self.networkManager.sendMessage(self.serverId,
+                    CommandBuilder.buildJobInformationString(**job.__dict__))                
+
+    def resumeJob(self, jobId):
+        '''
+        @summary: Pauses a job.
+        @param jobId: the jobId to pause
+        @result: 
+        '''
+        job = self.getFromDatabase(Job, first=True, jobId=jobId)
+
+        if job.stateId == JobState.lookup("PAUSED") and \
+            self.jobRunner.resumeJob(jobId):
+            
+            job.stateId = JobState.lookup("RUNNING")
+            self.updateDatabaseEntry(job)
+            self.networkManager.sendMessage(self.serverId,
+                CommandBuilder.buildJobInformationString(**job.__dict__))
+        else:
+            pass               
 
 
     # Command Handler

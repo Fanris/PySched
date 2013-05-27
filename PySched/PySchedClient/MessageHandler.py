@@ -85,6 +85,20 @@ class MessageHandler(MessageHandlerInterface):
         '''
         self.pySchedClient.abortJob(data.get("jobId", None))
 
+    def pauseJob(self, client, data):
+        '''
+        @summary:       Is called, when a job should be paused.
+        @result:
+        '''
+        self.pySchedClient.pauseJob(data.get("jobId", None))
+
+    def resumeJob(self, client, data):
+        '''
+        @summary:       Is called, when a job should be paused.
+        @result:
+        '''
+        self.pySchedClient.resumeJob(data.get("jobId", None))            
+
     def fileTransferCompleted(self, sender, pathToFile):
         '''
         @summary:       Is called when a file transfer is completed.

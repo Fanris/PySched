@@ -27,6 +27,22 @@ class JobRunnerInterface(object):
         '''
         raise NotImplementedError
 
+    def pauseJob(self, jobId):
+        '''
+        @summary: Pauses the job with the given id
+        @param jobId: the jobId
+        @result:
+        '''
+        raise NotImplementedError
+
+    def resumeJob(self, jobId):
+        '''
+        @summary: Resumes the job with the given id
+        @param jobId: the jobId
+        @result:
+        '''
+        raise NotImplementedError        
+
     def isRunning(self, jobId):
         '''
         @summary: Checks if the job with the given id is currently running.
