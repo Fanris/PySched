@@ -14,7 +14,7 @@ from twisted.internet import reactor
 
 import os
 import logging
-import psutils
+import psutil
 
 class JobRunner(JobRunnerInterface):
     '''
@@ -96,7 +96,7 @@ class JobRunner(JobRunnerInterface):
         if process:
             try:
                 pid = process.pid
-                p = psutils.Process(pid)
+                p = psutil.Process(pid)
                 p.suspend()
                 return True
             except:
@@ -114,7 +114,7 @@ class JobRunner(JobRunnerInterface):
         if process:
             try:
                 pid = process.pid
-                p = psutils.Process(pid)
+                p = psutil.Process(pid)
                 p.resume()
                 return True
             except:
