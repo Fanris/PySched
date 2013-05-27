@@ -231,6 +231,8 @@ class PySchedServer(object):
         if not (job or user) or not (job.userId == user.id):
             return False
 
+        job.stateId = JobState.lookup("ARBORTED")
+        self.updateDatabaseEntry(job)
         networkId = self.lookupWorkstationName(job.workstation)
         self.logger.info("Aborting job {} on workstation {} ({})".format(job.jobId, job.workstation, networkId))
         self.networkManager.sendMessage(networkId, CommandBuilder.buildKillJobString(job.jobId))    
