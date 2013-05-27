@@ -341,6 +341,7 @@ class PySchedServer(object):
             CommandBuilder.buildReserveCPUString(job.jobId))
 
     def pauseJob(self, userId, jobId):
+        self.logger.info("Try to pause job {}".format(jobId))
         user = self.getUser(userId)
         job = self.getJob(jobId)
 
@@ -348,9 +349,10 @@ class PySchedServer(object):
             (job.userId == user.id or user.admin):
             networkId = self.lookupWorkstationName(job.workstation)
             self.networkManager.sendMessage(networkId,
-                CommandBuilder.buildPauseJobString(job.jobId))
+                CommandBuilder.buildPauseJobString(job.jobId))            
 
     def resumeJob(self, userId, jobId):
+        self.logger.info("Try to resume job {}".format(jobId))
         user = self.getUser(userId)
         job = self.getJob(jobId)
 

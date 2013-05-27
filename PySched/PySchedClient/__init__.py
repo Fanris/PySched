@@ -345,13 +345,16 @@ class PySchedClient(object):
         @param jobId: the jobId to pause
         @result: 
         '''
+        self.logger.info("Try to pause job {}".format(jobId))
+
         if self.jobRunner.pauseJob(jobId):
             job = self.getFromDatabase(Job, first=True, jobId=jobId)
             if job:
-                job.stateId = JobState.lookup("PAUSED")
-                self.updateDatabaseEntry(job)
+                job.stateId = JobState.lookup("PAUSED")                
+                self.updateDatabaseEntry(job)                
                 self.networkManager.sendMessage(self.serverId,
-                    CommandBuilder.buildJobInformationString(**job.__dict__))                
+                    CommandBuilder.buildJobInformationString(**job.__dict__))
+                self.logger.info("Job {} paused.".format(jobId))
 
     def resumeJob(self, jobId):
         '''
@@ -359,6 +362,7 @@ class PySchedClient(object):
         @param jobId: the jobId to pause
         @result: 
         '''
+        self.logger.info("Try to resume job {}".format(jobId))
         job = self.getFromDatabase(Job, first=True, jobId=jobId)
 
         if job.stateId == JobState.lookup("PAUSED") and \
@@ -368,6 +372,7 @@ class PySchedClient(object):
             self.updateDatabaseEntry(job)
             self.networkManager.sendMessage(self.serverId,
                 CommandBuilder.buildJobInformationString(**job.__dict__))
+            self.logger.info("Job {} resumed".format(jobId))
         else:
             pass               
 
