@@ -22,6 +22,7 @@ class JobProcessProtocol(protocol.ProcessProtocol):
         self.jobDir = jobDir
         self.aborted = False
         self.jobRunner = jobRunner
+        self.pid = 0
 
         createDirectory(os.path.join(self.jobDir, "results"))
 
@@ -32,6 +33,7 @@ class JobProcessProtocol(protocol.ProcessProtocol):
         self.stdErr = open(stdErrPath, "w+")
 
     def connectionMade(self):
+        self.pid = self.transport.pid
         self.jobRunner.jobStarted(self.jobId)
 
     def outReceived(self, data):
