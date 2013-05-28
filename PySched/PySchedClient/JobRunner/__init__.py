@@ -169,7 +169,7 @@ class JobRunner(JobRunnerInterface):
         @param jobId:
         @result:
         '''
-        if jobId in self.runningJobs:
+        if jobId in self.runningJobs.keys():
             return True
 
         return False
