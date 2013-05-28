@@ -470,16 +470,16 @@ class PySchedClient(object):
 
         # Check if job exists and rund
         self.logger.debug("Check if job {} is running...".format(jobId))
-        self.logger.debug("Running jobs: {}".format(self.jobRunner.runningJobs.keys()))
-        if self.jobRunner.isRunning(jobId):
-            self.logger.info("Updating job data of {}".format(jobId))
-            if self.jobRunner.pauseJob(jobId):
-                dest = os.path.join(jobDir, jobId)
+        job = self.getFromDatabase(Job, first=True, jobId=jobId)
+        if job and self.jobRunner.isRunning(job.jobId):
+            self.logger.info("Updating job data of {}".format(job.jobId))
+            if self.jobRunner.pauseJob(job.jobId):
+                dest = os.path.join(jobDir, job.jobId)
                 FileUtils.createDirectory(jobDir)
                 FileUtils.copyFile(pathToFile, dest)
                 Archive.unpack(dest)
                 FileUtils.deleteFile(dest)
-                self.jobRunner.resumeJob(jobId)
+                self.jobRunner.resumeJob(job.jobId)
                 return True
         else:
             self.logger.debug("Job {} isnt running.".format(jobId))
