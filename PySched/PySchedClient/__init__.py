@@ -474,7 +474,7 @@ class PySchedClient(object):
         if job and self.jobRunner.isRunning(job.jobId):
             self.logger.info("Updating job data of {}".format(job.jobId))
             if self.jobRunner.pauseJob(job.jobId):
-                dest = os.path.join(jobDir, job.jobId)
+                dest = os.path.join(jobDir, str(job.jobId))
                 FileUtils.createDirectory(jobDir)
                 FileUtils.copyFile(pathToFile, dest)
                 Archive.unpack(dest)
