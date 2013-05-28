@@ -479,13 +479,14 @@ class PySchedClient(object):
                 Archive.unpack(dest)
                 FileUtils.deleteFile(dest)
                 self.jobRunner.resumeJob(jobId)
+                return True
         else:
+            self.logger.debug("Job {} isnt running.".format(jobId))
             dest = os.path.join(jobDir, jobId)
             FileUtils.createDirectory(jobDir)
             FileUtils.copyFile(pathToFile, dest)
             Archive.unpack(dest)
             FileUtils.deleteFile(dest)
-
             reactor.callInThread(self.runJob, jobId)
 
     def createFileIndex(self, jobId):
