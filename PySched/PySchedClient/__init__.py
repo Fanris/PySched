@@ -407,6 +407,7 @@ class PySchedClient(object):
         @param jobId:
         @result:
         '''
+        archive = None
         job = self.getFromDatabase(Job, jobId=jobId, first=True)
         if job and job.stateId >= JobState.lookup("DONE"):
             jobDir = os.path.join(self.workingDir, str(job.jobId))
@@ -429,7 +430,8 @@ class PySchedClient(object):
                     FileUtils.clearDirectory(jobDir)
                     FileUtils.deleteFile(jobDir)
 
-        FileUtils.deleteFile(archive)        
+        if archive:
+            FileUtils.deleteFile(archive)        
         return True
 
     def checkJobs(self):
