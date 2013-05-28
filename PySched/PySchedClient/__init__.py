@@ -470,6 +470,7 @@ class PySchedClient(object):
 
         # Check if job exists and rund
         if self.jobRunner.isRunning(jobId):
+            self.logger.info("Updating job data of {}".format(jobId))
             if self.jobRunner.pauseJob(jobId):
                 dest = os.path.join(jobDir, jobId)
                 FileUtils.createDirectory(jobDir)
