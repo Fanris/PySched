@@ -61,6 +61,7 @@ class JobRunner(JobRunnerInterface):
 
             protocol = JobProcessProtocol(job.jobId, jobPath, self)
             self.runningJobs[job.jobId] = protocol
+            self.logger.debug("Added {} to running Jobs.".format(job.jobId))
             try:
                 self.logger.debug("Environment: {}".format(os.environ))
                 reactor.spawnProcess(protocol, executable=executable,
