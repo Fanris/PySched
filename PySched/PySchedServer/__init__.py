@@ -30,7 +30,7 @@ import datetime
 import os
 
 
-VERSION = "1.2.3"
+VERSION = "1.2.4"
 TITLE = """
  _____        _____      _              _  _____                           
 |  __ \      / ____|    | |            | |/ ____|                          
@@ -676,15 +676,26 @@ class PySchedServer(object):
         jobId = os.path.splitext(os.path.split(pathToFile)[1])[0]
         dest = os.path.join(self.workingDir, jobId, jobId)
         FileUtils.copyFile(pathToFile, dest)
-        self.logger.info("Unpacking file...")
-        Archive.unpack(dest)
+
+        job = self.getJob(jobId)
+        # Check if job currently running        
+        if job.stateId < JobState.lookup("DONE") and \
+            job.stateId >= JobState.lookup("RUNNING"):
+            self.logger.info("Updating job data of {}".format(jobId))
+            networkId = self.lookupWorkstationName(job.workstation)
+            if networkId:
+                self.networkManager.sendFile(networkId, dest)
+                FileUtils.deleteFile(dest)
+        else:
+            self.logger.info("Unpacking file...")
+            Archive.unpack(dest)
+
+            if job.stateId < JobState.lookup("PREPARED"):
+                reactor.callInThread(self.schedule, jobId)
+
         FileUtils.deleteFile(dest)
         FileUtils.deleteFile(pathToFile)
-        
-        job = self.getFromDatabase(Job, first=True, jobId=jobId)
-
-        if job.stateId < JobState.lookup("PREPARED"):
-            reactor.callInThread(self.schedule, jobId)
+        return True
 
     def fileTransferFailed(self, pathToFile):
         '''

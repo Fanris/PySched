@@ -341,7 +341,7 @@ class MessageHandler(MessageHandlerInterface):
         @summary:           Appends a new search Path for programs at the 
                             workstations
         @param networkId:   The sender
-        @param data:
+        @param data:        userId, path
         @result: 
         '''
         userId = data.get("userId", None)
@@ -351,6 +351,13 @@ class MessageHandler(MessageHandlerInterface):
             self.pySchedServer.appendPath(userId, path)
 
     def getPaths(self, networkId, data):
+        '''
+        @summary:           Returns the current configured program search Paths
+        @param networkId:
+        @param data:        userId
+        @result: 
+        '''
+
         user = self.pySchedServer.getUser(data.get("userId", None))
         if user.admin:
             paths = self.pySchedServer.getPath()
@@ -366,15 +373,33 @@ class MessageHandler(MessageHandlerInterface):
                 result=False))
 
     def shutdownAll(self, networkId, data):
+        '''
+        @summary:           Shutsdown the server and all workstations
+        @param networkId:
+        @param data:        userId
+        @result: 
+        '''
         self.pySchedServer.stopAll(data.get("userId", None))
 
-    def pauseJob(self, networkId, data): 
+    def pauseJob(self, networkId, data):
+        '''
+        @summary:           Pauses the job with the given jobId
+        @param networkId:
+        @param data:        userId, jobId
+        @result: 
+        '''
         user = data.get("userId", None)
         jobId = data.get("jobId", None)
 
         self.pySchedServer.pauseJob(user, jobId)
 
     def resumeJob(self, networkId, data):
+        '''
+        @summary:           Resumes the job with the given jobId
+        @param networkId:
+        @param data:        userId, jobId
+        @result: 
+        '''        
         user = data.get("userId", None)
         jobId = data.get("jobId", None)
 
