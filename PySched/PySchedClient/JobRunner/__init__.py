@@ -175,7 +175,7 @@ class JobRunner(JobRunnerInterface):
         return False
 
     def deleteRunningJob(self, jobId):
-        if jobId in self.runningJobs:
+        if jobId in self.runningJobs.keys():
             del self.runningJobs[jobId]
 
     def getRunningJobCount(self):
