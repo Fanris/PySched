@@ -197,8 +197,11 @@ class PySchedServer(object):
         @result:
         '''
         job = self.getFromDatabase(Job, jobId=jobInformations.get("jobId", ""), first=True)
+        isDeleted = False
+        if job.stateId == JobState.lookup("DELETED"):
+            isDeleted = True
 
-        if job:
+        if job:            
             self.logger.info("Updating job state of job {}".format(job.jobId))
             for key in jobInformations:
                 if key in job.__dict__:
@@ -215,7 +218,11 @@ class PySchedServer(object):
             self.cleanupJobDir(job.jobId)
             self.getResultsFromWorkstation(job.jobId)    
             self.addToJobLog(job.jobId, "Job Ended.")        
-            reactor.callInThread(self.schedule)        
+            reactor.callInThread(self.schedule)
+
+        if isDeleted:
+            job.JobState = JobState.lookup("DELETED")
+            self.updateDatabaseEntry(job)
 
     def killJob(self, jobId, userId):
         '''
