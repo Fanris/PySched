@@ -27,7 +27,7 @@ import os
 import logging
 import datetime
 
-VERSION = "1.2.3"
+VERSION = "1.2.4"
 TITLE = """
  _____        _____      _              _  _____ _ _            _    
 |  __ \      / ____|    | |            | |/ ____| (_)          | |   
@@ -355,6 +355,8 @@ class PySchedClient(object):
                 self.networkManager.sendMessage(self.serverId,
                     CommandBuilder.buildJobInformationString(**job.__dict__))
                 self.logger.info("Job {} paused.".format(jobId))
+        else:
+            self.logger.warning("Failed to pause job {}".format(jobId))
 
     def resumeJob(self, jobId):
         '''
@@ -374,7 +376,7 @@ class PySchedClient(object):
                 CommandBuilder.buildJobInformationString(**job.__dict__))
             self.logger.info("Job {} resumed".format(jobId))
         else:
-            pass               
+            self.logger.warning("Failed to resume job {}".format(jobId))
 
 
     # Command Handler
@@ -465,13 +467,24 @@ class PySchedClient(object):
         # The filename equals the job Id
         jobId = os.path.splitext(os.path.split(pathToFile)[1])[0]
         jobDir = os.path.join(self.workingDir, jobId)
-        dest = os.path.join(jobDir, jobId)
-        FileUtils.createDirectory(jobDir)
-        FileUtils.copyFile(pathToFile, dest)
-        Archive.unpack(dest)
 
-        FileUtils.deleteFile(dest)
-        reactor.callInThread(self.runJob, jobId)
+        # Check if job exists and rund
+        if self.jobRunner.isRunning(jobId):
+            if self.jobRunner.pauseJob(jobId):
+                dest = os.path.join(jobDir, jobId)
+                FileUtils.createDirectory(jobDir)
+                FileUtils.copyFile(pathToFile, dest)
+                Archive.unpack(dest)
+                FileUtils.deleteFile(dest)
+                self.jobRunner.resumeJob(jobId)
+        else:
+            dest = os.path.join(jobDir, jobId)
+            FileUtils.createDirectory(jobDir)
+            FileUtils.copyFile(pathToFile, dest)
+            Archive.unpack(dest)
+            FileUtils.deleteFile(dest)
+
+            reactor.callInThread(self.runJob, jobId)
 
     def createFileIndex(self, jobId):
         '''
