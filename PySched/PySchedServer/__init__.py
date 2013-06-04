@@ -30,7 +30,7 @@ import datetime
 import os
 
 
-VERSION = "1.2.6"
+VERSION = "1.2.7"
 TITLE = """
  _____        _____      _              _  _____                           
 |  __ \      / ____|    | |            | |/ ____|                          
@@ -417,6 +417,30 @@ class PySchedServer(object):
 
         return self.getFromDatabase(User, first=True, userId=userId)
 
+    def getUsers(self, userId):
+        user = self.getUser(userId)
+        if user.admin:
+            return self.getFromDatabase(User)
+
+        return None        
+
+    def deleteUser(self, userId, email):
+        '''
+        @summary: Delete the user with the given email
+        @param userId: userId of the requesting user
+        @param email:
+        @result: 
+        '''
+        rUser = self.getUser(userId)
+
+        if rUser.admin:
+            delUser = self.getFromDatabase(User, first=True, email=email)
+            if delUser:
+                self.deleteFromDatabase(delUser)
+                return True
+
+        return False
+
     def getJobList(self, userId, showAll, showAllUser):
         '''
         @summary: Returns a list with all jobs of the user
@@ -788,13 +812,6 @@ class PySchedServer(object):
 
     def getPath(self):
         return FileUtils.readFile(os.path.join(self.workingDir, "PATHS"))
-
-    def getUsers(self, userId):
-        user = self.getUser(userId)
-        if user.admin:
-            return self.getFromDatabase(User)
-
-        return None
 
     def lookupUserId(self, userRealId):
         '''

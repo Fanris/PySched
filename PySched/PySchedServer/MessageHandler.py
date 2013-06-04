@@ -216,6 +216,22 @@ class MessageHandler(MessageHandlerInterface):
         else:
             self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
 
+    def deleteUser(self, networkId, data):
+        '''
+        @summary:           Deletes a user
+        @param networkId:   the networkId of the sender
+        @param data:        userId of the requesting user, email of the user 
+                            which should be deleted
+        @result: 
+        '''
+        userId = data.get("userId", None)
+        email = data.get("email", None)
+
+        if self.pySchedServer.deleteUser(userId, email):
+            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True))
+        else:
+            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
+
 
     def fileTransferCompleted(self, networkId, pathToFile):
         '''
