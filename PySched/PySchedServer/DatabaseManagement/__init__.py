@@ -147,6 +147,9 @@ class SqliteManager(DatabaseInterface):
         elif isinstance(obj, Compiler):
             sqliteClass = SqliteCompiler
             sqliteObject = SqliteCompiler.convertFromPySched(obj)
+        elif isinstance(obj, Program):
+            sqliteClass = SqliteProgram
+            sqliteObject = SqliteProgram.convertFromPySched(obj)
 
         if not sqliteClass or not sqliteObject:
             self.logger.debug("Something went wrong during database deleting.")

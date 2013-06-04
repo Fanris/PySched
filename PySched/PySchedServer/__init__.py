@@ -543,6 +543,7 @@ class PySchedServer(object):
         if user and user.admin:
             program = self.getFromDatabase(Program, first=True, programName=programName)
             if program:
+                self.logger.debug("Deleting {}".format(program.__dict__))
                 self.deleteFromDatabase(program)
                 return True
 
