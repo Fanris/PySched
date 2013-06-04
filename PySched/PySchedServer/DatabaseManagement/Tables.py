@@ -157,6 +157,7 @@ class SqliteUser(Tables.declBase):
         @param updatedObject:
         @result:
         '''
+        self.id = updatedObject.id
         self.firstName = updatedObject.firstName
         self.lastName = updatedObject.lastName
         self.email = updatedObject.email
