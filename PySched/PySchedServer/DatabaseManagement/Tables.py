@@ -84,11 +84,11 @@ class SqliteProgram(Tables.declBase):
     programExec = Column('programExec', String)
     programVersion = Column('programVersion', String)
 
-    def __init__(self, programName, programExec, programPath, programVersion):
-        self.programName = programName
-        self.programExec = programExec
-        self.programPath = programPath
-        self.programVersion = programVersion
+    def __init__(self):
+        self.programName = None
+        self.programExec = None
+        self.programPath = None
+        self.programVersion = None
 
     def update(self, updatedObject):
         '''
@@ -122,8 +122,8 @@ class SqliteProgram(Tables.declBase):
         @param obj: Object to convert
         @result:
         '''
-        program = SqliteProgram(obj.programName)
-        program.id = obj.id
+        program = SqliteProgram()
+        program.id = obj.id    
         program.programName = obj.programName
         program.programExec = obj.programExec
         program.programPath = obj.programPath
