@@ -138,7 +138,7 @@ class MessageHandler(MessageHandlerInterface):
 
         jobList = []
         for job in jobs:
-            job.userId = self.pySchedServer.lookupUserId(job.userId)
+            job.userId = self.pySchedServer.lookupUserId(job.userId).username
             job.stateId = JobState.lookup(job.stateId)
             jobList.append(job.__dict__)
 
