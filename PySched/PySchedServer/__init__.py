@@ -395,6 +395,7 @@ class PySchedServer(object):
 
             self.logger.debug("Updating existing user: {}".format(user.__dict__))
             if user:
+                u.id = user.id
                 result = self.updateDatabaseEntry(u)
             else:
                 result = self.addToDatabase(u)
