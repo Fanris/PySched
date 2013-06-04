@@ -313,6 +313,27 @@ class MessageHandler(MessageHandlerInterface):
                 networkId,
                 CommandBuilder.buildResponseString(result=True))
 
+    def deleteProgram(self, networkId, data):
+        '''
+        @summary:           Deletes the program with the given name form the 
+                            database
+        @param networkId:
+        @param data:        userId, programName
+        @result: 
+        '''
+        userId = data.get("userId", None)
+        programName = data.get("programName", None)
+
+        if self.pySchedServer.deleteProgram(userId, programName):
+            self.pySchedServer.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(result=True))
+        else:
+            self.pySchedServer.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(result=False))
+
+
     def getWorkstations(self, networkId, data):
         workstations = self.pySchedServer.workstations
         server = self.pySchedServer.getServerInformations()

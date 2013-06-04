@@ -30,7 +30,7 @@ import datetime
 import os
 
 
-VERSION = "1.2.7"
+VERSION = "1.2.8"
 TITLE = """
  _____        _____      _              _  _____                           
 |  __ \      / ____|    | |            | |/ ____|                          
@@ -498,7 +498,7 @@ class PySchedServer(object):
         user = self.getUser(userId)
         job = self.getJob(jobId)
 
-        if user.id == job.userId or user.admin:
+        if (user and job) and user.id == job.userId or user.admin:
             logPath = os.path.join(self.workingDir, str(jobId), "logs", "joblog.log")            
             log = ""
             for bytes in FileUtils.readBytesFromFile(logPath):
@@ -515,7 +515,7 @@ class PySchedServer(object):
         '''
         user = self.getUser(userId)
 
-        if user.admin:
+        if user and user.admin:
             programs = self.getFromDatabase(Program)
             for p in programs:
                 if p.programName == program.programName and \
@@ -530,6 +530,24 @@ class PySchedServer(object):
                 return True
 
         return False
+
+    def deleteProgram(self, userId, programName):
+        '''
+        @summary: Deletes the prgoram with the given name
+        @param userId:
+        @param programName:
+        @result: 
+        '''
+        user = self.getUser(userId)
+
+        if user and user.admin:
+            program = self.getFromDatabase(Program, first=True, programName=programName)
+            if program:
+                self.deleteFromDatabase(program)
+                return True
+
+        return False
+
 
     # Workstation Functions
     # ========================
