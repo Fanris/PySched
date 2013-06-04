@@ -186,7 +186,13 @@ class MessageHandler(MessageHandlerInterface):
         @param userInfo:    a dictionary containing the user informations
         @result:            Returns the generated user name of the user.
         '''
-        if self.pySchedServer.createUser(userInfo):
+        userId = userInfo.get("userId", None)
+        try:
+            del userInfo["userId"]
+        except:
+            pass
+
+        if self.pySchedServer.createUser(userId, userInfo):
             self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, message="User created."))
 
         else:

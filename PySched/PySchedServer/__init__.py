@@ -371,7 +371,7 @@ class PySchedServer(object):
 
     # User Functions
     # ========================
-    def createUser(self, userInformation):
+    def createUser(self, userId, userInformation):
         '''
         @summary: Creates a new user with the given informations.
         @param firstName: The first name
@@ -379,26 +379,30 @@ class PySchedServer(object):
         @param email: The email address
         @result: Return an generated userId
         '''
-        u = User()
-        for key in userInformation:
-            if key in u.__dict__:
-                setattr(u, key, userInformation[key])
+        rUser = self.getUser(userId)
+
+        if rUser.admin:
+            u = User()
+            for key in userInformation:
+                if key in u.__dict__:
+                    setattr(u, key, userInformation[key])
+                else:
+                    u.otherAttr[key] = userInformation[key]
+
+            u.userId = u.email
+
+            user = self.getFromDatabase(User, userId=u.userId, first=True)
+
+            if user:
+                result = self.updateDatabaseEntry(u)
             else:
-                u.otherAttr[key] = userInformation[key]
+                result = self.addToDatabase(u)
 
-        u.userId = u.email
+            if not result:
+                return False
 
-        user = self.getFromDatabase(User, userId=u.userId, first=True)
-
-        if user:
-            result = self.updateDatabaseEntry(u)
-        else:
-            result = self.addToDatabase(u)
-
-        if not result:
-            return False
-
-        return True
+            return True
+        return False
 
     def getUser(self, userId):
         '''
