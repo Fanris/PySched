@@ -783,6 +783,15 @@ class PySchedServer(object):
     def getPath(self):
         return FileUtils.readFile(os.path.join(self.workingDir, "PATHS"))
 
+    def lookupUserId(self, userRealId):
+        '''
+        @summary:       Searches the username for the given userId (database)
+        @param userId:
+        @result: 
+        '''
+        return self.getFromDatabase(User, first=True, id=userRealId)
+
+
     def initializeLogger(self, workingDir, args):
         '''
         @summary: Initializes the logger

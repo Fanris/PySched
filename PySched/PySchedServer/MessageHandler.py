@@ -138,6 +138,7 @@ class MessageHandler(MessageHandlerInterface):
 
         jobList = []
         for job in jobs:
+            job.userId = self.pySchedServer.lookupUserId(job.userId)
             job.stateId = JobState.lookup(job.stateId)
             jobList.append(job.__dict__)
 
@@ -243,9 +244,13 @@ class MessageHandler(MessageHandlerInterface):
         '''
         programs = self.pySchedServer.getFromDatabase(Program)
 
+        programList = []
+        for program in programs:
+            programList.append(program.__dict__)
+
         self.pySchedServer.networkManager.sendMessage(
             networkId, 
-            CommandBuilder.buildResponseString(result=True, programs=programs))
+            CommandBuilder.buildResponseString(result=True, programs=programList))
 
     def addProgram(self, networkId, data):
         '''
