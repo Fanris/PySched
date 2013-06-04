@@ -783,6 +783,13 @@ class PySchedServer(object):
     def getPath(self):
         return FileUtils.readFile(os.path.join(self.workingDir, "PATHS"))
 
+    def getUsers(self, userId):
+        user = self.getUser(userId)
+        if user.admin:
+            return self.getFromDatabase(User)
+
+        return None
+
     def lookupUserId(self, userRealId):
         '''
         @summary:       Searches the username for the given userId (database)

@@ -192,6 +192,25 @@ class MessageHandler(MessageHandlerInterface):
         else:
             self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
 
+    def getUsers(self, networkId, data):
+        '''
+        @summary:           Is called when a client request a list of all registered users
+        @param networkId:   The networkId of the client
+        @param data:        The current userId of the client
+        @result: 
+        '''
+        users = self.pySchedServer.getUsers(data.get("userId", None))
+
+        if users:
+            userList = []
+            for user in users:
+                userList.append(user.__dict__)
+
+            self.PySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, users=userList))
+        else:
+            self.PySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
+
+
     def fileTransferCompleted(self, networkId, pathToFile):
         '''
         @summary:           Is called when a file transfer is completed.
