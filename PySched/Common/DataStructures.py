@@ -61,6 +61,7 @@ class Program(object):
     overrides the informations of the WIM if the same program name occurs.
     '''
     def __init__(self):
+        self.id = None
         self.programName = None
         self.programExec = None
         self.programPath = None
