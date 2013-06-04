@@ -393,6 +393,7 @@ class PySchedServer(object):
 
             user = self.getFromDatabase(User, userId=u.userId, first=True)
 
+            self.logger.debug("Updating existing user: {}".format(user))
             if user:
                 result = self.updateDatabaseEntry(u)
             else:
