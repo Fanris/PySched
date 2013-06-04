@@ -206,9 +206,9 @@ class MessageHandler(MessageHandlerInterface):
             for user in users:
                 userList.append(user.__dict__)
 
-            self.PySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, users=userList))
+            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, users=userList))
         else:
-            self.PySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
+            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
 
 
     def fileTransferCompleted(self, networkId, pathToFile):
