@@ -722,14 +722,16 @@ class PySchedServer(object):
 
     # FileTransfer Functions
     # ========================
-    def fileReceived(self, pathToFile):
+    def fileReceived(self, pathToFile, jobId=None):
         '''
         @summary: Is called when a file was received successful
         @param pathToFile: path to the file
         @result:
         '''
         # The filename equals the job Id
-        jobId = os.path.splitext(os.path.split(pathToFile)[1])[0]
+        if not jobId:
+            jobId = os.path.splitext(os.path.split(pathToFile)[1])[0]
+            
         dest = os.path.join(self.workingDir, jobId, jobId)
         FileUtils.copyFile(pathToFile, dest)
 

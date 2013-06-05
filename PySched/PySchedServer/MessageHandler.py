@@ -536,3 +536,16 @@ class MessageHandler(MessageHandlerInterface):
                 CommandBuilder.buildUploadPathString(
                     pathToUpload, jobId))
 
+    def FileUploadCompleted(self, networkId, data):
+        '''
+        @summary:           Is called when a file upload is completed 
+        @param networkId:   The client which sends the file.
+        @param data:        jobId, path
+        @result: 
+        '''
+        jobId = data.get("jobId", None)
+        pathToFile = data.get("path", None)
+
+        if jobId and pathToFile:
+            self.pySchedServer.fileReceived(pathToFile, jobId=jobId)
+
