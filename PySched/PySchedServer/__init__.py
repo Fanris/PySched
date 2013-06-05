@@ -30,7 +30,7 @@ import datetime
 import os
 
 
-VERSION = "1.3.0"
+VERSION = "1.3.1"
 TITLE = """
  _____        _____      _              _  _____                           
 |  __ \      / ____|    | |            | |/ ____|                          
@@ -754,7 +754,9 @@ class PySchedServer(object):
     def getUploadPath(self, jobId):
         job = self.getJob(jobId)
         if job:
-            return os.path.join(self.workingDir, "temp", "{}.tar".format(jobId))
+            localPath = self.workingDir, "temp", "{}.tar".format(jobId)
+            FileUtils.createDirectory(os.path.split(localPath)[0])
+            return os.path.join(localPath)
             
 
     def fileTransferFailed(self, pathToFile):
