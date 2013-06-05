@@ -430,7 +430,7 @@ class PySchedClient(object):
             archive = Archive.packFolder(archivePath, jobDir)
 
             self.logger.info("Sending results of job {}".format(jobId))
-            self.networkManager.sendFile(archivePath, remotePath,)
+            self.networkManager.sendFile(archivePath, remotePath, None)
 
             FileUtils.clearDirectory(jobDir)
             FileUtils.deleteFile(jobDir)
