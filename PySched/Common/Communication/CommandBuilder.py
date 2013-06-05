@@ -204,7 +204,7 @@ class CommandBuilder(object):
         return CommandBuilder.buildCommand("uploadPath", path=uploadPath, jobId=jobId)
 
     @staticmethod
-    def buildfileUploadCompletedString(remotePath, jobId):
+    def buildFileUploadCompletedString(remotePath, jobId):
         return CommandBuilder.buildCommand("fileUploadCompleted", path=remotePath, jobId=jobId)
 
     @staticmethod
