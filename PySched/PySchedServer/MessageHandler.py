@@ -510,3 +510,11 @@ class MessageHandler(MessageHandlerInterface):
             self.pySchedServer.networkManager.sendMessage(
                 networkId,
                 CommandBuilder.buildResponseString(result=False))
+
+    def getFileCompleted(self, networkId, data):
+        pathToFile = data.get("path", None)
+        jobId = data.get("jobId", None)
+        
+        FileUtils.deleteFile(pathToFile)
+        self.pySchedServer.archiveJob(jobId)
+        return True
