@@ -171,19 +171,15 @@ class NetworkManager(NetworkInterface):
         '''
         self.tcpClient.sendMessage(message)        
 
-    def sendFile(self, receiver, pathToFile):
+    def sendFile(self, localPath, remotePath, callback):
         '''
         @summary: Sends a File
         @param receiver: the receiver of the file
         @param pathToFile: the path to the file
         @result:
         '''
-        if self.tcpClient:
-            self.connectionBusy = True
-            md5 = getFileMD5Hashsum(pathToFile)
-            return self.tcpClient.sendFile(pathToFile, md5)
-        else:
-            return False
+        self.sshTunnel.sendFile(localPath, remotePath, callback)
+        
 
     def getFile(self, localPath, remotePath, callback):
         self.sshTunnel.getFile(localPath, remotePath, callback)

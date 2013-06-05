@@ -271,11 +271,10 @@ class PySchedClient(object):
             job.__dict__.update(jobInformations)
             self.addToDatabase(job)
 
-            localPath = os.path.join(self.workingDir, "temp")
-            FileUtils.createDirectory(localPath)
             filename = os.path.split(remotePath)[1]
-            localPath = os.path.join(localPath, filename)
-
+            localPath = os.path.join(self.workingDir, "temp", filename)
+            FileUtils.createDirectory(os.path.split(localPath)[0])
+            
             self.network.getFile(remotePath, localPath, None)
             self.fileReceived(localPath)
         else:
@@ -338,6 +337,7 @@ class PySchedClient(object):
 
         self.updateDatabaseEntry(job)
         self.cleanupJobDir(jobId)
+
         self.networkManager.sendMessage(self.serverId, 
             CommandBuilder.buildJobInformationString(**job.__dict__))
 
@@ -410,7 +410,7 @@ class PySchedClient(object):
             self.logger.info("Sending informations on job {}".format(job.jobId))
             self.networkManager.sendMessage(self.serverId, CommandBuilder.buildJobInformationString(**job.__dict__))
 
-    def returnResults(self, jobId):
+    def returnResults(self, jobId, remotePath):
         '''
         @summary: Returns the results of the given job
         @param jobId:
@@ -430,14 +430,10 @@ class PySchedClient(object):
             archive = Archive.packFolder(archivePath, jobDir)
 
             self.logger.info("Sending results of job {}".format(jobId))
-            if not self.networkManager.sendFile(self.serverId, archive):
-                self.logger.error("Could not transfer file {} to {}".format(archive, job.workstation))
-                FileUtils.deleteFile(archive)
-                return False
-            else:
-                if not self.debugMode:
-                    FileUtils.clearDirectory(jobDir)
-                    FileUtils.deleteFile(jobDir)
+            self.networkManager.sendFile(archivePath, remotePath,)
+
+            FileUtils.clearDirectory(jobDir)
+            FileUtils.deleteFile(jobDir)
 
         if archive:
             FileUtils.deleteFile(archive)        
