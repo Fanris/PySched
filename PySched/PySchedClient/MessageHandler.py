@@ -66,10 +66,14 @@ class MessageHandler(MessageHandlerInterface):
 
     def getResults(self, client, data):
         '''
-        @summary:       Is called, when the job results are requested.
-        @result:
+        @summary:       Is called when the server requests the job results
+        @param client:  
+        @param data:    jobId, path
+        @result: 
         '''
-        self.pySchedClient.returnResults(data.get("jobId", None))
+        jobId = data.get("jobId", None)
+        remotePath = data.get("path", None)
+        self.pySchedClient.returnResults(jobId, remotePath)
 
     def getJobState(self, client, data):
         '''
