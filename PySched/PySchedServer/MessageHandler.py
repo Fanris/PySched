@@ -490,7 +490,7 @@ class MessageHandler(MessageHandlerInterface):
                 CommandBuilder.buildUploadPathString(
                     pathToUpload, jobId))
 
-    def FileUploadCompleted(self, networkId, data):
+    def fileUploadCompleted(self, networkId, data):
         '''
         @summary:           Is called when a file upload is completed 
         @param networkId:   The client which sends the file.

@@ -5,12 +5,8 @@ Created on 2012-11-30 13:25
 @author: Martin Predki
 '''
 
-from PySched.Common.IO.FileUtils import readBytesFromFile
-
 import json
-import os
 import logging
-import base64
 
 class Client(object):
     '''

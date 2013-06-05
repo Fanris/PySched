@@ -5,7 +5,7 @@ Created on 2013-01-09 15:11
 @author: Martin Predki
 '''
 from PySched.Common.Interfaces.Network.NetworkInterface import NetworkInterface
-from PySched.Common.IO.FileUtils import getFileMD5Hashsum, deleteFile, createDirectory
+from PySched.Common.IO.FileUtils import createDirectory
 
 from TcpClient import TcpClient
 from UdpClient import UdpClient
@@ -183,14 +183,6 @@ class NetworkManager(NetworkInterface):
 
     def getFile(self, localPath, remotePath, callback):
         self.sshTunnel.getFile(localPath, remotePath, callback)
-
-    def transferingFile(self, setTo=True):
-        self.connectionBusy = setTo
-
-    def fileReceived(self, networkId, pathToFile, md5):
-        self.connectionBusy = False
-        self.messageReceiver.fileTransferCompleted(networkId, pathToFile)
-        deleteFile(pathToFile)
 
     def stopService(self):
         self.logger.info("Shutting down tcp server...")
