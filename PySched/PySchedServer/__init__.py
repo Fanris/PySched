@@ -731,6 +731,8 @@ class PySchedServer(object):
         # The filename equals the job Id
         if not jobId:
             jobId = os.path.splitext(os.path.split(pathToFile)[1])[0]
+        else:
+            jobId = str(jobId)
             
         dest = os.path.join(self.workingDir, jobId, jobId)
         FileUtils.copyFile(pathToFile, dest)
