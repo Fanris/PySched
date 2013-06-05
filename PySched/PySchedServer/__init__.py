@@ -690,7 +690,11 @@ class PySchedServer(object):
             and job.stateId < JobState.lookup("SCHEDULER_ERROR"):
             self.logger.info("Requesting results for job {} from {}".format(jobId, job.workstation))
             networkId = self.lookupWorkstationName(job.workstation)
-            self.networkManager.sendMessage(networkId, CommandBuilder.buildGetResultsString(job.jobId))
+
+            localPath = os.path.join(self.workingDir, "temp", str(job.jobId))
+            FileUtils.createDirectory(os.path.split(localPath)[0])
+
+            self.networkManager.sendMessage(networkId, CommandBuilder.buildGetResultsString(job.jobId, localPath))
             return True
         else:
             return False

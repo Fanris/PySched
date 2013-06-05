@@ -128,13 +128,13 @@ class CommandBuilder(object):
 
 
     @staticmethod
-    def buildGetResultsString(jobId):
+    def buildGetResultsString(jobId, pathToStoreResults):
         '''
         @summary: Client Command. Creates a get results command.
         @param jobId: ID of the job.
         @result:
         '''
-        return CommandBuilder.buildCommand("getResults", jobId=jobId)
+        return CommandBuilder.buildCommand("getResults", jobId=jobId, path=pathToStoreResults)
 
     @staticmethod
     def buildGetJobStateString(jobId):
