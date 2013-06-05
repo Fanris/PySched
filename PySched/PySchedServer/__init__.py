@@ -754,9 +754,9 @@ class PySchedServer(object):
     def getUploadPath(self, jobId):
         job = self.getJob(jobId)
         if job:
-            localPath = self.workingDir, "temp", "{}.tar".format(jobId)
+            localPath = os.path.join(self.workingDir, "temp", "{}.tar".format(jobId))
             FileUtils.createDirectory(os.path.split(localPath)[0])
-            return os.path.join(localPath)
+            return localPath
             
 
     def fileTransferFailed(self, pathToFile):
