@@ -30,7 +30,7 @@ import datetime
 import os
 
 
-VERSION = "1.2.8"
+VERSION = "1.2.9"
 TITLE = """
  _____        _____      _              _  _____                           
 |  __ \      / ____|    | |            | |/ ____|                          
@@ -785,6 +785,24 @@ class PySchedServer(object):
                     CommandBuilder.buildShutdownString())
 
         reactor.callLater(10, self.shutdown)
+
+    def stopWorkstation(self, userId, workstationName):
+        '''
+        @summary: Stops the given workstation
+        @param userId:
+        @param workstationName:
+        @result: 
+        '''
+        user = self.getUser(userId)
+        if user and user.admin:
+            networkId = self.lookupWorkstationName(workstationName)
+            if networkId:
+                self.networkManager.sendMessage(
+                    networkId,
+                    CommandBuilder.buildShutdownString())
+                return True
+        return False
+
 
     def shutdown(self):
         '''

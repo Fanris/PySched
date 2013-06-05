@@ -441,12 +441,31 @@ class MessageHandler(MessageHandlerInterface):
 
     def shutdownAll(self, networkId, data):
         '''
-        @summary:           Shutsdown the server and all workstations
+        @summary:           Shuts the server and all workstations down
         @param networkId:
         @param data:        userId
         @result: 
         '''
         self.pySchedServer.stopAll(data.get("userId", None))
+
+    def shutdownWorkstation(self, networkId, data):
+        '''
+        @summary:           Shuts down the given Workstation
+        @param networkId:   
+        @param data:        userId, workstationName
+        @result: 
+        '''
+        if self.pySchedServer.stopWorkstation(
+            data.get("userId", None),
+            data.get("workstationName", None)):
+            self.pySchedServer.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(result=True))
+        else:
+            self.pySchedServer.networkManager.sendMessage(
+                networkId, 
+                CommandBuilder.buildResponseString(result=False))
+
 
     def pauseJob(self, networkId, data):
         '''
@@ -471,3 +490,23 @@ class MessageHandler(MessageHandlerInterface):
         jobId = data.get("jobId", None)
 
         self.pySchedServer.resumeJob(user, jobId)
+
+    def requestResultFile(self, networkId, data):
+        '''
+        @summary:           Is called, when a client requests a results file
+        @param networkId:   The client which sends the request
+        @param data:        userId, jobId
+        @result: 
+        '''
+        userId = data.get("userId", None)
+        jobId = data.get("jobId", None)
+
+        pathToResultFile = self.pySchedServer.returnResultsToClient(userId, jobId)
+        if pathToResultFile:
+            self.pySchedServer.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(result=True, path=pathToResultFile))
+        else:
+            self.pySchedServer.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(result=False))
