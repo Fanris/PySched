@@ -198,3 +198,7 @@ class CommandBuilder(object):
     @staticmethod
     def buildResumeJobString(jobId):
         return CommandBuilder.buildCommand("resumeJob", jobId=jobId)
+
+    @staticmethod
+    def buildUploadPathString(uploadPath, jobId):
+        return CommandBuilder.buildCommand("uploadPath", path=uploadPath, jobId=jobId)

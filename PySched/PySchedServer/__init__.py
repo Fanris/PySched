@@ -753,6 +753,12 @@ class PySchedServer(object):
         FileUtils.deleteFile(pathToFile)
         return True
 
+    def getUploadPath(self, jobId):
+        job = self.getJob(jobId)
+        if job:
+            return os.path.join(self.workingDir, "temp", "{}.tar".format(jobId))
+            
+
     def fileTransferFailed(self, pathToFile):
         '''
         @summary: Is called when a file transfer has failed due to invalid md5 hashsum

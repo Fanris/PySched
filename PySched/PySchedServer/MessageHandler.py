@@ -491,7 +491,7 @@ class MessageHandler(MessageHandlerInterface):
 
         self.pySchedServer.resumeJob(user, jobId)
 
-    def requestResultFile(self, networkId, data):
+    def requestFileDownload(self, networkId, data):
         '''
         @summary:           Is called, when a client requests a results file
         @param networkId:   The client which sends the request
@@ -511,10 +511,28 @@ class MessageHandler(MessageHandlerInterface):
                 networkId,
                 CommandBuilder.buildResponseString(result=False))
 
-    def getFileCompleted(self, networkId, data):
+    def fileDownloadCompleted(self, networkId, data):
         pathToFile = data.get("path", None)
         jobId = data.get("jobId", None)
-        
+
         FileUtils.deleteFile(pathToFile)
         self.pySchedServer.archiveJob(jobId)
         return True
+
+    def requestFileUpload(self, networkId, data):
+        '''
+        @summary:           Is called by a client when a file should be transferred
+                            to the server.
+        @param networkId:   The id of the requesting client.
+        @param data:        jobId
+        @result: 
+        '''
+        jobId = data.get("jobId", None)
+        pathToUpload = self.pySchedServer.getUploadPath(jobId)
+
+        if pathToUpload:
+            self.pySchedServer.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildUploadPathString(
+                    pathToUpload, jobId))
+
