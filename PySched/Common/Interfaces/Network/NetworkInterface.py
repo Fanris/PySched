@@ -45,7 +45,16 @@ class NetworkInterface(object):
         '''
         raise NotImplementedError
 
-    def sendFile(self, receiver, pathToFile):
+    def sendFile(self, localPath, remotePath, callback):
+        '''
+        @summary: Sends a File
+        @param receiver: the receiver of the file
+        @param pathToFile: the path to the file
+        @result: Returns True if the file was send
+        '''
+        raise NotImplementedError
+
+    def getFile(self, localPath, remotePath, callback):
         '''
         @summary: Sends a File
         @param receiver: the receiver of the file

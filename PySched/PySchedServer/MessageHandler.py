@@ -7,7 +7,7 @@ Created on 2013-01-11 14:45
 
 from PySched.Common.Interfaces.Network.MessageHandlerInterface import MessageHandlerInterface
 from PySched.Common.Communication.CommandBuilder import CommandBuilder
-from PySched.Common.DataStructures import JobState, Compiler, Program
+from PySched.Common.DataStructures import JobState, Program
 from PySched.Common.IO import FileUtils
 
 import json
@@ -52,9 +52,6 @@ class MessageHandler(MessageHandlerInterface):
         @result:
         '''
         self.pySchedServer.removeWorkstation(networkId)
-
-    def connectionMade(self, networkId):
-        pass
 
     def workstationInfo(self, networkId, info):
         '''
@@ -231,49 +228,6 @@ class MessageHandler(MessageHandlerInterface):
             self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True))
         else:
             self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
-
-
-    def fileTransferCompleted(self, networkId, pathToFile):
-        '''
-        @summary:           Is called when a file transfer is completed.
-        @param networkId:   The id of the client which receives the file
-        @param pathToFile:  Path to the transfered file.
-        @result:
-        '''
-        self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True))
-        self.pySchedServer.fileReceived(pathToFile)
-
-    def fileTransferFailed(self, networkId, pathToFile):
-        '''
-        @summary:           Is called when a file transfer is completed.
-        @param networkId:   The id of the client which receives the file
-        @param pathToFile:  Path to the transfered File.
-        @result:
-        '''
-        self.pySchedServer.fileTransferFailed(pathToFile)
-        self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
-
-    def getCompiler(self, networkId, data):
-        '''
-        @summary:           Is called when a client requests a list of all 
-                            available Compilers.
-        @param networkId:   The client which sends the request.
-        @param data:
-        @result:
-        '''
-        compiler = self.pySchedServer.getFromDatabase(Compiler)
-
-        if not compiler:
-            compiler = []
-
-        if isinstance(compiler, Compiler):
-            compiler = [compiler]
-
-        for index in range(0, len(compiler)):
-            compiler[index] = compiler[index].__dict__
-
-        self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, compiler=compiler))
-
 
     def getPrograms(self, networkId, data):
         '''

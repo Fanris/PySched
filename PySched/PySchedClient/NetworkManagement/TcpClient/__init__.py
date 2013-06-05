@@ -93,33 +93,3 @@ class TcpClient(object):
         '''
         if self.server:
             self.server.sendMessage(message)
-
-    def sendFile(self, pathToFile, md5):
-        '''
-        @summary: Sends a file to a client.
-        @param clientId: the global id or name of the client.
-        @param file: the file to send.
-        @result:
-        '''
-        if self.server:
-            self.server.sendFile(pathToFile, md5)
-            return True
-
-    def transferingFile(self, setTo=True):
-        '''
-        @summary: is called when a file is about to be received.
-        @param pathToFile: path where the file should be stored
-        @param md5: md5 hashsum of the file
-        @result:
-        '''
-        self.networkManager.transferingFile(setTo)
-
-    def fileTransferCompleted(self, client, pathToFile, md5):
-        '''
-        @summary: Is called when a file was completely received.
-        @param pathToFile: path where the file was stored
-        @param md5: md5 hashsum of the original file
-        @result:
-        '''
-        self.logger.debug("File transfer completed. Checking MD5...")
-        self.networkManager.fileReceived(client.id, pathToFile, md5)

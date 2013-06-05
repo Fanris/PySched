@@ -73,61 +73,12 @@ class Client(object):
         cmd = json.loads(line, encoding="ISO-8859-1")
         networkCommand = cmd.get("nCommand", "")
 
-        if networkCommand == "put":
-            self.logger.info("Receiving file...")
-            self.receiveFile(cmd.get("filename", None), cmd.get("md5", None))
-            return
-
-        if networkCommand == "file":
-            self.receiveFileChunk(cmd.get("chunk", None))
-            return
-
-        if networkCommand == "fileOk":
-            self.logger.info("File received!")
-            self.currentFile.close()
-            self.tcpServer.fileTransferCompleted(self, self.currentFilePath, self.currentMD5)
-            self.currentFilePath = None
-            self.currentFile = None
-            self.currentMD5 = None
-            return
-
         if networkCommand == "heartbeat":
             cmd = json.dumps({"nCommand": "heartBeatResponse"})
             self.sendMessage(cmd)
             return
 
         self.tcpServer.commandReceived(self, line)
-
-    def receiveFileChunk(self, chunk):
-        '''
-        @summary: Is called when a new file chunk is received.
-        @param chunk: the new chunk
-        @result:
-        '''
-        decodedData = base64.b64decode(chunk)
-        self.logger.debug("Received File Data: {}".format(decodedData))
-        self.currentFile.write(decodedData)
-
-    def sendFile(self, path, md5):
-        '''
-        @summary: Sends the given file to the workstation
-        @param pathToFile: Path to the file
-        @param jobId: Job id to which this file belongs
-        @result:
-        '''
-        filename = os.path.split(path)[1]
-        cmd = json.dumps({"nCommand": "put", "filename": filename, "md5": md5})
-        self.sendMessage(cmd)
-
-        for bytes in readBytesFromFile(path):
-            # Encoding the bytes to base64 String so it could be encoded
-            # by json
-            cmd = json.dumps({"nCommand": "file", "chunk": base64.b64encode(bytes)})
-            self.sendMessage(cmd)
-
-        cmd = json.dumps({"nCommand": "fileOk"})
-        self.sendMessage(cmd)
-        return True
 
     def sendMessage(self, message):
         '''
@@ -136,19 +87,3 @@ class Client(object):
         @result:
         '''
         self.tcpProtocol.sendMessage(message)
-
-    def receiveFile(self, destination, md5):
-        '''
-        @summary: This function is called by the command parser if a file
-        transfer is about to start (signaled by a put command)
-        @param data: a dictionary containing informations about the file to receive
-        @result:
-        '''
-        # Set the protocol to raw mode
-        self.currentFilePath = os.path.join(self.tcpServer.networkManager.workingDir, destination)
-        self.currentFile = open(self.currentFilePath, 'wb')
-        self.currentMD5 = md5
-
-
-
-
