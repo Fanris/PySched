@@ -283,17 +283,7 @@ class PySchedServer(object):
         archive = Archive.packFolder(archivePath, jobDir)
         networkId = self.lookupWorkstationName(job.workstation)
 
-        self.networkManager.sendMessage(networkId, CommandBuilder.buildAddJobString(**job.__dict__))
-
-        if not self.networkManager.sendFile(networkId, archive):
-            self.logger.error("Could not transfer file {} to {}".format(archive, job.workstation))
-            FileUtils.deleteFile(archive)
-            return False
-        else:
-            FileUtils.clearDirectory(jobDir, deleteSubfolders=False)
-
-        self.addToJobLog(job.jobId, "Job sent to Workstation {}".format(job.workstation))
-        FileUtils.deleteFile(archive)
+        self.networkManager.sendMessage(networkId, CommandBuilder.buildAddJobString(archive, **job.__dict__))
         return True
 
     def cleanupJobDir(self, jobId):

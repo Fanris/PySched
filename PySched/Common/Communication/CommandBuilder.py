@@ -72,13 +72,13 @@ class CommandBuilder(object):
         return CommandBuilder.buildCommand("put", jobId=jobId, filename=filename, md5=hashsum)
 
     @staticmethod
-    def buildAddJobString(**jobInformations):
+    def buildAddJobString(pathToJobFile, **jobInformations):
         '''
         @summary: Global Command. Creates an addJob command.
         @param **jobInformations: the job informations
         @result:
         '''
-        return CommandBuilder.buildCommand("addJob", **jobInformations)
+        return CommandBuilder.buildCommand("addJob", path=pathToJobFile, **jobInformations)
 
 
     @staticmethod

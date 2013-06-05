@@ -44,6 +44,28 @@ class SSHTunnel(object):
         self.serve = True
         self.isConnected = False
 
+    def getFile(self, localPath, remotePath, callback=None):
+        '''
+        @summary: Copies a File from the server
+        @param localPath: The localPath to store the file
+        @param remotePath: The remotePath, were the file is stored
+        @result: 
+        '''
+        sftp = paramiko.SFTPClient.from_transport(self.client.get_transport())
+        sftp.get(remotePath, localPath, callback)
+        sftp.close()
+
+    def sendFile(self, localPath, remotePath, callback=None):
+        '''
+        @summary: Uploads a file from the local machine to the server
+        @param localPath:   The local file path
+        @param remotePath:  The remote file path
+        @param callback:
+        @result: 
+        '''
+        sftp = paramiko.SFTPClient.from_transport(self.client.get_transport())
+        sftp.put(localPath, remotePath, callback) 
+
     def buildTunnel(self):
         '''
         @summary: Builds the SSH tunnel.

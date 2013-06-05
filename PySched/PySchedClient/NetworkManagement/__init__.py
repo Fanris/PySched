@@ -185,6 +185,9 @@ class NetworkManager(NetworkInterface):
         else:
             return False
 
+    def getFile(self, localPath, remotePath, callback):
+        self.sshTunnel.getFile(localPath, remotePath, callback)
+
     def transferingFile(self, setTo=True):
         self.connectionBusy = setTo
 

@@ -264,11 +264,20 @@ class PySchedClient(object):
         @result:
         '''
         job = self.getFromDatabase(Job, jobId=jobInformations["jobId"], first=True)
+        remotePath = jobInformations.get("path", None)
 
-        if not job:
+        if not job or not remotePath:
             job = Job()
             job.__dict__.update(jobInformations)
             self.addToDatabase(job)
+
+            localPath = os.path.join(self.workingDir, "temp")
+            FileUtils.createDirectory(localPath)
+            filename = os.path.split(remotePath)[1]
+            localPath = os.path.join(localPath, filename)
+
+            self.network.getFile(remotePath, localPath, None)
+            self.fileReceived(localPath)
         else:
             job.__dict__.update(jobInformations)
             self.updateDatabaseEntry(job)
