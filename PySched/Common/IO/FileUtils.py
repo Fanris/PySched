@@ -92,8 +92,10 @@ def copyFile(source, dest):
     @param dest: Destination
     @result:
     '''
-    if not source == dest:
-        shutil.copy(source, dest)
+    try:
+        shutil.move(source, dest)
+    except:
+        pass
 
 def moveFile(source, dest):
     '''
@@ -102,8 +104,10 @@ def moveFile(source, dest):
     @param dest: Destination
     @result:
     '''
-    if not source == dest:
+    try:
         shutil.move(source, dest)
+    except:
+        pass
 
 def validateFileMD5(pathToFile, originalMD5):
     '''
