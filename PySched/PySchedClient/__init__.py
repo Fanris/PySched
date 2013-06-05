@@ -276,6 +276,9 @@ class PySchedClient(object):
             FileUtils.createDirectory(os.path.split(localPath)[0])
             
             self.networkManager.getFile(localPath, remotePath, None)
+            self.networkManager.sendMessage(
+                self.serverId,
+                CommandBuilder.buildFileDownloadCompletedString(remotePath, job.jobId))
             self.fileReceived(localPath)
         else:
             job.__dict__.update(jobInformations)
@@ -430,6 +433,9 @@ class PySchedClient(object):
 
             self.logger.info("Sending results of job {}".format(jobId))
             self.networkManager.sendFile(archivePath, remotePath, None)
+            self.networkManager.sendMessage(
+                self.serverId,
+                CommandBuilder.buildFileUploadCompletedString(remotePath, jobId))
 
             FileUtils.clearDirectory(jobDir)
             FileUtils.deleteFile(jobDir)
