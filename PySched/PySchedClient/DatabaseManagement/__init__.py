@@ -34,8 +34,7 @@ class SqliteManager(DatabaseInterface):
         self.logger.debug("Adding {} to database...".format(type(obj)))
 
         sqliteObject = None
-        if isinstance(obj, Job):
-            self.logger.debug("convert to SqliteJob".format())
+        if isinstance(obj, Job):            
             sqliteObject = SqliteJob.convertFromPySched(obj)
 
         if not sqliteObject:
@@ -59,15 +58,12 @@ class SqliteManager(DatabaseInterface):
         elif obj == Program:
             sqliteObject = SqliteProgram
 
-        self.logger.debug("selected SqliteObject: {}".format(sqliteObject))
-
         s = self.sessionClass()
         returnList = []
 
         query = s.query(sqliteObject)
 
         for item in query:
-            self.logger.debug("Converting SqliteObject to PySchedObject".format())
             returnList.append(item.convertToPySched())
 
         s.close()
