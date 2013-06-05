@@ -424,7 +424,6 @@ class PySchedClient(object):
                 return False
 
             archivePath = os.path.join(self.workingDir, "temp", "{}.tar".format(job.jobId))
-            self.cleanupJobDir(jobId)
             
             FileUtils.createDirectory(os.path.split(archivePath)[0])
             archive = Archive.packFolder(archivePath, jobDir)

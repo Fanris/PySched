@@ -44,6 +44,8 @@ class MessageHandler(MessageHandlerInterface):
         else:
             self.logger.warning("Cannot parse command: {}".format(message))
 
+    def connectionMade(self, networkId):
+        pass
 
     def connectionLost(self, networkId):
         '''
@@ -471,6 +473,9 @@ class MessageHandler(MessageHandlerInterface):
 
         FileUtils.deleteFile(pathToFile)
         self.pySchedServer.archiveJob(jobId)
+        self.pySchedServer.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(result=True))
         return True
 
     def requestFileUpload(self, networkId, data):
@@ -489,6 +494,10 @@ class MessageHandler(MessageHandlerInterface):
                 networkId,
                 CommandBuilder.buildUploadPathString(
                     pathToUpload, jobId))
+        else:
+            self.pySchedServer.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(result=False))
 
     def fileUploadCompleted(self, networkId, data):
         '''
