@@ -27,7 +27,7 @@ import os
 import logging
 import datetime
 
-VERSION = "1.2.5"
+VERSION = "1.3.1"
 TITLE = """
  _____        _____      _              _  _____ _ _            _    
 |  __ \      / ____|    | |            | |/ ____| (_)          | |   
@@ -521,36 +521,35 @@ class PySchedClient(object):
         @param jobId:
         @result:
         '''
-        if not self.debugMode:
-            self.logger.info("Cleaning up job {}...".format(jobId))
-            jobDir = os.path.join(self.workingDir, str(jobId))
+        self.logger.info("Cleaning up job {}...".format(jobId))
+        jobDir = os.path.join(self.workingDir, str(jobId))
 
-            if not os.path.exists(jobDir):
-                return
+        if not os.path.exists(jobDir):
+            return
 
-            indexFilePath = os.path.join(jobDir, 'index')
-            files = []
+        indexFilePath = os.path.join(jobDir, 'index')
+        files = []
 
-            # Reading index file
-            if os.path.exists(indexFilePath):
-                with open(indexFilePath, 'r') as indexFile:
-                    files = indexFile.readlines()
+        # Reading index file
+        if os.path.exists(indexFilePath):
+            with open(indexFilePath, 'r') as indexFile:
+                files = indexFile.readlines()
 
-            self.logger.debug("Files to delete {}".format(len(files)))
-            for f in files:
-                filepath = os.path.join(jobDir, f).strip()
-                self.logger.debug("Checking file {}".format(filepath))
-                if os.path.isfile(filepath):
-                    self.logger.debug("deleting file {}".format(filepath))
-                    FileUtils.deleteFile(filepath)
+        self.logger.debug("Files to delete {}".format(len(files)))
+        for f in files:
+            filepath = os.path.join(jobDir, f).strip()
+            self.logger.debug("Checking file {}".format(filepath))
+            if os.path.isfile(filepath):
+                self.logger.debug("deleting file {}".format(filepath))
+                FileUtils.deleteFile(filepath)
 
-            FileUtils.deleteFile(indexFilePath)
+        FileUtils.deleteFile(indexFilePath)
 
-            for f in os.listdir(jobDir):
-                filepath = os.path.join(jobDir, f).strip()
-                if os.path.isfile(filepath):
-                    newPath = os.path.join(jobDir, 'results', f)
-                    FileUtils.moveFile(filepath, newPath)
+        for f in os.listdir(jobDir):
+            filepath = os.path.join(jobDir, f).strip()
+            if os.path.isfile(filepath):
+                newPath = os.path.join(jobDir, 'results', f)
+                FileUtils.moveFile(filepath, newPath)
 
     def updatePath(self, paths):
         '''
