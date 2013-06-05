@@ -549,3 +549,8 @@ class MessageHandler(MessageHandlerInterface):
         if jobId and pathToFile:
             self.pySchedServer.fileReceived(pathToFile, jobId=jobId)
 
+        self.pySchedServer.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(result=True))
+
+
