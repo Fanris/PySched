@@ -275,7 +275,7 @@ class PySchedClient(object):
             localPath = os.path.join(self.workingDir, "temp", filename)
             FileUtils.createDirectory(os.path.split(localPath)[0])
             
-            self.network.getFile(remotePath, localPath, None)
+            self.networkManager.getFile(remotePath, localPath, None)
             self.fileReceived(localPath)
         else:
             job.__dict__.update(jobInformations)
