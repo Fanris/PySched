@@ -739,7 +739,7 @@ class PySchedServer(object):
             self.logger.info("Updating job data of {}".format(jobId))
             networkId = self.lookupWorkstationName(job.workstation)
             if networkId != -1:
-                self.networkManager.sendMessage(networkId, CommandBuilder.buildAddJobString(dest, **job.__dict__))                
+                self.networkManager.sendMessage(networkId, CommandBuilder.buildUpdateJobString(jobId, dest))                
         else:
             self.logger.info("Unpacking file...")
             Archive.unpack(dest)

@@ -210,3 +210,7 @@ class CommandBuilder(object):
     @staticmethod
     def buildFileDownloadCompletedString(remotePath, jobId):
         return CommandBuilder.buildCommand("fileDownloadCompleted", path=remotePath, jobId=jobId)
+
+    @staticmethod
+    def buildUpdateJobString(jobId, path):
+        return CommandBuilder.buildCommand("updateJob", jobId=jobId, path=path)

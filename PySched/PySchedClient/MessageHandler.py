@@ -96,6 +96,18 @@ class MessageHandler(MessageHandlerInterface):
         '''
         self.pySchedClient.pauseJob(data.get("jobId", None))
 
+    def updateJob(self, client, data):
+        '''
+        @summary:       Is called, when a job should be updated
+        @param client:  
+        @param data:    jobId, path
+        @result: 
+        '''
+        userId = data.get("userId", None)
+        path = data.get("path", None)
+        self.pySchedClient.updateJobData(userId, path)
+
+
     def resumeJob(self, client, data):
         '''
         @summary:       Is called, when a job should be paused.

@@ -307,6 +307,26 @@ class PySchedClient(object):
             self.logger.info("Sending updated JobState of Job {}".format(job.jobId))
             self.networkManager.sendMessage(self.serverId, CommandBuilder.buildJobInformationString(**job.__dict__))
 
+    def updateJobData(self, jobId, remotePath):
+        '''
+        @summary: Updates the files within a job folder.
+        @param jobId: the id of the job
+        @param remotePath: the remote path on the server, where the new files are stored.
+        @result: 
+        '''
+        job = self.getFromDatabase(Job, first=True, jobId=jobId)
+        if not job or not remotePath:
+            filename = os.path.split(remotePath)[1]
+            localPath = os.path.join(self.workingDir, "temp", filename)
+            FileUtils.createDirectory(os.path.split(localPath)[0])
+            
+            self.networkManager.getFile(localPath, remotePath, None)
+            self.networkManager.sendMessage(
+                self.serverId,
+                CommandBuilder.buildFileDownloadCompletedString(remotePath, job.jobId))
+            self.fileReceived(localPath)
+
+
     def jobStarted(self, jobId):
         '''
         @summary: Is called when a job is started.
@@ -469,6 +489,7 @@ class PySchedClient(object):
         self.logger.info("Searching for program(s): {}".format(programs))
         self.wim.checkForPrograms(programs)
         self.sendWorkstationState()
+
 
     def fileReceived(self, pathToFile):
         '''
