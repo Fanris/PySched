@@ -608,6 +608,7 @@ class PySchedServer(object):
         for k, v in self.workstations.iteritems():
             if v.get("workstationName", None) == workstationName:
                 return k
+        
         return -1
 
     def lookupNetworkId(self, networkId):
@@ -737,7 +738,7 @@ class PySchedServer(object):
             job.stateId >= JobState.lookup("RUNNING"):
             self.logger.info("Updating job data of {}".format(jobId))
             networkId = self.lookupWorkstationName(job.workstation)
-            if networkId:
+            if networkId != -1:
                 self.networkManager.sendMessage(networkId, CommandBuilder.buildAddJobString(dest, **job.__dict__))                
         else:
             self.logger.info("Unpacking file...")
