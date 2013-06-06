@@ -30,7 +30,7 @@ import datetime
 import os
 
 
-VERSION = "1.3.1"
+VERSION = "1.3.2"
 TITLE = """
  _____        _____      _              _  _____                           
 |  __ \      / ____|    | |            | |/ ____|                          
@@ -803,11 +803,11 @@ class PySchedServer(object):
         if user and user.admin:
             networkId = self.lookupWorkstationName(workstationName)
             self.logger.debug("Shutting down Workstation {} ({})".format(workstationName, networkId))
-            if networkId >= 0:
-                self.networkManager.sendMessage(
-                    networkId, 
-                    CommandBuilder.buildShutdownString())
-                return True
+            self.networkManager.sendMessage(
+                networkId, 
+                CommandBuilder.buildShutdownString())
+            return True
+
         return False
 
 
