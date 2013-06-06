@@ -257,7 +257,7 @@ class PySchedServer(object):
         job = self.getFromDatabase(Job, jobId=jobId, first=True)
         user = self.getFromDatabase(User, userId=userId, first=True)
 
-        if not (job or user) or not (job.userId == user.id):
+        if not (job or user) or not (job.userId == user.id or user.admin):
             return False
 
         if job.stateId == JobState.lookup("RUNNING"):
