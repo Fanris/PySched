@@ -323,7 +323,7 @@ class PySchedClient(object):
             self.networkManager.getFile(localPath, remotePath, None)
             self.networkManager.sendMessage(
                 self.serverId,
-                CommandBuilder.buildFileDownloadCompletedString(remotePath, job.jobId))
+                CommandBuilder.buildFileDownloadCompletedString(remotePath, jobId))
             self.fileReceived(localPath)
 
 
