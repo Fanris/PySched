@@ -382,8 +382,7 @@ class PySchedServer(object):
             u.userId = u.email
 
             user = self.getFromDatabase(User, userId=u.userId, first=True)
-
-            self.logger.debug("Updating existing user: {}".format(user.__dict__))
+            
             if user:
                 u.id = user.id
                 result = self.updateDatabaseEntry(u)
