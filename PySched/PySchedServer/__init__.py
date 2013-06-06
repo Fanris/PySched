@@ -801,6 +801,7 @@ class PySchedServer(object):
         user = self.getUser(userId)
         if user and user.admin:
             networkId = self.lookupWorkstationName(workstationName)
+            self.logger.debug("Shutting down Workstation {} ({})".format(workstationName, networkId))
             if networkId:
                 self.networkManager.sendMessage(
                     networkId,
