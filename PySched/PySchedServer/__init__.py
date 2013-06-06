@@ -608,6 +608,7 @@ class PySchedServer(object):
         for k, v in self.workstations.iteritems():
             if v.get("workstationName", None) == workstationName:
                 return k
+        return -1
 
     def lookupNetworkId(self, networkId):
         '''
@@ -802,7 +803,7 @@ class PySchedServer(object):
         if user and user.admin:
             networkId = self.lookupWorkstationName(workstationName)
             self.logger.debug("Shutting down Workstation {} ({})".format(workstationName, networkId))
-            if not networkId == None :
+            if networkId >= 0:
                 self.networkManager.sendMessage(
                     networkId, 
                     CommandBuilder.buildShutdownString())
