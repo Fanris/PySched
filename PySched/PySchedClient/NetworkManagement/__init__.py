@@ -109,7 +109,7 @@ class NetworkManager(NetworkInterface):
             pass
         
         if self.tcpClient:
-            self.messageReceiver.connectionLost(self.tcpClient.server.id)
+            self.messageReceiver.connectionLost()
             
         self.tcpClient = None
         self.sshTunnel.closeTunnel()
