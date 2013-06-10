@@ -170,9 +170,11 @@ class WIM(WIMInterface):
         '''
         maintenancePath = os.path.join(self.pySchedClient.workingDir, "MAINTENANCE")
         if maintenanceStatus:
+            self.logger.info("Set to Maintenance mode!")
             FileUtils.createFile(maintenancePath)
         else:
-            FileUtils.removeVile(maintenancePath)
+            self.logger.info("Unset Maintenance mode!")
+            FileUtils.removeFile(maintenancePath)
 
 
 

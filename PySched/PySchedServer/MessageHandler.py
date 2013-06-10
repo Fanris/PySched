@@ -516,7 +516,7 @@ class MessageHandler(MessageHandlerInterface):
                 networkId,
                 CommandBuilder.buildResponseString(result=True))
 
-    def setMaintenance(self, sender, data):
+    def setMaintenance(self, networkId, data):
         '''
         @summary:       Set or unset Maintenance status for the workstation
         @param sender:
@@ -527,3 +527,7 @@ class MessageHandler(MessageHandlerInterface):
         status = data.get("maintenance", False)
         workstationName = data.get("workstationName", None)
         self.pySchedServer.setMaintenance(userId, status, workstationName)
+
+        self.pySchedServer.networkManager.sendMessage(
+            networkId,
+            CommandBuilder.buildResponseString(result=True))
