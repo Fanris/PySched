@@ -174,7 +174,7 @@ class WIM(WIMInterface):
             FileUtils.createFile(maintenancePath)
         else:
             self.logger.info("Unset Maintenance mode!")
-            FileUtils.removeFile(maintenancePath)
+            FileUtils.deleteFile(maintenancePath)
 
 
 
