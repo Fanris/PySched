@@ -130,6 +130,7 @@ class PyScheduler(SchedulerInterface):
                 self.pySchedServer.addToJobLog(job.jobId,
                     "{} in Maintenance Mode".
                     format(workstation.get("workstationName"), None))
+                continue
 
             # First check the installed OS
             if not None and not workstation.get("os", "").lower() == job.reqOS.lower():
