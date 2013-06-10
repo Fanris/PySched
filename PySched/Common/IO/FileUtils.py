@@ -19,7 +19,7 @@ def createDirectory(path):
 
     return path
 
-def createFile(pathToFile, filedata):
+def createFile(pathToFile, filedata=None):
     '''
     @summary: Creates a file with the given data at the directory
     @param pathToFile: path to directory
