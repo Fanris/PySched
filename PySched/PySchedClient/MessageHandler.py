@@ -168,3 +168,13 @@ class MessageHandler(MessageHandlerInterface):
         @result: 
         '''
         self.pySchedClient.updatePath(data.get("path", None))
+
+    def setMaintenance(self, sender, data):
+        '''
+        @summary:       Set or unset Maintenance status for this workstation
+        @param sender:
+        @param data:    maintenance
+        @result: 
+        '''
+        self.pySchedClient.setMaintenance(data.get("maintenance", False))
+

@@ -11,6 +11,7 @@ from PySched.Common.Interfaces.WIMInterface import WIMInterface
 from twisted.internet.task import LoopingCall
 
 from PySched.Common.DataStructures import Program
+from PySched.Common.IO import FileUtils
 
 import psutil
 import platform
@@ -94,7 +95,8 @@ class WIM(WIMInterface):
             "diskLoad": psutil.disk_usage(self.pySchedClient.workingDir)[3],
             "diskFree": psutil.disk_usage(
                 self.pySchedClient.workingDir)[2] / (1024**3),
-            "reservedCpus": self.pySchedClient.getReservedCPUCount()
+            "reservedCpus": self.pySchedClient.getReservedCPUCount(),
+            "maintenance": self.checkForMaintenanceFile()
         })
 
     def checkForPrograms(self, programs):
@@ -147,3 +149,30 @@ class WIM(WIMInterface):
 
     def is_exe(self, fpath):
         return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
+
+    def checkForMaintenanceFile(self):
+        '''
+        @summary: Checks for a file that indecates maintenance for the workstation
+        @result: 
+        '''
+        maintenancePath = os.path.join(self.pySchedClient.workingDir, "MAINTENANCE")
+        if os.path.exists(maintenancePath):
+            return True
+        else:
+            return False
+
+    def setMaintenance(self, maintenanceStatus):
+        '''
+        @summary: Creates (if true) or deletes (if false) the file that indicates
+                    Maintenance status.
+        @param maintenanceStatus:
+        @result: 
+        '''
+        maintenancePath = os.path.join(self.pySchedClient.workingDir, "MAINTENANCE")
+        if maintenanceStatus:
+            FileUtils.createFile(maintenancePath)
+        else:
+            FileUtils.removeVile(maintenancePath)
+
+
+

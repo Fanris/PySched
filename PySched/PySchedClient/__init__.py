@@ -605,6 +605,9 @@ class PySchedClient(object):
                 append = append.strip()
                 os.environ['PATH'] = os.environ['PATH'] + append
 
+    def setMaintenance(self, maintenanceStatus):
+        self.wim.setMaintenance(maintenanceStatus)
+
     def shutdown(self):
         '''
         @summary: Shuts the workstation down.
