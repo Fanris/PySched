@@ -123,6 +123,14 @@ class PyScheduler(SchedulerInterface):
         for workstation in workstationList:
             self.logger.debug("Checking workstation {}".format(workstation))
             freeCpus = 0
+
+
+            # Check Maintenance Mode
+            if workstation.get("maintenance", False):
+                self.pySchedServer.addToJobLog(job.jobId,
+                    "{} in Maintenance Mode".
+                    format(workstation.get("workstationName"), None))
+
             # First check the installed OS
             if not None and not workstation.get("os", "").lower() == job.reqOS.lower():
                 self.pySchedServer.addToJobLog(job.jobId, 

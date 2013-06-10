@@ -714,6 +714,22 @@ class PySchedServer(object):
                     networkId,
                     CommandBuilder.buildUpdatePathString(paths))
 
+    def setMaintenance(self, userId, status, workstationName):
+        '''
+        @summary: Set or unset maintenance mode on the given workstation.
+        @param userId: ID of the user who requested this
+        @param status: set maintenance (True) or remove it (False)
+        @param WorkstationName: Name of the workstation.
+        @result: 
+        '''
+        user = self.getUser(userId)
+
+        if user and user.admin:
+            networkId = self.lookupWorkstationName(workstationName)
+            self.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildSetMaintenanceString(status))
+
 
     # FileTransfer Functions
     # ========================

@@ -214,3 +214,7 @@ class CommandBuilder(object):
     @staticmethod
     def buildUpdateJobString(jobId, path):
         return CommandBuilder.buildCommand("updateJob", jobId=jobId, path=path)
+
+    @staticmethod
+    def buildSetMaintenanceString(maintenance):
+        return CommandBuilder.buildCommand("setMaintenance", maintenance=maintenance)
