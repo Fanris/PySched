@@ -26,6 +26,8 @@ class MessageHandler(MessageHandlerInterface):
         self.logger = logging.getLogger("PySchedServer")
         self.pySchedServer = pySchedServer
 
+
+    # ======================= Incoming Messages ===============================
     def messageReceived(self, networkId, message):
         '''
         @summary:           Should be called if a new message is received.
@@ -40,9 +42,13 @@ class MessageHandler(MessageHandlerInterface):
         cmd = commandDict.get("command", None)
 
         if cmd and hasattr(self, commandDict.get("command", None)):
-            getattr(self, commandDict.get("command", None))(networkId, commandDict)
+            getattr(self, commandDict.get("command", None))(
+                networkId, 
+                commandDict)
         else:
             self.logger.warning("Cannot parse command: {}".format(message))
+
+
 
     def connectionMade(self, networkId):
         pass
@@ -69,7 +75,8 @@ class MessageHandler(MessageHandlerInterface):
     def jobInfo(self, networkId, jobState):
         '''
         @summary:           Is called if a job is finished.
-        @param networkId:   global id of the workstation which sent this message
+        @param networkId:   global id of the workstation which sent this 
+                            message
         @param jobState:    dictionary containing the job informations
         @result:
         '''
@@ -85,9 +92,16 @@ class MessageHandler(MessageHandlerInterface):
         job = self.pySchedServer.addJob(jobInfo)
 
         if job:
-            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, jobId=job.jobId))
+            self.pySchedServer.networkManager.sendMessage(
+                networkId, 
+                CommandBuilder.buildResponseString(
+                    result=True, 
+                    jobId=job.jobId))
         else:
-            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
+            self.pySchedServer.networkManager.sendMessage(
+                networkId, 
+                CommandBuilder.buildResponseString(
+                    result=False))
 
     def schedule(self, networkId, data):
         '''
@@ -113,8 +127,14 @@ class MessageHandler(MessageHandlerInterface):
         @param data:        Dictionary containing the userId and the job id
         @result:
         '''
-        self.pySchedServer.killJob(data.get("jobId", None), data.get("userId", None))
-        self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True))
+        userId = data.get("userId", None)
+        jobId = data.get("jobId", None)
+
+        self.pySchedServer.killJob(userId, jobId)
+        self.pySchedServer.networkManager.sendMessage(
+            networkId, 
+            CommandBuilder.buildResponseString(
+                result=True))
 
     def getJobs(self, networkId, data):
         '''
@@ -128,11 +148,16 @@ class MessageHandler(MessageHandlerInterface):
         showAll = data.get("showAll", False)
         showAllUser = data.get("showAllUser", False)
 
-        self.logger.debug("Get Jobs for user ({}, showAll={})".format(userId, showAll))
+        self.logger.debug("Get Jobs for user ({}, showAll={})".
+            format(userId, showAll))
+
         jobs = self.pySchedServer.getJobList(userId, showAll, showAllUser)
 
         if not jobs:
-            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
+            self.pySchedServer.networkManager.sendMessage(
+                networkId, 
+                CommandBuilder.buildResponseString(
+                    result=False))
             return False
 
         jobList = []
@@ -141,7 +166,12 @@ class MessageHandler(MessageHandlerInterface):
             job.stateId = JobState.lookup(job.stateId)
             jobList.append(job.__dict__)
 
-        self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, jobs=jobList))
+        self.pySchedServer.networkManager.sendMessage(
+            networkId, 
+            CommandBuilder.buildResponseString(
+                result=True, 
+                jobs=jobList))
+
         return True
 
     def archiveJob(self, networkId, data):
@@ -155,7 +185,8 @@ class MessageHandler(MessageHandlerInterface):
 
     def getResults(self, networkId, data):
         '''
-        @summary:           Is called when an user requests the results of a job
+        @summary:           Is called when an user requests the results of a 
+                            job
         @param networkId:   global client id
         @param data:        A dictionary containig userId and jobId
         @result:
@@ -166,12 +197,20 @@ class MessageHandler(MessageHandlerInterface):
         resultsFile = self.pySchedServer.returnResultsToClient(userId, jobId)
 
         if not resultsFile:
-            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
+            self.pySchedServer.networkManager.sendMessage(
+                networkId, 
+                CommandBuilder.buildResponseString(
+                    result=False))
+
             return False
 
         self.logger.info("Sending results...")
-        if not self.pySchedServer.networkManager.sendFile(networkId, resultsFile):
-            self.logger.error("Could not transfer file {} to {}".format(resultsFile, networkId))
+        if not self.pySchedServer.networkManager.sendFile(
+            networkId, resultsFile):
+
+            self.logger.error("Could not transfer file {} to {}".
+                format(resultsFile, networkId))
+
             FileUtils.deleteFile(resultsFile)
             return False
 
@@ -179,41 +218,58 @@ class MessageHandler(MessageHandlerInterface):
         self.pySchedServer.archiveJob(jobId)
         return True
 
-    def createUser(self, networkId, userInfo):
+    def createUser(self, networkId, data):
         '''
         @summary:           Is called when a new user should be created.
-        @param userInfo:    a dictionary containing the user informations
+        @param data:        a dictionary containing the user informations
         @result:            Returns the generated user name of the user.
         '''
-        userId = userInfo.get("userId", None)
+        userId = data.get("userId", None)
         try:
-            del userInfo["userId"]
+            del data["userId"]
         except:
             pass
 
-        if self.pySchedServer.createUser(userId, userInfo):
-            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, message="User created."))
+        if self.pySchedServer.createUser(userId, data):
+            self.pySchedServer.networkManager.sendMessage(
+                networkId, 
+                CommandBuilder.buildResponseString(
+                    result=True, 
+                    message="User created."))
 
         else:
-            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
+            self.pySchedServer.networkManager.sendMessage(
+                networkId, 
+                CommandBuilder.buildResponseString(
+                    result=False))
 
     def getUsers(self, networkId, data):
         '''
-        @summary:           Is called when a client request a list of all registered users
+        @summary:           Is called when a client request a list of all 
+                            registered users
         @param networkId:   The networkId of the client
         @param data:        The current userId of the client
         @result: 
         '''
-        users = self.pySchedServer.getUsers(data.get("userId", None))
+        userId = data.get("userId", None)
+
+        users = self.pySchedServer.getUsers(userId)
 
         if users:
             userList = []
             for user in users:
                 userList.append(user.__dict__)
 
-            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, users=userList))
+            self.pySchedServer.networkManager.sendMessage(
+                networkId, 
+                CommandBuilder.buildResponseString(
+                    result=True, 
+                    users=userList))
         else:
-            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
+            self.pySchedServer.networkManager.sendMessage(
+                networkId,                 
+                CommandBuilder.buildResponseString(
+                    result=False))
 
     def deleteUser(self, networkId, data):
         '''
@@ -227,9 +283,15 @@ class MessageHandler(MessageHandlerInterface):
         email = data.get("email", None)
 
         if self.pySchedServer.deleteUser(userId, email):
-            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True))
+            self.pySchedServer.networkManager.sendMessage(
+                networkId, 
+                CommandBuilder.buildResponseString(
+                    result=True))
         else:
-            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
+            self.pySchedServer.networkManager.sendMessage(
+                networkId, 
+                CommandBuilder.buildResponseString(
+                    result=False))
 
     def getPrograms(self, networkId, data):
         '''
@@ -247,7 +309,9 @@ class MessageHandler(MessageHandlerInterface):
 
         self.pySchedServer.networkManager.sendMessage(
             networkId, 
-            CommandBuilder.buildResponseString(result=True, programs=programList))
+            CommandBuilder.buildResponseString(
+                result=True, 
+                programs=programList))
 
     def addProgram(self, networkId, data):
         '''
@@ -258,6 +322,7 @@ class MessageHandler(MessageHandlerInterface):
         @result: 
         '''
         user = data.get("userId")
+
         program = Program()
         program.programName = data.get("programName", None)
         program.programExec = data.get("programExec", None)
@@ -267,7 +332,8 @@ class MessageHandler(MessageHandlerInterface):
         if self.pySchedServer.addProgram(user, program):
             self.pySchedServer.networkManager.sendMessage(
                 networkId,
-                CommandBuilder.buildResponseString(result=True))
+                CommandBuilder.buildResponseString(
+                    result=True))
 
     def deleteProgram(self, networkId, data):
         '''
@@ -283,11 +349,13 @@ class MessageHandler(MessageHandlerInterface):
         if self.pySchedServer.deleteProgram(userId, programName):
             self.pySchedServer.networkManager.sendMessage(
                 networkId,
-                CommandBuilder.buildResponseString(result=True))
+                CommandBuilder.buildResponseString(
+                    result=True))
         else:
             self.pySchedServer.networkManager.sendMessage(
                 networkId,
-                CommandBuilder.buildResponseString(result=False))
+                CommandBuilder.buildResponseString(
+                    result=False))
 
 
     def getWorkstations(self, networkId, data):
@@ -308,10 +376,18 @@ class MessageHandler(MessageHandlerInterface):
         @param data:        userId, jobId
         @result:
         '''
-        if self.pySchedServer.deleteJob(data.get("userId", ""), data.get("jobId", None)):
-            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True))
+        userId = data.get("userId", None)
+        jobId = data.get("jobId", None)
+
+        if self.pySchedServer.deleteJob(userId, jobId):
+            self.pySchedServer.networkManager.sendMessage(
+                networkId, CommandBuilder.buildResponseString(
+                    result=True))
         else:
-            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
+            self.pySchedServer.networkManager.sendMessage(
+                networkId, 
+                CommandBuilder.buildResponseString(
+                    result=False))
 
     def checkUser(self, networkId, data):
         '''
@@ -321,16 +397,27 @@ class MessageHandler(MessageHandlerInterface):
         @param data:        contains the userId to check
         @result: 
         '''
-        user = self.pySchedServer.getUser(data.get("userId", None))
+        userId = data.get("userId", None)
+        user = self.pySchedServer.getUser(userId)
 
         if not user:
-            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
+            self.pySchedServer.networkManager.sendMessage(
+                networkId, 
+                CommandBuilder.buildResponseString(
+                    result=False))
             return
 
         if user.admin:
-            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, admin=True))
+            self.pySchedServer.networkManager.sendMessage(
+                networkId, 
+                CommandBuilder.buildResponseString(
+                    result=True, 
+                    admin=True))
         else:
-            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True))
+            self.pySchedServer.networkManager.sendMessage(
+                networkId, 
+                CommandBuilder.buildResponseString(
+                    result=True))
 
     def shutdown(self, networkId, data):
         '''
@@ -340,13 +427,22 @@ class MessageHandler(MessageHandlerInterface):
         @param data:        the userId
         @result: 
         '''
-        user = self.pySchedServer.getUser(data.get("userId", None))
+        userId = data.get("userId", None)
+
+        user = self.pySchedServer.getUser(userId)
         
         if not user or not user.admin:
-            self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=False))
+            self.pySchedServer.networkManager.sendMessage(
+                networkId, 
+                CommandBuilder.buildResponseString(
+                    result=False))
             return
         
-        self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True))
+        self.pySchedServer.networkManager.sendMessage(
+            networkId, 
+            CommandBuilder.buildResponseString(
+                result=True))
+
         self.pySchedServer.shutdown()
 
     def getJobLog(self, networkId, data):
@@ -356,8 +452,15 @@ class MessageHandler(MessageHandlerInterface):
         @param data:        jobId, username
         @result:
         '''
-        log = self.pySchedServer.getLog(data.get("jobId", None), data.get("userId", None))
-        self.pySchedServer.networkManager.sendMessage(networkId, CommandBuilder.buildResponseString(result=True, log=log))
+        userId = data.get("userId", None)
+        jobId = data.get("jobId", None)
+
+        log = self.pySchedServer.getLog(userId, jobId)
+        self.pySchedServer.networkManager.sendMessage(
+            networkId, 
+            CommandBuilder.buildResponseString(
+                result=True, 
+                log=log))
 
     def addPath(self, networkId, data):
         '''
@@ -389,7 +492,9 @@ class MessageHandler(MessageHandlerInterface):
                 CommandBuilder.buildResponseString(
                     result=True,
                     paths=paths))
+
             return True
+
         self.pySchedServer.networkManager.sendMessage(
             networkId,
             CommandBuilder.buildResponseString(
@@ -402,7 +507,9 @@ class MessageHandler(MessageHandlerInterface):
         @param data:        userId
         @result: 
         '''
-        self.pySchedServer.stopAll(data.get("userId", None))
+        userId = data.get("userId", None)
+
+        self.pySchedServer.stopAll(userId)
 
     def shutdownWorkstation(self, networkId, data):
         '''
@@ -411,16 +518,19 @@ class MessageHandler(MessageHandlerInterface):
         @param data:        userId, workstationName
         @result: 
         '''
-        if self.pySchedServer.stopWorkstation(
-            data.get("userId", None),
-            data.get("workstationName", None)):
+        userId = data.get("userId", None)
+        jobId = data.get("jobId", None)
+
+        if self.pySchedServer.stopWorkstation(userId, jobId):             
             self.pySchedServer.networkManager.sendMessage(
                 networkId,
-                CommandBuilder.buildResponseString(result=True))
+                CommandBuilder.buildResponseString(
+                    result=True))
         else:
             self.pySchedServer.networkManager.sendMessage(
                 networkId, 
-                CommandBuilder.buildResponseString(result=False))
+                CommandBuilder.buildResponseString(
+                    result=False))
 
 
     def pauseJob(self, networkId, data):
@@ -457,15 +567,21 @@ class MessageHandler(MessageHandlerInterface):
         userId = data.get("userId", None)
         jobId = data.get("jobId", None)
 
-        pathToResultFile = self.pySchedServer.returnResultsToClient(userId, jobId)
+        pathToResultFile = self.pySchedServer.returnResultsToClient(
+            userId, jobId)
+
         if pathToResultFile:
             self.pySchedServer.networkManager.sendMessage(
                 networkId,
-                CommandBuilder.buildResponseString(result=True, path=pathToResultFile))
+                CommandBuilder.buildResponseString(
+                    result=True, 
+                    path=pathToResultFile))
+
         else:
             self.pySchedServer.networkManager.sendMessage(
                 networkId,
-                CommandBuilder.buildResponseString(result=False))
+                CommandBuilder.buildResponseString(
+                    result=False))
 
     def fileDownloadCompleted(self, networkId, data):
         pathToFile = data.get("path", None)
@@ -475,7 +591,9 @@ class MessageHandler(MessageHandlerInterface):
         self.pySchedServer.archiveJob(jobId)
         self.pySchedServer.networkManager.sendMessage(
                 networkId,
-                CommandBuilder.buildResponseString(result=True))
+                CommandBuilder.buildResponseString(
+                    result=True))
+
         return True
 
     def requestFileUpload(self, networkId, data):
@@ -493,11 +611,13 @@ class MessageHandler(MessageHandlerInterface):
             self.pySchedServer.networkManager.sendMessage(
                 networkId,
                 CommandBuilder.buildUploadPathString(
-                    pathToUpload, jobId))
+                    pathToUpload, 
+                    jobId))
         else:
             self.pySchedServer.networkManager.sendMessage(
                 networkId,
-                CommandBuilder.buildResponseString(result=False))
+                CommandBuilder.buildResponseString(
+                    result=False))
 
     def fileUploadCompleted(self, networkId, data):
         '''
@@ -514,7 +634,8 @@ class MessageHandler(MessageHandlerInterface):
 
         self.pySchedServer.networkManager.sendMessage(
                 networkId,
-                CommandBuilder.buildResponseString(result=True))
+                CommandBuilder.buildResponseString(
+                    result=True))
 
     def setMaintenance(self, networkId, data):
         '''
@@ -530,4 +651,5 @@ class MessageHandler(MessageHandlerInterface):
 
         self.pySchedServer.networkManager.sendMessage(
             networkId,
-            CommandBuilder.buildResponseString(result=True))
+            CommandBuilder.buildResponseString(
+                result=True))

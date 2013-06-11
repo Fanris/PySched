@@ -175,7 +175,8 @@ class PySchedServer(object):
 
         self.logger.debug("New Job: {}".format(job.__dict__))
 
-        user = self.getFromDatabase(User, userId=jobInformations.get("userId", ""), first=True)
+        userId = jobInformations.get("userId", None)
+        user = self.getUser(userId)
         if not user:
             return False
 
@@ -183,7 +184,9 @@ class PySchedServer(object):
 
         job = self.addToDatabase(job)
         if job:
-            jobDir = FileUtils.createDirectory(os.path.join(self.workingDir, str(job.jobId)))
+            jobDir = FileUtils.createDirectory(
+                os.path.join(self.workingDir, str(job.jobId)))
+
             FileUtils.createDirectory(os.path.join(jobDir, "logs"))
             self.addToJobLog(job.jobId, "Job added.")
             return job
@@ -196,7 +199,8 @@ class PySchedServer(object):
         @param jobInformations: A dictionary containing the job informations.
         @result:
         '''
-        job = self.getFromDatabase(Job, jobId=jobInformations.get("jobId", ""), first=True)
+        jobId = jobInformations.get("jobId", None)
+        job = self.getJob(jobId)
         isDeleted = False
         if job.stateId == JobState.lookup("DELETED"):
             isDeleted = True
@@ -224,7 +228,7 @@ class PySchedServer(object):
             job.JobState = JobState.lookup("DELETED")
             self.updateDatabaseEntry(job)
 
-    def killJob(self, jobId, userId):
+    def killJob(self, userId, jobId):
         '''
         @summary: Kills a job.
         @param jobId: Id of the job to kill.
@@ -232,8 +236,8 @@ class PySchedServer(object):
         @result: Returns true if the kill signal is sent to
         the workstation
         '''
-        job = self.getFromDatabase(Job, jobId=jobId, first=True)
-        user = self.getFromDatabase(User, userId=userId, first=True)
+        job = self.getJob(jobId)
+        user = self.getUser(userId)
 
         if not (job or user) or not (job.userId == user.id or user.admin):
             return False
@@ -241,8 +245,14 @@ class PySchedServer(object):
         job.stateId = JobState.lookup("ARBORTED")
         self.updateDatabaseEntry(job)
         networkId = self.lookupWorkstationName(job.workstation)
-        self.logger.info("Aborting job {} on workstation {} ({})".format(job.jobId, job.workstation, networkId))
-        self.networkManager.sendMessage(networkId, CommandBuilder.buildKillJobString(job.jobId))    
+        self.logger.info("Aborting job {} on workstation {} ({})".
+            format(job.jobId, job.workstation, networkId))
+
+        self.networkManager.sendMessage(
+            networkId, 
+            CommandBuilder.buildKillJobString(
+                job.jobId))
+
         self.addToJobLog(job.jobId, "Job aborted by user.")  
         return True  
 
@@ -278,12 +288,18 @@ class PySchedServer(object):
         @result:
         '''
         jobDir = os.path.join(self.workingDir, str(job.jobId))
-        archivePath = os.path.join(self.workingDir, "temp", "{}.tar".format(job.jobId))
+        archivePath = os.path.join(
+            self.workingDir, "temp", "{}.tar".format(job.jobId))
+
         FileUtils.createDirectory(os.path.split(archivePath)[0])
         archive = Archive.packFolder(archivePath, jobDir)
         networkId = self.lookupWorkstationName(job.workstation)
 
-        self.networkManager.sendMessage(networkId, CommandBuilder.buildAddJobString(archive, **job.__dict__))
+        self.networkManager.sendMessage(
+            networkId, 
+            CommandBuilder.buildAddJobString(
+                archive, 
+                **job.__dict__))
         return True
 
     def cleanupJobDir(self, jobId):
@@ -319,7 +335,9 @@ class PySchedServer(object):
         job = self.getFromDatabase(Job, jobId=jobId, first=True)
 
         if job:
-            logPath = os.path.join(self.workingDir, str(jobId), "logs", "joblog.log")
+            logPath = os.path.join(
+                self.workingDir, str(jobId), "logs", "joblog.log")
+
             m = "[{}] {}\n".format(datetime2Str(datetime.datetime.now()),
                 message)
             FileUtils.createOrAppendToFile(logPath, m)
@@ -477,7 +495,7 @@ class PySchedServer(object):
         self.logger.info("Results for job {} prepared.".format(jobId))
         return archive  
 
-    def getLog(self, jobId, userId):
+    def getLog(self, userId, jobId):
         '''
         @summary: Reads the logfile of a job and returns it
         @param jobId: the jobId of the job
