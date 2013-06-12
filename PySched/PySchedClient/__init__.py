@@ -478,6 +478,7 @@ class PySchedClient(object):
         if job:
             jobDir = os.path.join(self.workingDir, str(job.jobId))
             filePath = os.path.join(jobDir, path)
+            self.logger.debug("Reading File: {}".format(filePath))
             content = FileUtils.readLinesFromFile(
                 filePath, lineCount=lineCount, rev=True)
 
