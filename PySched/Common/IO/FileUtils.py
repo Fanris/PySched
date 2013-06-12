@@ -169,8 +169,8 @@ def readFile(pathToFile):
     @result: Returns a list with all lines
     '''
     if os.path.exists(pathToFile):
-        with open(pathToFile, "r") as f:
-            return f.readlines()   
+        with open(pathToFile, "r") as f:            
+            return f.readlines()    
 
 def readLinesFromFile(pathToFile, lineCount=0, rev=False):
     '''
@@ -181,7 +181,8 @@ def readLinesFromFile(pathToFile, lineCount=0, rev=False):
                     (reversed=True)
     @result: 
     '''
-    f = readFile(pathToFile)    
+    f = readFile(pathToFile)
+    print f
     if f:
         if lineCount <= 0:
             return f
