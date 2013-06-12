@@ -206,6 +206,7 @@ def getDirectoryStructure(pathToDir, subFolders=True):
             for f in files:
                 fullPath = os.path.join(pathToDir, f)
                 if os.path.isdir(fullPath):
-                    files.extend(getDirectoryStructure(fullPath))
+                    for sf in getDirectoryStructure(fullPath):
+                        files.append(os.path.join(f, sf))
 
     return files
