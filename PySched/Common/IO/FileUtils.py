@@ -210,5 +210,7 @@ def getDirectoryStructure(pathToDir, subFolders=True):
                 if subFolders:
                     for sf in getDirectoryStructure(fullPath):
                         files.append(os.path.join(f, sf))
+            else:
+                files.append(f)
 
     return files
