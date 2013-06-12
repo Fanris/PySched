@@ -464,6 +464,53 @@ class PySchedClient(object):
             FileUtils.deleteFile(archive)        
         return True
 
+    def getFileContent(self, jobId, path, lineCount, sender):
+        '''
+        @summary: Returns the content of a given file
+        @param jobId: the id of the job to which the file belongs
+        @param path: the path to the file relative to the jobDir
+        @param lineCount: the amount of lines which should returned (from EOF)
+        @param sender: the client which requests the content. This must be 
+                        returned in the response.
+        @result: 
+        '''
+        job = self.getFromDatabase(Job, first=True, jobId=jobId)
+        if job:
+            jobDir = os.path.join(self.workingDir, str(job.jobId))
+            filePath = os.path.join(jobDir, path)
+            content = FileUtils.readLinesFromFile(
+                filePath, lineCount=lineCount, rev=True)
+
+            self.networkManager.sendMessage(
+                self.serverId,
+                CommandBuilder.buildFileContentString(
+                    jobId=job.jobId,
+                    path=path,
+                    content=content,
+                    sender=sender))
+            return True
+
+    def getJobDirStruct(self, jobId, sender):
+        '''
+        @summary: Returns the directory structure of the given job
+        @param jobId: the id of the job
+        @param sender: the client which requests the content. This must be 
+                        returned in the response.
+        @result: 
+        '''
+        job = self.getFromDatabase(Job, first=True, jobId=jobId)
+        if job:
+            jobDir = os.path.join(self.workingDir, str(job.jobId))
+            content = FileUtils.getDirectoryStructure(jobDir)
+
+            self.networkManager.sendMessage(
+                self.serverId,
+                CommandBuilder.buildJobDirStruct(
+                    jobId=job.jobId,
+                    content=content,
+                    sender=sender))
+
+
     def checkJobs(self):
         '''
         @summary: Checks all jobs which are saved in the database as 'RUNNING'

@@ -38,7 +38,7 @@ TITLE = """
 |  ___/ | | |\___ \ / __| '_ \ / _ \/ _` |\___ \ / _ \ '__\ \ / / _ \ '__| 
 | |   | |_| |____) | (__| | | |  __/ (_| |____) |  __/ |   \ V /  __/ |    
 |_|    \__, |_____/ \___|_| |_|\___|\__,_|_____/ \___|_|    \_/ \___|_|    
-        __/ |                              Copyright 2012 by Martin Predki 
+        __/ |                              Copyright 2013 by Martin Predki 
        |___/                               Version {}          
 
 ==========================================================================
@@ -375,7 +375,53 @@ class PySchedServer(object):
             (job.userId == user.id or user.admin):
             networkId = self.lookupWorkstationName(job.workstation)
             self.networkManager.sendMessage(networkId,
-                CommandBuilder.buildResumeJobString(job.jobId))            
+                CommandBuilder.buildResumeJobString(job.jobId)) 
+
+    def getFileContentFromWS(self, userId, jobId, path, lineCount, sender):
+        '''
+        @summary: Retrieves the content of a file from a workstation
+        @param userId: id of the requesting user
+        @param jobId: id of the job
+        @param path: remote path to the file
+        @param lineCount: amount of lines which should be returned (from the
+                            end of the file)
+        @result: 
+        '''
+        user = self.getUser(userId)
+        job = self.getJob(jobId)
+
+        if user and job and (job.userId == user.id or user.admin):
+            networkId = self.lookupWorkstationName(job.workstation)
+            self.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildGetFileContentString(
+                    jobId=jobId,
+                    path=path,
+                    lineCount=lineCount,
+                    sender=sender))
+            return True
+
+    def getJobDirStruct(self, userId, jobId, sender):
+        '''
+        @summary: Retrieves the directory structure of the given job from the 
+                    workstation
+        @param userId: the id of the user
+        @param jobId: the id of the job
+        @param sender: the sender (client) which requests the structure
+        @result: 
+        '''
+        user = self.getUser(userId)
+        job = self.getJob(jobId)
+
+        if user and job and (job.userId == user.id or user.admin):
+            networkId = self.lookupWorkstationName(job.workstation)
+            self.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildGetJobDirString(
+                    jobId=jobId,
+                    sender=sender))
+            return True
+
 
     # User Functions
     # ========================

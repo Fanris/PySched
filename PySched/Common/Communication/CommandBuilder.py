@@ -218,3 +218,21 @@ class CommandBuilder(object):
     @staticmethod
     def buildSetMaintenanceString(maintenance):
         return CommandBuilder.buildCommand("setMaintenance", maintenance=maintenance)
+
+    @staticmethod
+    def buildGetFileContentString(jobId, path, lineCount, sender):
+        return CommandBuilder.buildCommand("getFileContent",
+            jobId=jobId, path=path, lineCount=lineCount, sender=sender)
+
+    @staticmethod
+    def buildFileContentString(jobId, path, content, sender):
+        return CommandBuilder.buildCommand("fileContent", 
+            jobId=jobId, path=path, content=content, sender=sender)
+
+    @staticmethod
+    def buildGetJobDirString(jobId, sender):
+        return CommandBuilder.buildCommand("getJobDirStruct", jobId=jobId, sender=sender)
+
+    @staticmethod
+    def buildJobDirStruct(jobId, content, sender):
+        return CommandBuilder.buildCommand("jobDirStruct", jobId=jobId, content=content, sender=sender)

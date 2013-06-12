@@ -170,5 +170,42 @@ def readFile(pathToFile):
     '''
     if os.path.exists(pathToFile):
         with open(pathToFile, "r") as f:
-            return f.readlines()    
+            return f.readlines()   
 
+def readLinesFromFile(pathToFile, lineCount=0, rev=False):
+    '''
+    @summary: Reads lineCount lines from a file.
+    @param pathToFile: Path to the file
+    @param lineCount: Lines to read (0 = Whole file)
+    @param rev: Read first lines (reversed=False) or last lines 
+                    (reversed=True)
+    @result: 
+    '''
+    f = readFile(pathToFile)    
+    if f:
+        if lineCount <= 0:
+            return f
+
+        if rev:
+            return f[-lineCount:]
+        else:
+            return f[:lineCount]
+
+def getDirectoryStructure(pathToDir, subFolders=True):
+    '''
+    @summary: Returns all files within the given directory
+    @param pathToDir: Path to the directory
+    @param subFolders: Descent in every Subfolder
+    @result: 
+    '''
+    files = []
+    if os.path.isdir(pathToDir):
+        files.extend(os.listdir(pathToDir))
+
+        if subFolders:
+            for f in files:
+                fullPath = os.path.join(pathToDir, f)
+                if os.path.isdir(fullPath):
+                    files.extend(getDirectoryStructure(fullPath))
+
+    return files

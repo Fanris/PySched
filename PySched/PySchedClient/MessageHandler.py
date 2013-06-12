@@ -178,3 +178,29 @@ class MessageHandler(MessageHandlerInterface):
         '''
         self.pySchedClient.setMaintenance(data.get("maintenance", False))
 
+    def getFileContent(self, sender, data):
+        '''
+        @summary:       Return the content of a given file.
+        @param sender:  
+        @param data:    jobId, path, sender (the client), lineCount
+        @result: 
+        '''
+        jobId = data.get("jobId", None)
+        path = data.get("path", None)
+        sender = data.get("sender", None)
+        lineCount = data.get("lineCount", 0)
+
+        self.pySchedClient.getFileContent(jobId, path, lineCount, sender)
+
+    def getJobDirStruct(self, sender, data):
+        '''
+        @summary:       Return the structure of a given job directory
+        @param sender:  
+        @param data:    jobId, sender (the client)
+        @result: 
+        '''
+        jobId = data.get("jobId", None)
+        sender = data.get("sender", None)
+
+        self.pySchedClient.getJobDirStruct(jobId, sender)
+

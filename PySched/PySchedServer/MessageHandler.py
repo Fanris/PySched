@@ -41,8 +41,8 @@ class MessageHandler(MessageHandlerInterface):
         # Run command....
         cmd = commandDict.get("command", None)
 
-        if cmd and hasattr(self, commandDict.get("command", None)):
-            getattr(self, commandDict.get("command", None))(
+        if cmd and hasattr(self, cmd):
+            getattr(self, cmd)(
                 networkId, 
                 commandDict)
         else:
@@ -653,3 +653,80 @@ class MessageHandler(MessageHandlerInterface):
             networkId,
             CommandBuilder.buildResponseString(
                 result=True))
+
+    def getFileFromWS(self, networkId, data):
+        '''
+        @summary:           Returns the content of a file from the server
+        @param networkId:   The client who requested the content
+        @param data:        userId, jobId, path, lineCount
+        @result: 
+        '''
+        userId = data.get("userId", None)
+        jobId = data.get("jobId", None)
+        path = data.get("path", None)
+        lineCount = data.get("lineCount")
+
+        if not self.pySchedServer.getFileContentFromWS(
+            userId, jobId, path, lineCount, networkId):
+
+            self.pySchedServer.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(
+                    result=False))
+
+    def fileContent(self, networkId, data):
+        '''
+        @summary:           Is called when file content is received.
+        @param networkId:   sender of the message
+        @param data:        jobId, path, content, sender (The client which
+                            requested the content)
+        @result: 
+        '''
+        path = data.get("path", None)
+        content = data.get("content", None)
+        sender = data.get("sender", None)
+
+        if sender:
+            self.pySchedServer.sendMessage(
+                sender,
+                CommandBuilder.buildResponseString(
+                    result=True,
+                    content=content,
+                    path=path))
+
+    def getJobDirStruct(self, networkId, data):
+        '''
+        @summary:           Returns the directory sturcture of a given job on 
+                            on the workstation
+        @param networkId:   sender of the message
+        @param data:        userId, jobId
+        @result: 
+        '''
+        userId = data.get("userId")
+        jobId = data.get("jobId")
+
+        if not self.pySchedServer.getJobDirStruct(userId, jobId, networkId):
+            self.pySchedServer.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(result=False))
+
+    def jobDirStruct(self, networkId, data):
+        '''
+        @summary:           Is called when a job directory structure is received
+        @param networkId:   sender of the message
+        @param data:        jobId, content, sender
+        @result: 
+        '''
+        jobId = data.get("jobId", None)
+        content = data.get("content", None)
+        sender = data.get("sender", None)
+
+        if sender:
+            self.pySchedServer.sendMessage(
+                sender,
+                CommandBuilder.buildResponseString(
+                    result=True,
+                    jobId=jobId,
+                    content=content))
+
+
