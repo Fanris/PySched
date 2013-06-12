@@ -687,7 +687,7 @@ class MessageHandler(MessageHandlerInterface):
         sender = data.get("sender", None)
 
         if sender:
-            self.pySchedServer.sendMessage(
+            self.pySchedServer.networkManager.sendMessage(
                 sender,
                 CommandBuilder.buildResponseString(
                     result=True,
@@ -706,7 +706,7 @@ class MessageHandler(MessageHandlerInterface):
         jobId = data.get("jobId")
 
         if not self.pySchedServer.getJobDirStruct(userId, jobId, networkId):
-            self.pySchedServer.sendMessage(
+            self.pySchedServer.networkManager.sendMessage(
                 networkId,
                 CommandBuilder.buildResponseString(result=False))
 
@@ -722,7 +722,7 @@ class MessageHandler(MessageHandlerInterface):
         sender = data.get("sender", None)
 
         if sender:
-            self.pySchedServer.sendMessage(
+            self.pySchedServer.networkManager.sendMessage(
                 sender,
                 CommandBuilder.buildResponseString(
                     result=True,
