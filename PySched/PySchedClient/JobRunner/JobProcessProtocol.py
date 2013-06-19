@@ -26,10 +26,10 @@ class JobProcessProtocol(protocol.ProcessProtocol):
 
         createDirectory(os.path.join(self.jobDir, "results"))
 
-        stdOutPath = os.path.join(self.jobDir, "results", "processOutput")
+        stdOutPath = os.path.join(self.jobDir, "results", "processOutput.log")
         self.stdOut = open(stdOutPath, "w+")
 
-        stdErrPath = os.path.join(self.jobDir, "results", "errOutput")
+        stdErrPath = os.path.join(self.jobDir, "results", "errOutput.log")
         self.stdErr = open(stdErrPath, "w+")
 
     def connectionMade(self):

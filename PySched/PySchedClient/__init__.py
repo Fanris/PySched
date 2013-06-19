@@ -27,7 +27,7 @@ import os
 import logging
 import datetime
 
-VERSION = "1.3.3"
+VERSION = "1.3.4"
 TITLE = """
  _____        _____      _              _  _____ _ _            _    
 |  __ \      / ____|    | |            | |/ ____| (_)          | |   
@@ -481,6 +481,9 @@ class PySchedClient(object):
             self.logger.debug("Reading File: {}".format(filePath))
             content = FileUtils.readLinesFromFile(
                 filePath, lineCount=lineCount, rev=True)
+
+            if not content:
+                self.logger.warning("Failed to read file: {}".format(filePath))
 
             self.networkManager.sendMessage(
                 self.serverId,
