@@ -20,8 +20,8 @@ class CompilerProcessProtocol(protocol.ProcessProtocol):
         self.jobDir = jobDir
         self.compiler = compiler
 
-        self.stdOutput = open(os.path.join(self.jobDir, "logs", "compilerOutput"), "w+")
-        self.errOutput = open(os.path.join(self.jobDir, "logs", "compilerError"), "w+")
+        self.stdOutput = open(os.path.join(self.jobDir, "logs", "compilerOutput.log"), "w+")
+        self.errOutput = open(os.path.join(self.jobDir, "logs", "compilerError.log"), "w+")
 
     def connectionMade(self):
         self.stdOutput.write("Begin with compile process...")
