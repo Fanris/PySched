@@ -9,79 +9,88 @@ import hashlib
 import os
 import shutil
 
+def expandPath(path):
+    tmp = path
+    tmp = os.path.expanduser(tmp)
+    tmp = os.path.expandvars(tmp)
+    return tmp
+
 def createDirectory(path):
     '''
     @summary: Creates an directory at the given path
     @param path: Path to the directory
     '''
+    path = expandPath(path)
     if not os.path.exists(os.path.normpath(path)):
         os.makedirs(os.path.normpath(path))
 
     return path
 
-def createFile(pathToFile, filedata=None):
+def createFile(path, filedata):
     '''
     @summary: Creates a file with the given data at the directory
     @param pathToFile: path to directory
     @param filename: The name of the File
     @result: Absolute path to the File
     '''
-    path = os.path.normpath(pathToFile)
+    path = expandPath(path)
     dirname = os.path.split(path)[0]
 
     if not os.path.exists(dirname):
         createDirectory(dirname)
 
-    fileHandler = open(os.path.normpath(pathToFile), "w+")
+    fileHandler = open(path, "w+")
     if filedata:
         fileHandler.write(filedata)
     fileHandler.close()
 
-    return os.path.normpath(pathToFile)
+    return os.path.normpath(path)
 
-def createOrAppendToFile(pathToFile, filedata):
+def createOrAppendToFile(path, filedata):
     '''
     @summary: Creates a file with the given data at the directory
     @param pathToFile: path to directory
     @param filename: The name of the File
     @result: Absolute path to the File
     '''
-    path = os.path.normpath(pathToFile)
+    path = expandPath(path)
 
     if not os.path.exists(path):
-        createFile(pathToFile, None)
+        createFile(path, None)
 
-    with open(os.path.normpath(pathToFile), "a") as fileHandler:
+    with open(os.path.normpath(path), "a") as fileHandler:
         if filedata:
             fileHandler.write(filedata)    
 
-    return os.path.normpath(pathToFile)
+    return os.path.normpath(path)
 
-def deleteFile(pathToFile):
+def deleteFile(path):
     '''
     @summary: Deletes a file
     @param pathToFile: The file to delete
     @result:
     '''
+    path = expandPath(path)
     try:
-        if os.path.exists(pathToFile):
-            if os.path.isfile(pathToFile):
-                os.remove(pathToFile)
-            elif os.path.isdir(pathToFile):
-                shutil.rmtree(pathToFile)
+        if os.path.exists(path):
+            if os.path.isfile(path):
+                os.remove(path)
+            elif os.path.isdir(path):
+                shutil.rmtree(path)
     except:
         pass
 
-def clearDirectory(pathToDir, deleteSubfolders=True):
+def clearDirectory(path, deleteSubfolders=True):
     '''
     @summary: Deletes all files within the folder
     @param pathToDir: path to the folder
     @result:
     '''
-    if os.path.isdir(pathToDir):
-        files = os.listdir(pathToDir)
+    path = expandPath(path)
+    if os.path.isdir(path):
+        files = os.listdir(path)
         for f in files:
-            filepath = os.path.join(pathToDir, f)
+            filepath = os.path.join(path, f)
             if deleteSubfolders or not os.path.isdir(filepath):
                 deleteFile(filepath)
 
@@ -93,7 +102,10 @@ def copyFile(source, dest):
     @result:
     '''
     try:
-        shutil.move(source, dest)
+        source = expandPath(source)
+        dest = expandPath(source)
+
+        shutil.copy(source, dest)
     except:
         pass
 
@@ -105,42 +117,48 @@ def moveFile(source, dest):
     @result:
     '''
     try:
+        source = expandPath(source)
+        dest = expandPath(source)
+
         shutil.move(source, dest)
     except:
         pass
 
-def validateFileMD5(pathToFile, originalMD5):
+def validateFileMD5(path, originalMD5):
     '''
     @summary: Checks the MD5-Hashsum an file against it's original hash
     @param pathToFile: File to check
     @param originalMD5: Original MD5-Hashsum
     @result: True if both Hashsums are equal
     '''
-    if getFileMD5Hashsum(pathToFile) == originalMD5:
+    path = expandPath(path)
+    if getFileMD5Hashsum(path) == originalMD5:
         return True
 
     return False
 
-def getFileMD5Hashsum(pathToFile):
+def getFileMD5Hashsum(path):
     '''
     @summary: Computes the MD5-Hashsum of the given File
     @param pathToFile: Path to file
     @result: The MD5-Hashsum as String
     '''
+    path = expandPath(path)
     md5_hash = hashlib.md5()
-    for bytes in readBytesFromFile(pathToFile):
+    for bytes in readBytesFromFile(path):
         md5_hash.update(bytes)
 
     return md5_hash.hexdigest()
 
-def readBytesFromFile(pathToFile, chunk_size=1000):
+def readBytesFromFile(path, chunk_size=1000):
     '''
     @summary: Reads the given File chunk-wise.
     @param pathToFile: Path to File
     @param chunk_size: Size of each chunk
     @result: Returns the next chunk of the File
     '''
-    with open(pathToFile, 'rb') as f:
+    path = expandPath(path)
+    with open(path, 'rb') as f:
         while True:
             chunk = f.read(chunk_size)
 
@@ -149,30 +167,29 @@ def readBytesFromFile(pathToFile, chunk_size=1000):
             else:
                 break
 
-def getFileSize(pathToFile):
+def getFileSize(path):
     '''
     @summary: Returns the file size in kb or None, if the file
     does not exists
     @param pathToFile: Path to file.
     @result:
     '''
-
-    if os.path.exists(pathToFile):
-        return os.path.getsize(pathToFile) / 1024
+    path = expandPath(path)
+    if os.path.exists(path):
+        return os.path.getsize(path) / 1024
     else:
         return None
 
-def readFile(pathToFile):
+def readFile(path):
     '''
     @summary: Reads a complete file
     @param pathToFile:
     @result: Returns a list with all lines
     '''
-    if os.path.exists(pathToFile):
-        with open(pathToFile, "r") as f:  
-            lines = f.readlines()
-            print "Lines: ", lines          
-            return f.readlines()    
+    path = expandPath(path)
+    if os.path.exists(path):
+        with open(path, "r") as f:
+            return f.readlines()     
 
 def readLinesFromFile(pathToFile, lineCount=0, rev=False):
     '''
@@ -205,7 +222,7 @@ def getDirectoryStructure(pathToDir, subFolders=True):
     if os.path.isdir(pathToDir):
         fileList = os.listdir(pathToDir)
 
-        for f in fileList:
+        for f in fileList:            
             fullPath = os.path.join(pathToDir, f)
             if os.path.isdir(fullPath):
                 files.append(f + os.sep)
