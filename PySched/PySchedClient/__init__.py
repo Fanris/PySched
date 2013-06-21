@@ -116,7 +116,10 @@ class PySchedClient(object):
         @result:
         '''
         self.logger.info("Stopping the workstation information loop...")
-        self.workstationStateLoop.stop()
+        try:
+            self.workstationStateLoop.stop()
+        except:
+            pass
 
     def sendWorkstationState(self):
         '''
