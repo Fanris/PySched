@@ -38,7 +38,6 @@ class NetworkManager(NetworkInterface):
 
         self.heartBeat = LoopingCall(self.sendHeartBeat)
         self.heartBeatTimeout = None
-        self.heartBeatCounter = 0
 
         self.tcpClient = None
         self.udpClient = None
@@ -95,7 +94,7 @@ class NetworkManager(NetworkInterface):
         '''
         self.logger.info("Tcp connection established.")
         self.logger.debug("Starting Heartbeat...")
-        self.heartBeat.start(60)
+        self.heartBeat.start(30)
         self.messageReceiver.connectionBuild(self.tcpClient.server.id)
 
     def connectionLost(self, reason=None):
@@ -136,7 +135,6 @@ class NetworkManager(NetworkInterface):
         if self.heartBeatTimeout:
             try:
                 self.heartBeatTimeout.cancel()
-                self.heartBeatCounter = 0
             except:
                 pass
             finally:
@@ -147,10 +145,7 @@ class NetworkManager(NetworkInterface):
         @summary: Is called, when a heartbeat got no response
         @result: 
         '''
-        if self.heartBeatCounter < 3:
-            self.heartBeatCounter += 1
-        else:
-            self.connectionLost("No response to heartbeat.")
+        self.connectionLost("No response to heartbeat.")
 
     def commandReceived(self, client, command):
         '''
