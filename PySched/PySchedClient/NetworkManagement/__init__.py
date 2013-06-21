@@ -50,7 +50,7 @@ class NetworkManager(NetworkInterface):
 
         self.__retryCounter = 0
 
-        self.connectionBusy = False
+        self.startingUdp = None
 
     def startService(self):
         '''
@@ -58,6 +58,7 @@ class NetworkManager(NetworkInterface):
         @result:
         '''
         self.logger.info("Starting udp server...")
+        self.startingUdp = None
         self.udpClient = UdpClient(self.udpPort, self.udpMultigroup, self)
         self.udpClient.startClient()
 
@@ -114,8 +115,9 @@ class NetworkManager(NetworkInterface):
         self.tcpClient = None
         self.sshTunnel.closeTunnel()
 
-        self.logger.info("Restarting the UDP Listener in 10 Seconds...")
-        reactor.callLater(10, self.startService)
+        if not self.startingUdp:
+            self.logger.info("Restarting the UDP Listener in 10 Seconds...")
+            self.startingUdp = reactor.callLater(10, self.startService)
 
     def sendHeartBeat(self):
         '''
@@ -145,13 +147,10 @@ class NetworkManager(NetworkInterface):
         @summary: Is called, when a heartbeat got no response
         @result: 
         '''
-        if not self.connectionBusy:
-            if self.heartBeatCounter < 3:
-                self.heartBeatCounter += 1
-            else:
-                self.connectionLost("No response to heartbeat.")
+        if self.heartBeatCounter < 3:
+            self.heartBeatCounter += 1
         else:
-            self.logger.warning("No heartbeat response. Maybe due to file transfer.")
+            self.connectionLost("No response to heartbeat.")
 
     def commandReceived(self, client, command):
         '''
