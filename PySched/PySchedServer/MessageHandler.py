@@ -519,9 +519,9 @@ class MessageHandler(MessageHandlerInterface):
         @result: 
         '''
         userId = data.get("userId", None)
-        jobId = data.get("jobId", None)
+        workstationName = data.get("workstationName", None)
 
-        if self.pySchedServer.stopWorkstation(userId, jobId):             
+        if self.pySchedServer.stopWorkstation(userId, workstationName):             
             self.pySchedServer.networkManager.sendMessage(
                 networkId,
                 CommandBuilder.buildResponseString(
