@@ -140,8 +140,8 @@ class PyScheduler(SchedulerInterface):
                 continue
 
             for load in workstation.get("cpuLoad", []):
-            # Count free cpus. Threshold of a free cpu is 20% CPU-Load
-                if load < 20:
+            # Count free cpus. Threshold of a free cpu is 30% CPU-Load
+                if load < 30:
                     freeCpus += 1
 
             # reserved Cpus
@@ -154,14 +154,14 @@ class PyScheduler(SchedulerInterface):
             if freeCpus == 0:
                 self.pySchedServer.addToJobLog(
                     job.jobId,
-                    "{} not appropriate: No free resources".format(
+                    "{} not appropriate: No free CPU-Cores".format(
                     workstation.get("workstationName"), None))
                 continue
 
             if freeCpus < job.minCpu:
                 self.pySchedServer.addToJobLog(
                     job.jobId,
-                    "{} not appropriate: not enough free CPUs".format(
+                    "{} not appropriate: Not enough free CPU-Cores".format(
                     workstation.get("workstationName"), None))
                 continue
 
@@ -215,7 +215,7 @@ class PyScheduler(SchedulerInterface):
             # Dont use machines with many programs that aren't
             # used by the job
             notReqProgramCount = len(workstation.get("programs", [])) - len(job.reqPrograms)
-            score -= 500 * notReqProgramCount
+            score -= 100 * notReqProgramCount
 
             # If someone working on the machine the scheduler
             # should select another one first.
