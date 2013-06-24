@@ -4,6 +4,7 @@ from subprocess import call
 
 import argparse
 import os
+import sys
 
 def main(args=None):
     from PySched import PySchedClient
@@ -28,7 +29,8 @@ def main(args=None):
     res = PySchedClient.PySchedClient(args.workingDir, args)
     if res.runUpdate:
         if update(PySchedClient.__file__, args):
-            main(args)
+            print sys.argv
+            #os.execl(sys.executable, )
 
 def update(installPath, args):
     print "PySchedClient terminated."
