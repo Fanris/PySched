@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
-from PySched import PySchedClient
-
 from subprocess import call
 
 import argparse
 import os
 
 def main(args=None):
+    import PySched
+    from PySched import PySchedClient
     #===============================================================================
     # Main Client Program
     #===============================================================================
@@ -18,9 +18,7 @@ def main(args=None):
     parser.add_argument("-k", '--key', help="Path to the server key")
     parser.add_argument("-m", '--multicast', help="Use non standard multicast group")
     parser.add_argument("workingDir", help="Sets the directory for job storage and execution")
-    if not args:
-        print "Reloading modules..."
-        PySchedClient = reload(PySchedClient)
+    if not args:        
         args = parser.parse_args()
 
     res = PySchedClient.PySchedClient(args.workingDir, args)
@@ -44,7 +42,7 @@ def update(installPath, args):
         "git://github.com/Fanris/PySched#egg=PySched"])
 
     if ret == 0:
-        print "Download / Install complete!"        
+        print "Download / Install complete!"    
         print "Restarting PySchedClient..."
         main(args)
     else:
