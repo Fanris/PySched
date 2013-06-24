@@ -23,13 +23,12 @@ def main(args=None):
 
     res = PySchedClient.PySchedClient(args.workingDir, args)
     if res.runUpdate:
-        update(args)
+        update(PySchedClien.__file__, args)
 
-def update(args):
+def update(installPath, args):
     print "PySchedClient terminated."
     print "Starting update..."
 
-    installPath = PySchedClient.__file__
     installPath = installPath.replace("pysched/pysched/PySchedClient/__init__.pyc", "")
     print "Install path = installPath"
     print "Downloading new version..."
