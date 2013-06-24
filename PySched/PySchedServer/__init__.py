@@ -808,8 +808,9 @@ class PySchedServer(object):
             jobId = os.path.splitext(os.path.split(pathToFile)[1])[0]
         else:
             jobId = str(jobId)
-            
+
         dest = os.path.join(self.workingDir, jobId, jobId)
+        self.logger.debug("Copying file from {} to {}".format(pathToFile, dest))
         FileUtils.copyFile(pathToFile, dest)
 
         job = self.getJob(jobId)
