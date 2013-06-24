@@ -101,13 +101,10 @@ def copyFile(source, dest):
     @param dest: Destination
     @result:
     '''
-    try:
-        source = expandPath(source)
-        dest = expandPath(source)
+    source = expandPath(source)
+    dest = expandPath(source)
 
-        shutil.copy(source, dest)
-    except:
-        pass
+    shutil.copy(source, dest)
 
 def moveFile(source, dest):
     '''
@@ -116,13 +113,10 @@ def moveFile(source, dest):
     @param dest: Destination
     @result:
     '''
-    try:
-        source = expandPath(source)
-        dest = expandPath(source)
+    source = expandPath(source)
+    dest = expandPath(source)
 
-        shutil.move(source, dest)
-    except:
-        pass
+    shutil.move(source, dest)
 
 def validateFileMD5(path, originalMD5):
     '''
