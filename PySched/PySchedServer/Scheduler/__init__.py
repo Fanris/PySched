@@ -64,7 +64,7 @@ class PyScheduler(SchedulerInterface):
     def _saveSchedulingParameter(self):
         paramPath = os.path.join(self.workingDir, "SchedulingParams")
         data = ""
-        for key, value in self.schedulingParams.iterItems():
+        for key, value in self.schedulingParams.iteritems():
             data += "{}={}\n".format(key, value)
 
         FileUtils.createFile(paramPath, filedata=data, forceCreate=True)
