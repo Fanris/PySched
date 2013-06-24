@@ -19,7 +19,7 @@ def main():
 
     res = PySchedClient(args.workingDir, args)
     print "PySchedClient terminated with {}".format(res)
-    print "Install path: {}".format(PySchedClient.__file__)
+    print "Install path: {}".format(PySched.PySchedClient.__file__)
 
 if __name__ == '__main__':
     main()
