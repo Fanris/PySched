@@ -30,7 +30,7 @@ def update(installPath, args):
     print "Starting update..."
 
     installPath = installPath.replace("pysched/pysched/PySchedClient/__init__.pyc", "")
-    print "Install path = installPath"
+    print "Install path = {}".format(installPath)
     print "Downloading new version..."
 
     ret = call([
