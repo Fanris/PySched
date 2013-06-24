@@ -629,7 +629,10 @@ class PySchedClient(object):
             filepath = os.path.join(jobDir, f).strip()
 
             newPath = os.path.join(jobDir, 'results', f)
-            FileUtils.moveFile(filepath, newPath)
+            try:
+                FileUtils.moveFile(filepath, newPath)
+            except:
+                pass
 
     def updatePath(self, paths):
         '''
