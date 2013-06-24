@@ -6,7 +6,6 @@ import argparse
 import os
 
 def main(args=None):
-    import PySched
     from PySched import PySchedClient
     #===============================================================================
     # Main Client Program
@@ -23,13 +22,14 @@ def main(args=None):
         args = parser.parse_args()
     else:
         print "Reloading Modules"
-        reload(PySched)
+        reload(PySchedClient)
         from PySched import PySchedClient
         res = None
 
     res = PySchedClient.PySchedClient(args.workingDir, args)
     if res.runUpdate:
-        update(PySchedClient.__file__, args)
+        if update(PySchedClient.__file__, args):
+            main()
 
 def update(installPath, args):
     print "PySchedClient terminated."
@@ -49,9 +49,8 @@ def update(installPath, args):
         "git://github.com/Fanris/PySched#egg=PySched"])
 
     if ret == 0:
-        print "Download / Install complete!"    
-        print "Restarting PySchedClient..."
-        main(args)
+        print "Download / Install complete!"
+        return True 
     else:
         print "Failed to download / install PySchedClient!"
 
