@@ -23,13 +23,12 @@ def main(args=None):
     else:
         print "Reloading Modules"
         reload(PySchedClient)
-        from PySched import PySchedClient
         res = None
 
     res = PySchedClient.PySchedClient(args.workingDir, args)
     if res.runUpdate:
         if update(PySchedClient.__file__, args):
-            main()
+            main(args)
 
 def update(installPath, args):
     print "PySchedClient terminated."
