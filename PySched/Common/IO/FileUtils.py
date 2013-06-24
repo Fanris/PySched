@@ -114,7 +114,9 @@ def moveFile(source, dest):
     @result:
     '''
     source = expandPath(source)
+    print source
     dest = expandPath(source)
+    print dest
 
     shutil.move(source, dest)
 
