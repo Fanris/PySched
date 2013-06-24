@@ -21,7 +21,6 @@ def main(args=None):
     if not args:
         args = parser.parse_args()
 
-    print PySchedClient
     res = PySchedClient.PySchedClient(args.workingDir, args)
     if res.runUpdate:
         update(PySchedClient.__file__, args)
@@ -46,7 +45,7 @@ def update(installPath, args):
     if ret == 0:
         print "Download / Install complete!"
         print "Reloading modules..."
-        PySchedClient = reload(PySchedClient)
+        from PySched import PySchedClient
         print "Restarting PySchedClient..."
         main(args)
     else:
