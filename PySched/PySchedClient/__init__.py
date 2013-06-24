@@ -62,6 +62,7 @@ class PySchedClient(object):
             self.printTitle()
 
         self.logger.info("Starting PySchedClient v{}".format(VERSION))
+        self.logger.info("Working directory: {}".format(self.workingDir))
 
         # Init
         self.reservedCpus = {}
