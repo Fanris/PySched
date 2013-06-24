@@ -20,10 +20,12 @@ def main(args=None):
     parser.add_argument("workingDir", help="Sets the directory for job storage and execution")
     
     if not args:
+        args = parser.parse_args()
+    else:
         print "Reloading Modules"
         reload(PySched)
         from PySched import PySchedClient
-        args = parser.parse_args()
+        res = None
 
     res = PySchedClient.PySchedClient(args.workingDir, args)
     if res.runUpdate:
