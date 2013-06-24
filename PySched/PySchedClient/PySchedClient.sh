@@ -29,7 +29,7 @@ def main(args=None):
     res = PySchedClient.PySchedClient(args.workingDir, args)
     if res.runUpdate:
         if update(PySchedClient.__file__, args):
-            args = argv
+            args = sys.argv
             for index in range(0, len(args)):
                 while args[index].startswith('-'):
                     args[index] = args[index][1:]
