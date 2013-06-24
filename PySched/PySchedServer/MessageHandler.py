@@ -739,4 +739,13 @@ class MessageHandler(MessageHandlerInterface):
         userId = data.get("userId", None)
         workstationName = data.get("workstationName", None)
 
-        self.pySchedServer.updateSoftware(userId, workstationName)
+        if self.pySchedServer.updateSoftware(userId, workstationName):
+            self.pySchedServer.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(
+                    result=True))
+        else:
+            self.pySchedServer.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(
+                    result=False))
