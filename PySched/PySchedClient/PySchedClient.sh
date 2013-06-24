@@ -23,7 +23,7 @@ def main(args=None):
 
     res = PySchedClient.PySchedClient(args.workingDir, args)
     if res.runUpdate:
-        update(PySchedClien.__file__, args)
+        update(PySchedClient.__file__, args)
 
 def update(installPath, args):
     print "PySchedClient terminated."
