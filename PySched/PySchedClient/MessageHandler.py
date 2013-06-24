@@ -204,3 +204,12 @@ class MessageHandler(MessageHandlerInterface):
 
         self.pySchedClient.getJobDirStruct(jobId, sender)
 
+    def updatePySched(self, sender, data):
+        '''
+        @summary:       Updates the software
+        @param sender:
+        @param data:
+        @result: 
+        '''
+        pass
+
