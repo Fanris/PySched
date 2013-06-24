@@ -236,3 +236,7 @@ class CommandBuilder(object):
     @staticmethod
     def buildJobDirStruct(jobId, content, sender):
         return CommandBuilder.buildCommand("jobDirStruct", jobId=jobId, content=content, sender=sender)
+
+    @staticmethod
+    def buildUpdateSoftwareString():
+        return CommandBuilder.buildCommand("updatePySched")

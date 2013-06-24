@@ -729,4 +729,14 @@ class MessageHandler(MessageHandlerInterface):
                     jobId=jobId,
                     content=content))
 
+    def updatePySched(self, networkId, data):
+        '''
+        @summary:           Is called when a workstation should update its software
+        @param networkId:   sender of the message
+        @param data:        userId, workstationName (may be none for server update)
+        @result: 
+        '''
+        userId = data.get("userId", None)
+        workstationName = data.get("workstationName", None)
 
+        self.pySchedServer.updateSoftware(userId, workstationName)

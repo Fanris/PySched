@@ -27,7 +27,7 @@ import os
 import logging
 import datetime
 
-VERSION = "1.3.8 (dev)"
+VERSION = "1.3.9 (dev)"
 TITLE = """
  _____        _____      _              _  _____ _ _            _    
 |  __ \      / ____|    | |            | |/ ____| (_)          | |   
@@ -51,11 +51,12 @@ class PySchedClient(object):
         @param args: passed arguments from the start script
         @result:
         '''
-        self.workingDir = os.path.normpath(FileUtils.expandPath(workingDir))
+        self.workingDir = os.path.normpath(FileUtils.expandPath(workingDir))        
         FileUtils.createDirectory(workingDir)
 
         self.initializeLogger(self.workingDir, args)
         self.debugMode = args.debug
+        self.runUpdate = False
 
         if not args.quiet:
             self.printTitle()
@@ -690,6 +691,15 @@ class PySchedClient(object):
         '''
         return VERSION
 
+    def updatePySched(self):
+        '''
+        @summary: 
+        @param userId:
+        @result: 
+        '''
+        self.logger.info("Going down for update...")
+        self.runUpdate = True
+        self.shutdown
 
     # Misc
     # =====================================================

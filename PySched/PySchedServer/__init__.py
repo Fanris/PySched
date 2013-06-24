@@ -946,6 +946,30 @@ class PySchedServer(object):
         '''
         return self.getFromDatabase(User, first=True, id=userRealId)
 
+    def updateSoftware(self, userId, workstationName=None):
+        '''
+        @summary:       Updates the software on the workstations or the server
+        @param userId:  id of the requesting user
+        @param workstationName: Name of the workstation to update. If none,
+                        update the server
+        @result: 
+        '''
+        user = self.getUser(userId)
+
+        if user and user.admin:
+            if workstationName:
+                networkId = self.lookupWorkstationName(workstationName)
+
+                self.networkManager.sendMessage(
+                    networkId, 
+                    CommandBuilder.buildUpdateSoftwareString())
+
+                return True
+            else:
+                self.logger.info("Going down for Update...")
+        else:
+            self.logger.info("Ignoring update command. User has no permission to do that.")
+
 
     def initializeLogger(self, workingDir, args):
         '''

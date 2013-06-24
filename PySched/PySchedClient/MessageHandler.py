@@ -211,5 +211,5 @@ class MessageHandler(MessageHandlerInterface):
         @param data:
         @result: 
         '''
-        pass
+        self.pySchedClient.updatePySched()
 
