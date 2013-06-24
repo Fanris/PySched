@@ -18,7 +18,10 @@ def main(args=None):
     parser.add_argument("-k", '--key', help="Path to the server key")
     parser.add_argument("-m", '--multicast', help="Use non standard multicast group")
     parser.add_argument("workingDir", help="Sets the directory for job storage and execution")
-    if not args:        
+    if not args:
+        print "Reloading Modules"
+        reload(PySched)
+        from PySched import PySchedClient
         args = parser.parse_args()
 
     res = PySchedClient.PySchedClient(args.workingDir, args)
