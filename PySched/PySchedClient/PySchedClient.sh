@@ -26,7 +26,6 @@ def main(args=None):
         update(PySchedClient.__file__, args)
 
 def update(installPath, args):
-    print PySchedClient
     print "PySchedClient terminated."
     print "Starting update..."
 
