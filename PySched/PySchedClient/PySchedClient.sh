@@ -19,6 +19,8 @@ def main(args=None):
     parser.add_argument("-m", '--multicast', help="Use non standard multicast group")
     parser.add_argument("workingDir", help="Sets the directory for job storage and execution")
     if not args:
+        print "Reloading modules..."
+        PySchedClient = reload(PySchedClient)
         args = parser.parse_args()
 
     res = PySchedClient.PySchedClient(args.workingDir, args)
@@ -42,9 +44,7 @@ def update(installPath, args):
         "git://github.com/Fanris/PySched#egg=PySched"])
 
     if ret == 0:
-        print "Download / Install complete!"
-        print "Reloading modules..."
-        from PySched import PySchedClient
+        print "Download / Install complete!"        
         print "Restarting PySchedClient..."
         main(args)
     else:
