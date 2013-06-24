@@ -207,3 +207,16 @@ class SchedulerInterface(object):
         @result: return true if the job was sent successful.
         '''
         raise NotImplementedError
+
+    def updateSchedulingParameter(self, parameter):
+        '''
+        @summary: This function can be called by the PySchedServer, if a user
+        wants to update the scheduling parameters. This function is optional
+        for the scheduling algorithm. The standard implementation of the
+        scheduling algorithm supports values for a free cpu threshold, the 
+        penality for unused cores / programs and how many cpu should be reserverd
+        for users on the workstation.
+        @param parameter: parameter is a dictionary containing the new parameters
+        @result: 
+        '''
+        pass

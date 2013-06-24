@@ -26,7 +26,7 @@ def createDirectory(path):
 
     return path
 
-def createFile(path, filedata=""):
+def createFile(path, filedata="", forceCreate=False):
     '''
     @summary: Creates a file with the given data at the directory
     @param pathToFile: path to directory
@@ -38,6 +38,8 @@ def createFile(path, filedata=""):
 
     if not os.path.exists(dirname):
         createDirectory(dirname)
+    elif forceCreate and os.path.exists(path):
+        deleteFile(path)
 
     fileHandler = open(path, "w+")
     if filedata:
@@ -228,3 +230,7 @@ def getDirectoryStructure(pathToDir, subFolders=True):
                 files.append(f)
 
     return files
+
+def pathExists(path):
+    path = expandPath(path)
+    return os.path.exists(path)

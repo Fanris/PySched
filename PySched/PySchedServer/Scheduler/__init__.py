@@ -7,6 +7,7 @@ Created on 2012-12-05 11:59
 
 from PySched.Common.Interfaces.SchedulerInterface import SchedulerInterface
 from PySched.Common.DataStructures import JobState, Program
+from PySched.Common.IO import FileUtils
 from Compiler import Compiler as CompilerClass
 
 from twisted.internet.task import LoopingCall
@@ -16,6 +17,8 @@ from collections import deque
 
 import copy
 import logging
+import os
+
 
 class PyScheduler(SchedulerInterface):
     '''
@@ -30,10 +33,41 @@ class PyScheduler(SchedulerInterface):
         '''
         super(PyScheduler, self).__init__(workingDir, pySchedServer)
         self.compiler = CompilerClass(self)
-        self.logger = logging.getLogger("PySchedServer")
+        self.logger = logging.getLogger("PySchedServer")  
+
+        self.schedulingParams = self._loadSchedulingParameter()      
 
         self.jobQueue = deque()
         self.schedulingLoop = LoopingCall(self.scheduleNext)
+
+    def _loadSchedulingParameter(self):
+        paramPath = os.path.join(self.workingDir, "SchedulingParams")
+        params = {}
+        if FileUtils.pathExists(paramPath):
+            lines = FileUtils.readFile(paramPath)
+            for line in lines:
+                key, value = line.split("=")
+                try:
+                    params[key] = float(value)
+                except AssertionError:
+                    pass
+        else:
+            params["cpuThreshold"] = 20
+            params["unusedCpuPenality"] = 100
+            params["usableCpuBonus"] = 100
+            params["unusedProgramPenality"] = 100
+            params["cpusForUsers"] = 1
+            params["activeUserPenality"] = 100
+
+        return params
+
+    def _saveSchedulingParameter(self):
+        paramPath = os.path.join(self.workingDir, "SchedulingParams")
+        data = ""
+        for key, value in self.schedulingParams.iterItems():
+            data += "{}={}\n".format(key, value)
+
+        FileUtils.createFile(paramPath, filedata=data, forceCreate=True)
 
     def scheduleNext(self):
         '''
@@ -141,12 +175,16 @@ class PyScheduler(SchedulerInterface):
 
             for load in workstation.get("cpuLoad", []):
             # Count free cpus. Threshold of a free cpu is 30% CPU-Load
-                if load < 30:
+                if load < self.schedulingParams.get("cpuThreshold", 20):
                     freeCpus += 1
 
             # reserved Cpus
             reserved = workstation.get("reserved", 0)
             freeCpus -= reserved
+
+            # reserve Cpus for users
+            if workstation.get("activeUsers", 0) > 0:
+                freeCpus -= self.schedulingParams.get("cpusForUsers", 0)
 
             self.logger.debug("Free cpu count: {}".format(freeCpus))
             # when no cpu is free, this workstation should not
@@ -215,22 +253,22 @@ class PyScheduler(SchedulerInterface):
             # Dont use machines with many programs that aren't
             # used by the job
             notReqProgramCount = len(workstation.get("programs", [])) - len(job.reqPrograms)
-            score -= 100 * notReqProgramCount
+            score -= self.schedulingParams.get("unusedProgramPenality", 100) * notReqProgramCount
 
             # If someone working on the machine the scheduler
             # should select another one first.
             if workstation.get("activeUsers", 0) > 0:
-                score -= 100
+                score -= self.schedulingParams.get("activeUserPenality", 100)
 
             if job.multiCpu:
                 # If the job supports multiple cpus, every free cpu
                 # is valuable
-                score += 100 * freeCpus
+                score += self.schedulingParams.get("usableCpuBonus", 100) * freeCpus
             else:
                 # If not, workstations which are already occupied by
                 # jobs should be selected, so other workstations might
                 # be available for multiprocessor jobs
-                score -= 100 * freeCpus
+                score -= self.schedulingParams.get("unusedCpuPenality", 100) * freeCpus
 
             scores[workstation.get("workstationName", None)] = score
             self.logger.debug("Scores: {}".format(scores))
@@ -269,3 +307,6 @@ class PyScheduler(SchedulerInterface):
         self.pySchedServer.updateDatabaseEntry(job)
         self.logger.error("Failed to compile job {}".format(job.jobId))
 
+    def updateSchedulingParameter(self, parameter):
+        self.schedulingParams.update(parameter)
+        self._saveSchedulingParameter()
