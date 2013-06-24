@@ -17,7 +17,8 @@ def main():
     parser.add_argument("workingDir", help="Sets the directory for job storage and execution")
     args = parser.parse_args()
 
-    PySchedClient(args.workingDir, args)
+    res = PySchedClient(args.workingDir, args)
+    print "PySchedClient terminated with {}".format(res)
 
 if __name__ == '__main__':
     main()
