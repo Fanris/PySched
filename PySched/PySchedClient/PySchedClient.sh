@@ -18,6 +18,7 @@ def main(args=None):
     parser.add_argument("-k", '--key', help="Path to the server key")
     parser.add_argument("-m", '--multicast', help="Use non standard multicast group")
     parser.add_argument("workingDir", help="Sets the directory for job storage and execution")
+    
     if not args:
         print "Reloading Modules"
         reload(PySched)
@@ -32,6 +33,7 @@ def update(installPath, args):
     print "PySchedClient terminated."
     print "Starting update..."
 
+    installPath = installPath.replace("pysched/PySched/PySchedClient/__init__.py", "")
     installPath = installPath.replace("pysched/PySched/PySchedClient/__init__.pyc", "")
     print "Install path = {}".format(installPath)
     print "Downloading new version..."
