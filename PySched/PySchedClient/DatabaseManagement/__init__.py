@@ -22,7 +22,7 @@ class SqliteManager(DatabaseInterface):
     '''
     def __init__(self, workingDir):
         super(SqliteManager, self).__init__(workingDir)
-        self.pathToDB = os.path.join(self.workingDir, "/PySchedClient.sqlite")
+        self.pathToDB = os.path.join(self.workingDir, "PySchedClient.sqlite")
         self.engine = create_engine("sqlite:////{}".format(self.pathToDB))
         self.sessionClass = sessionmaker(bind=self.engine)
         self.tables = Tables(self.engine)
