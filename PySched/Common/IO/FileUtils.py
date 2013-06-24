@@ -102,7 +102,7 @@ def copyFile(source, dest):
     @result:
     '''
     source = expandPath(source)
-    dest = expandPath(source)
+    dest = expandPath(dest)
 
     shutil.copy(source, dest)
 
@@ -114,9 +114,7 @@ def moveFile(source, dest):
     @result:
     '''
     source = expandPath(source)
-    print source
-    dest = expandPath(source)
-    print dest
+    dest = expandPath(dest)
 
     shutil.move(source, dest)
 
