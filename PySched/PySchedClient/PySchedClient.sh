@@ -37,7 +37,7 @@ def update(installPath, args):
         "pip", 
         "install", 
         "--user", 
-        "-src={}".format(installPath), 
+        "--src={}".format(installPath), 
         "-e", 
         "git://github.com/Fanris/PySched#egg=PySched"])
 
