@@ -220,3 +220,11 @@ class SchedulerInterface(object):
         @result: 
         '''
         pass
+
+    def getSchedulingParameter(self):
+        '''
+        @summary: This function should return a dictionary of the current
+        Scheduling parameters. This function is optional
+        @result: 
+        '''
+        pass

@@ -57,7 +57,7 @@ class PyScheduler(SchedulerInterface):
             params["usableCpuBonus"] = 100
             params["unusedProgramPenality"] = 100
             params["cpusForUsers"] = 1
-            params["activeUserPenality"] = 100
+            params["activeUserPenality"] = 100            
 
         return params
 
@@ -310,3 +310,6 @@ class PyScheduler(SchedulerInterface):
     def updateSchedulingParameter(self, parameter):
         self.schedulingParams.update(parameter)
         self._saveSchedulingParameter()
+
+    def getSchedulingParameter(self):
+        return self.schedulingParams

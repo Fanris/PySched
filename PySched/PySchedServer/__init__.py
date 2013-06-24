@@ -970,6 +970,27 @@ class PySchedServer(object):
         else:
             self.logger.info("Ignoring update command. User has no permission to do that.")
 
+    def getSchedulingParams(self, userId):
+        '''
+        @summary: Returns the current scheduling params
+        @param userId: id of the requesting user
+        @result: 
+        '''
+        user = self.getUser(userId)
+        if user and user.admin:
+            return self.scheduler.getSchedulingParameter()
+
+    def updateSchedulingParams(self, userId, params):
+        '''
+        @summary: Updates the current scheduling parameter
+        @param userId: th requesting user
+        @param params: the new parameter
+        @result: 
+        '''
+        user = self.getUser(userId)
+        if user and user.admin and params:
+            self.scheduler.updateSchedulingParameter(params)
+            return True
 
     def initializeLogger(self, workingDir, args):
         '''

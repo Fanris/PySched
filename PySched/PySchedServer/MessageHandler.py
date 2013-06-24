@@ -749,3 +749,47 @@ class MessageHandler(MessageHandlerInterface):
                 networkId,
                 CommandBuilder.buildResponseString(
                     result=False))
+
+    def getSchedulingParams(self, networkId, data):
+        '''
+        @summary:           Is called when a user want to edit the scheduling 
+                            params
+        @param networkId:   sender of the request
+        @param data:        userId
+        @result: 
+        '''
+        userId = data.get("userId", None)
+
+        params = self.pySchedServer.getSchedulingParams(userId)
+        if params:
+            self.pySchedServer.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(
+                    result=True,
+                    params=params))
+        else:
+            self.pySchedServer.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(
+                    result=False))
+
+    def updateSchedulingParams(self, networkId, data):
+        '''
+        @summary:           Is called when a user sends new scheduling parameter
+        @param networkId:   the sender of the request
+        @param data:        userId, params
+        @result: 
+        '''
+        userId = data.get("userId", None)
+        params = data.get("params", None)
+
+        if self.pySchedServer.updateSchedulingParams(userId, params):
+            self.pySchedServer.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(
+                    result=True))
+        else:
+            self.pySchedServer.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(
+                    result=False))
