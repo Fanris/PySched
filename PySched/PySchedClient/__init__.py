@@ -699,7 +699,7 @@ class PySchedClient(object):
         '''
         self.logger.info("Going down for update...")
         self.runUpdate = True
-        self.shutdown
+        self.shutdown()
 
     # Misc
     # =====================================================
