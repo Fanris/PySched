@@ -21,11 +21,13 @@ def main(args=None):
     if not args:
         args = parser.parse_args()
 
+    print PySchedClient
     res = PySchedClient.PySchedClient(args.workingDir, args)
     if res.runUpdate:
         update(PySchedClient.__file__, args)
 
 def update(installPath, args):
+    print PySchedClient
     print "PySchedClient terminated."
     print "Starting update..."
 
