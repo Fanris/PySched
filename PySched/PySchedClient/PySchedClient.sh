@@ -29,8 +29,12 @@ def main(args=None):
     res = PySchedClient.PySchedClient(args.workingDir, args)
     if res.runUpdate:
         if update(PySchedClient.__file__, args):
-            print sys.argv
-            os.execl(sys.executable, *sys.argv)
+            args = argv
+            for index in range(0, len(args)):
+                while args[index].startswith('-'):
+                    args[index] = args[index][1:]
+            print args
+            os.execl(sys.executable, *args)
 
 def update(installPath, args):
     print "PySchedClient terminated."
