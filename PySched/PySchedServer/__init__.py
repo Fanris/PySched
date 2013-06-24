@@ -809,9 +809,9 @@ class PySchedServer(object):
         else:
             jobId = str(jobId)
 
-        dest = os.path.join(self.workingDir, jobId, jobId, ".tar")
+        dest = os.path.join(self.workingDir, jobId, jobId + ".tar")
         self.logger.debug("Copying file from {} to {}".format(pathToFile, dest))
-        FileUtils.copyFile(pathToFile, dest)
+        FileUtils.moveFile(pathToFile, dest)
 
         job = self.getJob(jobId)
         # Check if job currently running        
@@ -829,8 +829,7 @@ class PySchedServer(object):
                 reactor.callInThread(self.schedule, jobId)
 
             FileUtils.deleteFile(dest)
-            
-        FileUtils.deleteFile(pathToFile)
+
         return True
 
     def getUploadPath(self, jobId):
