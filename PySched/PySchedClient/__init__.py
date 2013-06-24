@@ -27,7 +27,7 @@ import os
 import logging
 import datetime
 
-VERSION = "1.3.7"
+VERSION = "1.3.8 (dev)"
 TITLE = """
  _____        _____      _              _  _____ _ _            _    
 |  __ \      / ____|    | |            | |/ ____| (_)          | |   
@@ -51,7 +51,7 @@ class PySchedClient(object):
         @param args: passed arguments from the start script
         @result:
         '''
-        self.workingDir = os.path.normpath(workingDir)
+        self.workingDir = os.path.normpath(FileUtils.expandPath(workingDir))
         FileUtils.createDirectory(workingDir)
 
         self.initializeLogger(self.workingDir, args)

@@ -30,7 +30,7 @@ import datetime
 import os
 
 
-VERSION = "1.3.7"
+VERSION = "1.3.8 (dev)"
 TITLE = """
  _____        _____      _              _  _____                           
 |  __ \      / ____|    | |            | |/ ____|                          
@@ -51,7 +51,7 @@ class PySchedServer(object):
         @summary: Initializes the PySchedServer.
         @param workingDir: Path to the main directory to work on
         '''
-        self.workingDir = os.path.normpath(workingDir)
+        self.workingDir = os.path.normpath(FileUtils.expandPath(workingDir))
         FileUtils.createDirectory(workingDir)
 
         self.initializeLogger(self.workingDir ,args)
