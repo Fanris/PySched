@@ -29,7 +29,7 @@ def update(installPath, args):
     print "PySchedClient terminated."
     print "Starting update..."
 
-    installPath = installPath.replace("pysched/pysched/PySchedClient/__init__.pyc", "")
+    installPath = installPath.replace("pysched/PySched/PySchedClient/__init__.pyc", "")
     print "Install path = {}".format(installPath)
     print "Downloading new version..."
 
