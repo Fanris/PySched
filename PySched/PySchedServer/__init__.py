@@ -809,7 +809,7 @@ class PySchedServer(object):
         else:
             jobId = str(jobId)
 
-        dest = os.path.join(self.workingDir, jobId, jobId)
+        dest = os.path.join(self.workingDir, jobId, jobId, ".tar")
         self.logger.debug("Copying file from {} to {}".format(pathToFile, dest))
         FileUtils.copyFile(pathToFile, dest)
 
