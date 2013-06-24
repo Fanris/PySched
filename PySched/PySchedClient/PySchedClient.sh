@@ -29,6 +29,7 @@ def main(args=None):
     res = PySchedClient.PySchedClient(args.workingDir, args)
     if res.runUpdate:
         if update(PySchedClient.__file__, args):
+            print sys.argv[1:]
             os.execl(sys.executable, *sys.argv[1:])
 
 def update(installPath, args):
