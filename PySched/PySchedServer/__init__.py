@@ -30,7 +30,7 @@ import datetime
 import os
 
 
-VERSION = "1.4.0 (dev)"
+VERSION = "1.4.1"
 TITLE = """
  _____        _____      _              _  _____                           
 |  __ \      / ____|    | |            | |/ ____|                          

@@ -28,31 +28,40 @@ def main(args=None):
 
     res = PySchedClient.PySchedClient(args.workingDir, args)
     if res.runUpdate:
-        if update(PySchedClient.__file__, args):            
-            os.execl(sys.argv[0], *sys.argv)
+        if update(res, PySchedClient.__file__, args):            
+            try:
+                os.execl(sys.argv[0], *sys.argv)
+            except Exception, e:
+                res.logger.error(e)
 
-def update(installPath, args):
-    print "PySchedClient terminated."
-    print "Starting update..."
+def update(res, installPath, args):
+    res.logger.info("PySchedClient terminated.")
+    res.logger.info("Starting update...")
 
-    installPath = installPath.replace("pysched/PySched/PySchedClient/__init__.py", "")
-    installPath = installPath.replace("pysched/PySched/PySchedClient/__init__.pyc", "")
-    print "Install path = {}".format(installPath)
-    print "Downloading new version..."
+    if installPath.endswith(".py"):
+        installPath = installPath.replace("pysched/PySched/PySchedClient/__init__.py", "")
+    else:
+        installPath = installPath.replace("pysched/PySched/PySchedClient/__init__.pyc", "")
 
-    ret = call([
-        "pip", 
-        "install", 
-        "--user", 
-        "--src={}".format(installPath), 
-        "-e", 
-        "git://github.com/Fanris/PySched#egg=PySched"])
+    res.logger.info("Install path = {}".format(installPath))
+    res.logger.info("Downloading new version...")
+    os.chdir(installPath)
+    with open(os.path.join(res.workingDir, "updateLog.log"), 'w') as f:
+        ret = call([
+            "pip", 
+            "install", 
+            "--user", 
+            "--no-deps",
+            "--src={}".format(installPath), 
+            "-e", 
+            "git://github.com/Fanris/PySched#egg=PySched"],
+            stdout=f)
 
     if ret == 0:
-        print "Download / Install complete!"
+        res.logger.info("Download / Install complete!")
         return True 
     else:
-        print "Failed to download / install PySchedClient!"
+        res.logger.info("Failed to download / install PySchedClient!")
 
 if __name__ == '__main__':
     main()
