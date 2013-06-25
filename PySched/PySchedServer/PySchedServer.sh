@@ -37,8 +37,10 @@ def update(res, installPath, args):
     res.logger.info("PySchedServer terminated.")
     res.logger.info("Starting update...")
 
-    installPath = installPath.replace("pysched/PySched/PySchedServer/__init__.py", "")
-    installPath = installPath.replace("pysched/PySched/PySchedServer/__init__.pyc", "")
+    if installPath.endswith(".py"):
+        installPath = installPath.replace("pysched/PySched/PySchedServer/__init__.py", "")
+    else:
+        installPath = installPath.replace("pysched/PySched/PySchedServer/__init__.pyc", "")
     res.logger.info("Install path = {}".format(installPath))
     res.logger.info("Downloading new version...")
 
