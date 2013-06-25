@@ -28,16 +28,19 @@ def main(args=None):
     res = PySchedServer.PySchedServer(args.workingDir, args)
     if res.runUpdate:
         if update(PySchedServer.__file__, args):            
-            os.execl(sys.argv[0], *sys.argv)
+            try:
+                os.execl(sys.argv[0], *sys.argv)
+            except Exception e:
+                res.logger.error(e)
 
-def update(installPath, args):
-    print "PySchedServer terminated."
-    print "Starting update..."
+def update(res, installPath, args):
+    res.logger.info("PySchedServer terminated.")
+    res.logger.info("Starting update...")
 
     installPath = installPath.replace("pysched/PySched/PySchedServer/__init__.py", "")
     installPath = installPath.replace("pysched/PySched/PySchedServer/__init__.pyc", "")
-    print "Install path = {}".format(installPath)
-    print "Downloading new version..."
+    res.logger.info("Install path = {}".format(installPath))
+    res.logger.info("Downloading new version...")
 
     ret = call([
         "pip", 
@@ -48,10 +51,10 @@ def update(installPath, args):
         "git://github.com/Fanris/PySched#egg=PySched"])
 
     if ret == 0:
-        print "Download / Install complete!"
+        res.logger.info("Download / Install complete!")
         return True 
     else:
-        print "Failed to download / install PySchedServer!"
+        res.logger.info("Failed to download / install PySchedServer!")
 
 if __name__ == '__main__':
     main()
