@@ -228,3 +228,12 @@ class SchedulerInterface(object):
         @result: 
         '''
         pass
+
+    def jobAborted(self, jobId):
+        '''
+        @summary: This function is called, when the user aborts or deletes a job
+        that is currently in the scheduling queue
+        @param jobId: the id of the job
+        @result: 
+        '''
+        pass

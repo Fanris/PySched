@@ -313,3 +313,10 @@ class PyScheduler(SchedulerInterface):
 
     def getSchedulingParameter(self):
         return self.schedulingParams
+
+    def jobAborted(self, jobId):
+        try:
+            while jobId in self.deque:
+                self.deque.remove(jobId)
+        except ValueError:
+            pass        

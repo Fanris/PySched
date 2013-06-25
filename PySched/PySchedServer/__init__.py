@@ -242,16 +242,22 @@ class PySchedServer(object):
         if not (job or user) or not (job.userId == user.id or user.admin):
             return False
 
-        job.stateId = JobState.lookup("ARBORTED")
-        self.updateDatabaseEntry(job)
-        networkId = self.lookupWorkstationName(job.workstation)
-        self.logger.info("Aborting job {} on workstation {} ({})".
-            format(job.jobId, job.workstation, networkId))
+        if job.stateId >= JobState.lookup("RUNNING") and \
+            job.stateId < JobState.lookup("DONE"):
+            job.stateId = JobState.lookup("ARBORTED")
+            self.updateDatabaseEntry(job)
+            networkId = self.lookupWorkstationName(job.workstation)
+            self.logger.info("Aborting job {} on workstation {} ({})".
+                format(job.jobId, job.workstation, networkId))
 
-        self.networkManager.sendMessage(
-            networkId, 
-            CommandBuilder.buildKillJobString(
-                job.jobId))
+            self.networkManager.sendMessage(
+                networkId, 
+                CommandBuilder.buildKillJobString(
+                    job.jobId))
+        elif job.stateId < JobState.lookup("RUNNING"):
+            job.stateId = JobState.lookup("ARBORTED")
+            self.updateDatabaseEntry(job)
+            self.scheduler.jobAborted(job.jobId)
 
         self.addToJobLog(job.jobId, "Job aborted by user.")  
         return True  
@@ -270,8 +276,10 @@ class PySchedServer(object):
         if not (job or user) or not (job.userId == user.id or user.admin):
             return False
 
-        if job.stateId == JobState.lookup("RUNNING"):
+        if job.stateId in [JobState.lookup("RUNNING"), JobState.lookup("PAUSED")]:
             self.killJob(jobId, userId)
+        elif job.stateId < JobState.lookup("RUNNING"):
+            self.scheduler.jobAborted(job.jobId)
 
         self.logger.info("Deleting job {} from database.".format(jobId))
         self.cleanupJobDir(jobId)
