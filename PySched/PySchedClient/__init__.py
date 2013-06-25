@@ -27,7 +27,7 @@ import os
 import logging
 import datetime
 
-VERSION = "1.4.1"
+VERSION = "1.4.2"
 TITLE = """
  _____        _____      _              _  _____ _ _            _    
 |  __ \      / ____|    | |            | |/ ____| (_)          | |   
@@ -56,7 +56,7 @@ class PySchedClient(object):
 
         self.initializeLogger(self.workingDir, args)
         self.debugMode = args.debug
-        self.runUpdate = False
+        self.postCmd = None
 
         if not args.quiet:
             self.printTitle()
@@ -699,7 +699,12 @@ class PySchedClient(object):
         @result: 
         '''
         self.logger.info("Going down for update...")
-        self.runUpdate = True
+        self.postCmd = "UPDATE"
+        self.shutdown()
+
+    def restart(self):
+        self.logger.info("Restarting...")
+        self.postCmd = "RESTART"
         self.shutdown()
 
     # Misc

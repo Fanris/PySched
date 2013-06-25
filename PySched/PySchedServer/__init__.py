@@ -30,7 +30,7 @@ import datetime
 import os
 
 
-VERSION = "1.4.1"
+VERSION = "1.4.2"
 TITLE = """
  _____        _____      _              _  _____                           
 |  __ \      / ____|    | |            | |/ ____|                          
@@ -55,7 +55,7 @@ class PySchedServer(object):
         FileUtils.createDirectory(workingDir)
 
         self.initializeLogger(self.workingDir ,args)
-        self.runUpdate = False
+        self.postCmd = None
         if not args.quiet:
             self.printTitle()
 
@@ -910,6 +910,37 @@ class PySchedServer(object):
         self.networkManager.stopService()
         reactor.stop()
 
+    def restartServer(self, userId):
+        '''
+        @summary: Restarts the server
+        @param userId: the user which requested the restart
+        @result: 
+        '''
+        user = self.getUser(userId)
+
+        if user and user.admin:
+            self.logger.info("Restarting server...")
+            self.postCmd = "RESTART"
+            self.shutdown()
+
+    def restartWS(self, userId, workstationName):
+        '''
+        @summary: Restarts the server
+        @param userId: the user which requested the restart
+        @result: 
+        '''
+        user = self.getUser(userId)      
+
+        if user and user.admin:
+            networkId = self.lookupWorkstationName(workstationName)
+            self.logger.info("Restarting workstation {}".format(workstationName))
+            
+            self.NetworkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildRestartWSString())
+
+            return True
+
     def getServerInformations(self):
         '''
         @summary: Uses psutils to get Informations of the Server.
@@ -976,7 +1007,7 @@ class PySchedServer(object):
                 return True
             else:
                 self.logger.info("Going down for Update...")
-                self.runUpdate = True
+                self.postCmd = "UPDATE"
                 self.shutdown()
         else:
             self.logger.info("Ignoring update command. User has no permission to do that.")

@@ -27,12 +27,17 @@ def main(args=None):
         res = None
 
     res = PySchedClient.PySchedClient(args.workingDir, args)
-    if res.runUpdate:
-        if update(res, PySchedClient.__file__, args):            
-            try:
-                os.execl(sys.argv[0], *sys.argv)
-            except Exception, e:
-                res.logger.error(e)
+    if res.postCmd == "UPDATE":
+        if update(res, PySchedClient.__file__, args):   
+            restart()
+    elif res.postCmd == "RESTART":
+        restart()
+
+def restart():         
+    try:
+        os.execl(sys.argv[0], *sys.argv)
+    except Exception, e:
+        sys.exit(1)
 
 def update(res, installPath, args):
     res.logger.info("PySchedClient terminated.")

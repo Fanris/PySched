@@ -26,12 +26,17 @@ def main(args=None):
         res = None
 
     res = PySchedServer.PySchedServer(args.workingDir, args)
-    if res.runUpdate:
+    if res.postCmd == "UPDATE":
         if update(res, PySchedServer.__file__, args):            
-            try:
-                os.execl(sys.argv[0], *sys.argv)
-            except Exception, e:
-                res.logger.error(e)
+            restart()
+    elif res.postCmd == "RESTART":
+        restart()
+        
+def restart():
+    try:
+        os.execl(sys.argv[0], *sys.argv)
+    except Exception, e:
+        sys.exit(1)
 
 def update(res, installPath, args):
     res.logger.info("PySchedServer terminated.")

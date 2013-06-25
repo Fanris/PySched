@@ -213,3 +213,11 @@ class MessageHandler(MessageHandlerInterface):
         '''
         self.pySchedClient.updatePySched()
 
+    def restart(self, sender, data):
+        '''
+        @summary: Restarts the software
+        @param sender:
+        @param data:
+        @result: 
+        '''
+        self.pySchedClient.restart()

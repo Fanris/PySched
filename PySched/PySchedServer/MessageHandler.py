@@ -797,3 +797,35 @@ class MessageHandler(MessageHandlerInterface):
                 networkId,
                 CommandBuilder.buildResponseString(
                     result=False))
+
+    def restart(self, networkId, data):
+        '''
+        @summary:           Is called when the server should be restarted.
+        @param networkId:   the sender of the message
+        @param data:        userId
+        @result: 
+        '''
+        userId = data.get("userId")
+
+        self.pySchedServer.restartServer(userId)
+
+    def restartWS(self, networkId, data):
+        '''
+        @summary:           Is called when the server should be restarted.
+        @param networkId:   the sender of the message
+        @param data:        userId, workstationName
+        @result: 
+        '''
+        userId = data.get("userId", None)
+        workstationName = data.get("workstationName", None)
+
+        if self.pySchedServer.restartWS(userId, workstationName):
+            self.pySchedServer.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(
+                    result=True))
+        else:
+            self.pySchedServer.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(
+                    result=False))
