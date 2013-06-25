@@ -2,7 +2,7 @@
 
 import argparse
 
-def main():
+def main(args=None):
     from PySched import PySchedServer
     #===============================================================================
     # Main Server Program
