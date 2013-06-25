@@ -44,12 +44,13 @@ def update(res, installPath, args):
 
     res.logger.info("Install path = {}".format(installPath))
     res.logger.info("Downloading new version...")
-
+    os.chdir(installPath)
     with open(os.path.join(res.workingDir, "updateLog.log"), 'w') as f:
         ret = call([
             "pip", 
             "install", 
             "--user", 
+            "--no-deps",
             "--src={}".format(installPath), 
             "-e", 
             "git://github.com/Fanris/PySched#egg=PySched"],
