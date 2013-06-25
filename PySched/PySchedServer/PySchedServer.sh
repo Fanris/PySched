@@ -27,7 +27,7 @@ def main(args=None):
 
     res = PySchedServer.PySchedServer(args.workingDir, args)
     if res.runUpdate:
-        if update(PySchedServer.__file__, args):            
+        if update(res, PySchedServer.__file__, args):            
             try:
                 os.execl(sys.argv[0], *sys.argv)
             except Exception, e:
