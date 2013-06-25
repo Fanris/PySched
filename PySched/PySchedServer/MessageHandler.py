@@ -47,6 +47,10 @@ class MessageHandler(MessageHandlerInterface):
                 commandDict)
         else:
             self.logger.warning("Cannot parse command: {}".format(message))
+            self.pySchedServer.networkManager.sendMessage(
+                networkId,
+                CommandBuilder.buildResponseString(
+                    result=False))
 
 
 
