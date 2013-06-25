@@ -30,7 +30,7 @@ def main(args=None):
         if update(PySchedServer.__file__, args):            
             try:
                 os.execl(sys.argv[0], *sys.argv)
-            except Exception e:
+            except Exception, e:
                 res.logger.error(e)
 
 def update(res, installPath, args):
