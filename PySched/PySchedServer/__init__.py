@@ -55,6 +55,7 @@ class PySchedServer(object):
         FileUtils.createDirectory(workingDir)
 
         self.initializeLogger(self.workingDir ,args)
+        self.runUpdate = False
         if not args.quiet:
             self.printTitle()
 
@@ -975,6 +976,8 @@ class PySchedServer(object):
                 return True
             else:
                 self.logger.info("Going down for Update...")
+                self.runUpdate = True
+                self.shutdown()
         else:
             self.logger.info("Ignoring update command. User has no permission to do that.")
 
