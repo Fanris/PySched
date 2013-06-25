@@ -935,7 +935,7 @@ class PySchedServer(object):
             networkId = self.lookupWorkstationName(workstationName)
             self.logger.info("Restarting workstation {}".format(workstationName))
             
-            self.NetworkManager.sendMessage(
+            self.networkManager.sendMessage(
                 networkId,
                 CommandBuilder.buildRestartWSString())
 
