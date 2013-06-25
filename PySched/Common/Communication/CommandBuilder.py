@@ -240,3 +240,7 @@ class CommandBuilder(object):
     @staticmethod
     def buildUpdateSoftwareString():
         return CommandBuilder.buildCommand("updatePySched")
+
+    @staticmethod
+    def buildRestartWSString():
+        return CommandBuilder.buildCommand("restart")
