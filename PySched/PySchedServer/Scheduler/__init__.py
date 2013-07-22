@@ -316,7 +316,7 @@ class PyScheduler(SchedulerInterface):
 
     def jobAborted(self, jobId):
         try:
-            while jobId in self.deque:
-                self.deque.remove(jobId)
+            while jobId in self.jobQueue:
+                self.jobQueue.remove(jobId)
         except ValueError:
             pass        
