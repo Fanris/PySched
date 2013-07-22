@@ -30,7 +30,7 @@ import datetime
 import os
 
 
-VERSION = "1.4.2"
+VERSION = "1.4.3"
 TITLE = """
  _____        _____      _              _  _____                           
 |  __ \      / ____|    | |            | |/ ____|                          
@@ -623,11 +623,14 @@ class PySchedServer(object):
         newMachineName = workstationInfo.get("workstationName", None)
         if not newMachineName:
             self.logger.warning("Try to add a Workstation with no name.")
-
-        for k, v in self.workstations.iteritems():
-            if v.get("workstationName", None) == newMachineName:
-                self.logger.debug("Overriding old workstation Informations")
-                del self.workstations[k]
+        
+        try:
+            for k, v in self.workstations.iteritems():
+                if v.get("workstationName", None) == newMachineName:
+                    self.logger.debug("Overriding old workstation Informations")
+                    del self.workstations[k]        
+        except:
+            return            
 
         self.workstations[networkId] = workstationInfo
         self.logger.info("New workstation {} added. Currently are {} workstations available."
@@ -678,10 +681,13 @@ class PySchedServer(object):
         @param workstationName: the name to look up
         @result:
         '''
-        for k, v in self.workstations.iteritems():
-            if v.get("workstationName", None) == workstationName:
-                return k
-        
+        try:
+            for k, v in self.workstations.iteritems():
+                if v.get("workstationName", None) == workstationName:
+                    return k
+        except:
+            return -1
+            
         return -1
 
     def lookupNetworkId(self, networkId):
